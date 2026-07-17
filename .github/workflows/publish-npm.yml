@@ -83,22 +83,29 @@ jobs:
         run: |
           node <<'NODE'
           const fs = require('node:fs');
-          const name = '${{ steps.package.outputs.name }}';
-          const version = '${{ steps.package.outputs.version }}';
-          const urls = {
-            jsdelivr: `https://cdn.jsdelivr.net/npm/${name}@${version}/dist/fan-poker.js`,
-            unpkg: `https://unpkg.com/${name}@${version}/dist/fan-poker.js`
-          };
-          for (const [key, url] of Object.entries(urls)) {
-            let ok = false;
-            for (let attempt = 0; attempt < 6 && !ok; attempt += 1) {
-              const response = await fetch(url, { redirect: 'follow' });
-              const body = await response.text();
-              ok = response.ok && body.includes('customElements.define("fan-poker"') && body.includes('customElements.define("fan-card"');
-              if (!ok) await new Promise(resolve => setTimeout(resolve, 10000));
+
+          (async () => {
+            const name = '${{ steps.package.outputs.name }}';
+            const version = '${{ steps.package.outputs.version }}';
+            const urls = {
+              jsdelivr: `https://cdn.jsdelivr.net/npm/${name}@${version}/dist/fan-poker.js`,
+              unpkg: `https://unpkg.com/${name}@${version}/dist/fan-poker.js`
+            };
+
+            for (const [key, url] of Object.entries(urls)) {
+              let ok = false;
+              for (let attempt = 0; attempt < 6 && !ok; attempt += 1) {
+                const response = await fetch(url, { redirect: 'follow' });
+                const body = await response.text();
+                ok = response.ok && body.includes('customElements.define("fan-poker"') && body.includes('customElements.define("fan-card"');
+                if (!ok) await new Promise(resolve => setTimeout(resolve, 10000));
+              }
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${ok}\n`);
             }
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${ok}\n`);
-          }
+          })().catch(error => {
+            console.error(error);
+            process.exitCode = 1;
+          });
           NODE
 
       - name: Write publish result
