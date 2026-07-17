@@ -39,3 +39,5 @@ A stable release must pass:
 5. npm package-content inspection;
 6. Chromium behavior and accessibility smoke tests;
 7. npm Registry, jsDelivr, and unpkg verification.
+
+The checked-in `RELEASE_NOTES.md` is the canonical body for the matching GitHub Release.
