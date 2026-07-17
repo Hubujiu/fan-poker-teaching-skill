@@ -1,0 +1,2 @@
+# Do not edit during normal development.
+# Updating .github/npm-publish-trigger triggers the npm publishing workflow.
