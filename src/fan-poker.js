@@ -191,6 +191,18 @@ const STYLES = String.raw`
     font-size: 12px;
   }
 
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .empty {
     width: min(100%, 460px);
     margin: 30px auto;
@@ -223,6 +235,7 @@ const STYLES = String.raw`
 const SPEED = Object.freeze({ normal: 620, fast: 360, turbo: 180 });
 const TRUE_VALUES = new Set(["", "true", "1", "yes", "on"]);
 const FALSE_VALUES = new Set(["false", "0", "no", "off"]);
+const HTMLElementBase = globalThis.HTMLElement ?? class {};
 
 function readBoolean(element, attribute, fallback = true) {
   if (!element.hasAttribute(attribute)) return fallback;
@@ -257,13 +270,13 @@ function normalizeCardInput(card, index = 0) {
   };
 }
 
-class FanCardElement extends HTMLElement {
+export class FanCardElement extends HTMLElementBase {
   connectedCallback() {
     this.hidden = true;
   }
 }
 
-class FanPokerElement extends HTMLElement {
+export class FanPokerElement extends HTMLElementBase {
   static get observedAttributes() {
     return [
       "card-width",
@@ -294,7 +307,7 @@ class FanPokerElement extends HTMLElement {
     this._blockClickUntil = 0;
     this._ready = false;
     this._suspendObserver = false;
-    this._reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this._reducedMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
     this._onResize = () => this._queueMeasure();
   }
 
@@ -302,6 +315,8 @@ class FanPokerElement extends HTMLElement {
     if (!this.shadowRoot.querySelector(".stage")) this._renderShell();
     if (!this.hasAttribute("tabindex")) this.tabIndex = 0;
     this.setAttribute("role", "region");
+    this.setAttribute("aria-roledescription", "interactive card deck");
+    this.setAttribute("aria-keyshortcuts", "ArrowLeft ArrowRight ArrowUp ArrowDown PageUp PageDown Space");
     this._syncLabel();
     this._syncConfig();
     this._bindEvents();
@@ -468,11 +483,13 @@ class FanPokerElement extends HTMLElement {
       <style>${STYLES}</style>
       <section class="stage" part="stage">
         <div class="deck" part="deck"></div>
+        <div class="sr-only" part="status" aria-live="polite" aria-atomic="true"></div>
         <div class="empty" part="empty" hidden>Add one or more &lt;fan-card&gt; elements.</div>
       </section>
     `;
     this._stage = this.shadowRoot.querySelector(".stage");
     this._deck = this.shadowRoot.querySelector(".deck");
+    this._status = this.shadowRoot.querySelector(".sr-only");
     this._empty = this.shadowRoot.querySelector(".empty");
   }
 
@@ -666,6 +683,9 @@ class FanPokerElement extends HTMLElement {
     const article = document.createElement("article");
     article.className = "card";
     article.setAttribute("part", "card");
+    article.setAttribute("role", "group");
+    article.setAttribute("aria-roledescription", "card");
+    article.setAttribute("aria-label", `${card.title}, card ${index + 1} of ${this._cards.length}`);
     article.dataset.sourceIndex = String(index);
     article.style.setProperty("--card-accent", card.accent);
     article.innerHTML = `
@@ -804,6 +824,17 @@ class FanPokerElement extends HTMLElement {
       const offset = this._offsetFor(sourceIndex);
       this._setPose(node, this._fanPose(offset), offset, offset === 0);
     });
+    this._announceCurrent();
+  }
+
+  _announceCurrent() {
+    if (!this._status) return;
+    if (!this.cardCount) {
+      this._status.textContent = "No cards";
+      return;
+    }
+    const card = this._cards[this._index];
+    this._status.textContent = `${card.title}. Card ${this._index + 1} of ${this.cardCount}.`;
   }
 
   _renderTransition(direction, progress) {
@@ -940,7 +971,11 @@ class FanPokerElement extends HTMLElement {
   }
 }
 
-if (!customElements.get("fan-card")) customElements.define("fan-card", FanCardElement);
-if (!customElements.get("fan-poker")) customElements.define("fan-poker", FanPokerElement);
+export function defineFanPokerElements(registry = globalThis.customElements) {
+  if (!registry?.get || !registry?.define) return false;
+  if (!registry.get("fan-card")) registry.define("fan-card", FanCardElement);
+  if (!registry.get("fan-poker")) registry.define("fan-poker", FanPokerElement);
+  return true;
+}
 
-export { FanCardElement, FanPokerElement };
+defineFanPokerElements();
