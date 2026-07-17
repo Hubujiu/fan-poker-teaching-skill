@@ -1,0 +1,9 @@
+{
+  "configure": "failure",
+  "prepare": "skipped",
+  "upload": "skipped",
+  "deployment": "skipped",
+  "pageUrl": "",
+  "runId": "29593067045",
+  "commit": "a314ee3dc339b52367645caca7e635d3a6bcc505"
+}
