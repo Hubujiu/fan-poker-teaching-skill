@@ -1,0 +1,184 @@
+const STYLES = String.raw`
+  :host {
+    --fan-card-width: 390px;
+    --fan-card-height: 520px;
+    --fan-card-bg: #ffffff;
+    --fan-text: #171717;
+    --fan-muted: #737373;
+    --fan-line: rgba(23, 23, 23, 0.15);
+    --fan-accent: #e96d2f;
+    --fan-radius: 24px;
+    --fan-cover-text: #171717;
+    display: block;
+    min-width: 0;
+    color: var(--fan-text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    outline: none;
+  }
+
+  :host([theme="light"]) {
+    color-scheme: light;
+    --fan-card-bg: #ffffff;
+    --fan-text: #171717;
+    --fan-muted: #737373;
+    --fan-line: rgba(23, 23, 23, 0.15);
+    --fan-cover-text: #171717;
+  }
+
+  :host([theme="dark"]) {
+    color-scheme: dark;
+    --fan-card-bg: #1b1b1b;
+    --fan-text: #f3f3f3;
+    --fan-muted: #b2b2b2;
+    --fan-line: rgba(255, 255, 255, 0.14);
+    --fan-cover-text: #171717;
+  }
+
+  :host(:focus-visible) .stage {
+    outline: 2px solid color-mix(in srgb, var(--fan-accent) 65%, transparent);
+    outline-offset: 4px;
+    border-radius: calc(var(--fan-radius) + 4px);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  .stage {
+    position: relative;
+    margin: 0 auto;
+    overflow: visible;
+    perspective: 1600px;
+    touch-action: pan-y;
+    user-select: none;
+    contain: layout style;
+  }
+
+  .deck {
+    position: absolute;
+    width: var(--fan-card-width);
+    height: var(--fan-card-height);
+    transform-origin: 0 0;
+    transform-style: preserve-3d;
+  }
+
+  .card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--fan-line);
+    border-radius: var(--fan-radius);
+    background: var(--fan-card-bg);
+    box-shadow: none;
+    backface-visibility: hidden;
+    transform-origin: 50% 112%;
+    container-type: size;
+    will-change: transform;
+    isolation: isolate;
+  }
+
+  .card.is-current { cursor: grab; }
+  .deck.is-dragging .card.is-current { cursor: grabbing; }
+
+  .card-inner {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    pointer-events: none;
+  }
+
+  .card.is-current .card-inner { pointer-events: auto; }
+
+  .card-cover {
+    position: relative;
+    flex: 0 1 41%;
+    min-height: min(156px, 36%);
+    padding: clamp(14px, 6cqh, 46px) clamp(14px, 7cqw, 54px);
+    overflow: hidden;
+    border-bottom: 1px solid var(--fan-line);
+    background: var(--card-accent, #f2a65a);
+    color: var(--fan-cover-text);
+  }
+
+  .card-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid rgba(23, 23, 23, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.84);
+    color: #171717;
+    font-size: 12px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card-symbol {
+    position: absolute;
+    right: clamp(20px, 5cqw, 30px);
+    bottom: clamp(12px, 3cqh, 20px);
+    color: rgba(23, 23, 23, 0.74);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(58px, 28cqh, 126px);
+    line-height: 0.88;
+  }
+
+  .card-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    padding: clamp(14px, 6cqh, 46px) clamp(14px, 7cqw, 54px) clamp(20px, 8cqh, 68px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .card-tag {
+    margin: 0 0 12px;
+    color: var(--fan-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .card-title {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-size: clamp(18px, 9cqw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+  }
+
+  .card-body {
+    margin: 20px 0 0;
+    overflow-wrap: anywhere;
+    color: var(--fan-muted);
+    font-size: clamp(11px, 3.8cqw, 15px);
+    line-height: 1.75;
+  }
+
+  .card-body > :first-child { margin-top: 0; }
+  .card-body > :last-child { margin-bottom: 0; }
+  .card-body a { color: var(--fan-accent); }
+  .card-body img { max-width: 100%; height: auto; border-radius: 12px; }
+  .card-body pre {
+    max-width: 100%;
+    padding: 14px;
+    overflow: auto;
+    border: 1px solid var(--fan-line);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--fan-text) 6%, transparent);
+    color: var(--fan-text);
+    font-size: 0.88em;
+    line-height: 1.65;
+  
