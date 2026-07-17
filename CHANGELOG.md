@@ -1,8 +1,25 @@
 # Changelog
 
-All notable changes to this project will be documented here.
+## 0.1.0 - 2026-07-17
 
-## [1.0.0] - 2026-07-17
+### Added
+
+- `<fan-poker>` and `<fan-card>` Custom Elements
+- Shadow DOM style isolation
+- `card-width`, `card-height`, `start-index`, `keyboard`, `wheel`, and `draggable` configuration
+- `next()`, `previous()`, `goTo()`, and `reset()` methods
+- `currentIndex`, `cardCount`, and dynamic `cards` properties
+- `ready`, `cardchangestart`, and `cardchange` events
+- TypeScript declarations
+- Basic markup and JavaScript API examples
+- npm package metadata for `@hubujiu/fan-poker-deck`
+
+### Changed
+
+- The Agent Skill now generates compact Web Component markup by default.
+- The standalone HTML deck remains available as an offline fallback.
+
+## 0.0.1 - 2026-07-17
 
 ### Added
 

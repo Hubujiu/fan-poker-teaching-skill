@@ -1,31 +1,58 @@
 {
-  "name": "fan-poker-teaching-skill",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Agent Skill for generating dependency-free interactive HTML lessons as a single-sided fan poker deck.",
+  "name": "@hubujiu/fan-poker-deck",
+  "version": "0.1.0",
+  "description": "Dependency-free Web Component for interactive single-sided fan poker card lessons.",
+  "type": "module",
+  "main": "./dist/fan-poker.js",
+  "module": "./dist/fan-poker.js",
+  "types": "./types/fan-poker.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/fan-poker.d.ts",
+      "import": "./dist/fan-poker.js",
+      "default": "./dist/fan-poker.js"
+    }
+  },
+  "unpkg": "./dist/fan-poker.js",
+  "jsdelivr": "./dist/fan-poker.js",
+  "files": [
+    "dist",
+    "types",
+    "src",
+    "README.md",
+    "README_EN.md",
+    "LICENSE"
+  ],
+  "sideEffects": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node scripts/validate.mjs",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "web-component",
+    "custom-elements",
+    "agent-skill",
+    "interactive-tutorial",
+    "education",
+    "html",
+    "flashcards",
+    "poker-cards"
+  ],
   "homepage": "https://hubujiu.github.io/fan-poker-teaching-skill/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hubujiu/fan-poker-teaching-skill.git"
+    "url": "git+https://github.com/Hubujiu/fan-poker-teaching-skill.git"
   },
   "bugs": {
     "url": "https://github.com/Hubujiu/fan-poker-teaching-skill/issues"
   },
-  "scripts": {
-    "test": "node scripts/validate.mjs"
+  "author": "Hubujiu",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
-  "keywords": [
-    "agent-skill",
-    "ai-skill",
-    "agent-skills",
-    "interactive-tutorial",
-    "education",
-    "teaching-tools",
-    "single-file-html",
-    "html",
-    "javascript",
-    "flashcards",
-    "poker-cards"
-  ],
-  "license": "MIT"
+  "engines": {
+    "node": ">=18"
+  }
 }
