@@ -1,0 +1,85 @@
+name: Verify published release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/release-verify-trigger"
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Verify registry and CDN endpoints
+        id: smoke
+        continue-on-error: true
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const endpoints = {
+            registry: 'https://registry.npmjs.org/@hubujiu%2Ffan-poker-deck/0.1.0',
+            jsdelivr: 'https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js',
+            unpkg: 'https://unpkg.com/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js'
+          };
+
+          const result = {
+            package: '@hubujiu/fan-poker-deck',
+            version: '0.1.0',
+            checkedAt: new Date().toISOString(),
+            endpoints: {}
+          };
+
+          let ok = true;
+          for (const [name, url] of Object.entries(endpoints)) {
+            try {
+              const response = await fetch(url, { redirect: 'follow' });
+              const body = await response.text();
+              const markerOk = name === 'registry'
+                ? body.includes('"name":"@hubujiu/fan-poker-deck"') && body.includes('"version":"0.1.0"')
+                : body.includes('customElements.define("fan-poker"') && body.includes('customElements.define("fan-card"');
+              result.endpoints[name] = {
+                status: response.status,
+                ok: response.ok && markerOk,
+                bytes: Buffer.byteLength(body)
+              };
+              if (!result.endpoints[name].ok) ok = false;
+            } catch (error) {
+              result.endpoints[name] = { status: 0, ok: false, error: error.message };
+              ok = false;
+            }
+          }
+
+          result.ok = ok;
+          fs.writeFileSync('.github/release-smoke-result.json', JSON.stringify(result, null, 2) + '\n');
+          if (!ok) process.exitCode = 1;
+          NODE
+
+      - name: Commit smoke-test result
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/release-smoke-result.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record npm release smoke test"
+            git push
+          fi
+
+      - name: Fail when an endpoint is unavailable
+        if: steps.smoke.outcome != 'success'
+        run: exit 1
