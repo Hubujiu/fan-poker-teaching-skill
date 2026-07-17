@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -33,14 +33,9 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Configure Pages
-        id: configure
-        continue-on-error: true
         uses: actions/configure-pages@v5
 
       - name: Prepare static site
-        id: prepare
-        if: ${{ steps.configure.outcome == 'success' }}
-        continue-on-error: true
         shell: bash
         run: |
           rm -rf _site
@@ -56,44 +51,10 @@ jobs:
           test -s _site/media/preview.svg
 
       - name: Upload Pages artifact
-        id: upload
-        if: ${{ steps.prepare.outcome == 'success' }}
-        continue-on-error: true
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
-        if: ${{ steps.upload.outcome == 'success' }}
-        continue-on-error: true
         uses: actions/deploy-pages@v4
-
-      - name: Record Pages deployment result
-        if: ${{ always() }}
-        shell: bash
-        run: |
-          mkdir -p .github
-          cat > .github/pages-deploy-result.json <<EOF
-          {
-            "configure": "${{ steps.configure.outcome }}",
-            "prepare": "${{ steps.prepare.outcome }}",
-            "upload": "${{ steps.upload.outcome }}",
-            "deployment": "${{ steps.deployment.outcome }}",
-            "pageUrl": "${{ steps.deployment.outputs.page_url }}",
-            "runId": "${{ github.run_id }}",
-            "commit": "${{ github.sha }}"
-          }
-          EOF
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/pages-deploy-result.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Record GitHub Pages deployment result"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
-
-      - name: Fail when Pages deployment is incomplete
-        if: ${{ always() && (steps.configure.outcome != 'success' || steps.prepare.outcome != 'success' || steps.upload.outcome != 'success' || steps.deployment.outcome != 'success') }}
-        run: exit 1
