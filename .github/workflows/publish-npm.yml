@@ -64,16 +64,21 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Verify registry state
+      - name: Wait for npm registry propagation
         id: verify
         if: always()
         shell: bash
         run: |
-          if npm view "${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}" version >/dev/null 2>&1; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-          fi
+          published=false
+          for attempt in $(seq 1 12); do
+            if npm view "${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}" version >/dev/null 2>&1; then
+              published=true
+              break
+            fi
+            echo "Registry propagation attempt ${attempt}/12"
+            sleep 10
+          done
+          echo "published=${published}" >> "$GITHUB_OUTPUT"
 
       - name: Verify jsDelivr and unpkg
         id: cdn
