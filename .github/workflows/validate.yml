@@ -8,20 +8,56 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  static-validation:
+  prepare-v1:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
           package-manager-cache: false
-      - name: Validate package and examples
+      - name: Apply and validate the controlled v1 patch
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'agent/stable-v1.0.0' && hashFiles('.github/prepare-v1') != '' }}
+        run: |
+          node scripts/apply-v1.mjs
+          npm run build
+          npm test
+          npm pack --dry-run
+          bash scripts/browser-smoke.sh
+          rm scripts/apply-v1.mjs
+          rm .github/prepare-v1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Build stable Web Component v1.0.0"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+  static-validation:
+    needs: prepare-v1
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - name: Validate package on Node ${{ matrix.node }}
         run: npm test
-      - name: Verify package contents
+      - name: Verify npm package contents
+        if: ${{ matrix.node == 24 }}
         run: npm pack --dry-run
 
   browser-smoke:
@@ -29,6 +65,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
