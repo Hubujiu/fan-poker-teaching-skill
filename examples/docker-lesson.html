@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Docker on Linux · Fan Poker Lesson</title>
+<style>html,body{margin:0;min-height:100%;background:transparent}iframe{display:block;width:100%;height:100vh;border:0}.error{max-width:680px;margin:80px auto;padding:24px;font:16px/1.7 system-ui;color:#333}</style>
+</head>
+<body>
+<div class="error" id="status">正在装载 Docker 教学牌组…</div>
+<script>
+const cards=[
+  {tag:"目标",title:"在 Linux 上跑起 Docker",description:"完成安装、启动服务、验证容器运行，并掌握最常用的日常命令。",symbol:"A",accent:"#f2a65a"},
+  {tag:"准备",title:"确认系统与权限",description:"确认你可以使用 sudo，并记录发行版与版本。Ubuntu、Debian、CentOS 系列的软件源命令不同。",symbol:"K",accent:"#7dcfb6"},
+  {tag:"安装",title:"优先使用官方仓库",description:"生产环境建议使用 Docker 官方软件仓库，而不是来源不明的一键脚本。这样版本、签名与升级路径更清晰。",symbol:"Q",accent:"#8e9aef"},
+  {tag:"服务",title:"启动并设置开机自启",symbol:"J",accent:"#f4978e",html:"<p class='card-tag'>服务</p><h2 class='card-title'>启动并设置开机自启</h2><div class='card-description'><pre><code>sudo systemctl enable --now docker</code></pre><p>随后运行 <code>systemctl status docker</code> 确认服务处于 active 状态。</p></div>"},
+  {tag:"验证",title:"运行第一个容器",symbol:"10",accent:"#90be6d",html:"<p class='card-tag'>验证</p><h2 class='card-title'>运行第一个容器</h2><div class='card-description'><pre><code>sudo docker run --rm hello-world</code></pre><p>看到欢迎信息，说明镜像拉取、容器创建、执行与日志输出链路都正常。</p></div>"},
+  {tag:"权限",title:"决定是否免 sudo",description:"可将当前用户加入 docker 组，但该组接近 root 权限。个人开发机可按需使用，服务器上要明确风险。",symbol:"9",accent:"#f4d35e"},
+  {tag:"常用",title:"掌握四个日常命令",symbol:"8",accent:"#ee964b",html:"<p class='card-tag'>常用</p><h2 class='card-title'>掌握四个日常命令</h2><div class='card-description'><pre><code>docker ps -a\ndocker images\ndocker logs &lt;container&gt;\ndocker exec -it &lt;container&gt; sh</code></pre></div>"},
+  {tag:"完成",title:"从容器走向 Compose",description:"下一步用 compose.yaml 管理端口、卷、环境变量与多容器依赖，让部署从单条命令升级为可复现配置。",symbol:"7",accent:"#6c9bd2"}
+];
+(async()=>{
+  try{
+    const response=await fetch("../assets/fan-poker-base.html");
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    let source=await response.text();
+    source=source.replace(/<title>[\s\S]*?<\/title>/,"<title>Docker on Linux · Fan Poker Lesson</title>");
+    source=source.replace(/const cardData=\[[\s\S]*?\];/,`const cardData=${JSON.stringify(cards)};`);
+    document.open();document.write(source);document.close();
+  }catch(error){
+    document.querySelector("#status").innerHTML=`<h1>无法装载示例</h1><p>${error.message}</p><p>请通过 GitHub Pages 或本地 HTTP 服务器打开此文件。</p>`;
+  }
+})();
+</script>
+</body>
+</html>
