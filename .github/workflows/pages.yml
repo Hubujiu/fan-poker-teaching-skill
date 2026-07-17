@@ -46,9 +46,35 @@ jobs:
               cp -R "$directory" "_site/$directory"
             fi
           done
+
+          cp media/favicon.ico _site/favicon.ico
+          cp media/favicon.png _site/favicon.png
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          page = Path("_site/index.html")
+          lines = [
+              line for line in page.read_text(encoding="utf-8").splitlines()
+              if 'rel="icon"' not in line and 'rel="shortcut icon"' not in line and 'rel="apple-touch-icon"' not in line
+          ]
+          title_index = next(index for index, line in enumerate(lines) if "<title>" in line)
+          links = [
+              '  <link rel="icon" type="image/png" sizes="48x48" href="/fan-poker-teaching-skill/favicon.png?v=2">',
+              '  <link rel="icon" type="image/x-icon" href="/fan-poker-teaching-skill/favicon.ico?v=2">',
+              '  <link rel="shortcut icon" href="/fan-poker-teaching-skill/favicon.ico?v=2">',
+              '  <link rel="apple-touch-icon" href="/fan-poker-teaching-skill/favicon.png?v=2">',
+          ]
+          lines[title_index + 1:title_index + 1] = links
+          page.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
           touch _site/.nojekyll
           test -s _site/index.html
           test -s _site/media/preview.svg
+          test -s _site/favicon.ico
+          test -s _site/favicon.png
+          grep -Fq '/fan-poker-teaching-skill/favicon.png?v=2' _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
@@ -58,3 +84,46 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify published favicon
+        shell: bash
+        run: |
+          site="https://hubujiu.github.io/fan-poker-teaching-skill"
+          for attempt in $(seq 1 18); do
+            page_ok=false
+            png_ok=false
+            ico_ok=false
+
+            if curl -fsSL -H 'Cache-Control: no-cache' "$site/?verify=${{ github.sha }}-$attempt" -o /tmp/page.html; then
+              grep -Fq '/fan-poker-teaching-skill/favicon.png?v=2' /tmp/page.html && page_ok=true
+            fi
+
+            if curl -fsSL -H 'Cache-Control: no-cache' "$site/favicon.png?verify=${{ github.sha }}-$attempt" -o /tmp/favicon.png; then
+              python3 - <<'PY' && png_ok=true
+          from pathlib import Path
+          data = Path('/tmp/favicon.png').read_bytes()
+          assert data.startswith(b'\x89PNG\r\n\x1a\n')
+          assert len(data) > 1000
+          PY
+            fi
+
+            if curl -fsSL -H 'Cache-Control: no-cache' "$site/favicon.ico?verify=${{ github.sha }}-$attempt" -o /tmp/favicon.ico; then
+              python3 - <<'PY' && ico_ok=true
+          from pathlib import Path
+          data = Path('/tmp/favicon.ico').read_bytes()
+          assert data[:4] == b'\x00\x00\x01\x00'
+          assert len(data) > 1000
+          PY
+            fi
+
+            if $page_ok && $png_ok && $ico_ok; then
+              echo "Published favicon verified on attempt $attempt"
+              exit 0
+            fi
+
+            echo "Waiting for Pages propagation: page=$page_ok png=$png_ok ico=$ico_ok"
+            sleep 10
+          done
+
+          echo "GitHub Pages did not expose the expected favicon files in time" >&2
+          exit 1
