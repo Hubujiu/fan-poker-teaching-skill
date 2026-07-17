@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  validate:
+  static-validation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -26,12 +26,29 @@ jobs:
         if: ${{ hashFiles('.github/v0.2-source-ready') != '' }}
         run: |
           cat .github/v0.2-source-chunks/* > src/fan-poker.js
-          chmod +x scripts/browser-smoke.sh
           npm run build
       - name: Validate package and examples
         run: npm test
       - name: Verify package contents
         run: npm pack --dry-run
+
+  browser-smoke:
+    needs: static-validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Assemble staged readable source
+        if: ${{ hashFiles('.github/v0.2-source-ready') != '' }}
+        run: |
+          cat .github/v0.2-source-chunks/* > src/fan-poker.js
+          npm run build
       - name: Run Chromium browser smoke test
         if: ${{ hashFiles('scripts/browser-smoke.sh') != '' }}
         run: bash scripts/browser-smoke.sh
