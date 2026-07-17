@@ -3,15 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "description": "Agent Skill for generating dependency-free interactive HTML lessons as a single-sided fan poker deck.",
+  "homepage": "https://hubujiu.github.io/fan-poker-teaching-skill/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hubujiu/fan-poker-teaching-skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hubujiu/fan-poker-teaching-skill/issues"
+  },
   "scripts": {
     "test": "node scripts/validate.mjs"
   },
   "keywords": [
     "agent-skill",
     "ai-skill",
+    "agent-skills",
     "interactive-tutorial",
     "education",
+    "teaching-tools",
+    "single-file-html",
     "html",
+    "javascript",
     "flashcards",
     "poker-cards"
   ],
