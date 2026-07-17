@@ -1,10 +1,10 @@
 ---
-name: fan-poker-teaching-deck
+name: fan-poker-teaching-skill
 description: "Create standalone interactive HTML lessons, tutorials, onboarding flows, explainers, revision cards, flashcards, step-by-step guides, and mini courses using the bundled single-sided fan poker deck animation. Use this skill whenever a user asks to turn knowledge, documentation, notes, an article, a process, or a learning topic into swipeable, clickable, stacked, card-based, or poker-style teaching content, even when they do not explicitly say 'skill'."
 license: MIT
 ---
 
-# Fan Poker Teaching Deck
+# Fan Poker Teaching Skill
 
 Create complete, directly runnable teaching pages from `assets/fan-poker-base.html`. Treat the bundled HTML as the stable visual and animation foundation. Keep the page transparent, dependency-free, and free of top toolbars, page counters, and bottom page-number navigation.
 
@@ -77,68 +77,3 @@ Use `html` for code, lists, warnings, tables, links, or structured practice:
 ```
 
 Escape backticks and `${...}` inside JavaScript template literals. Keep code examples focused and executable with minimal modification.
-
-## Preserve the visual contract
-
-- Keep the page background transparent.
-- Keep every card the same size.
-- Keep the single-sided fan opening to the right.
-- Keep the front-card-to-back recycling animation and full-depth return path.
-- Keep all cards fully rendered throughout transitions.
-- Keep static cards shadowless.
-- Use solid, restrained accent colors with sufficient text contrast.
-- Do not introduce gradients, emoji-only icons, a toolbar, a page counter, or numbered bottom navigation unless explicitly requested.
-- Do not use `contain: paint`; it clips the motion envelope.
-
-## Preserve the interaction contract
-
-Retain:
-
-- Click to advance
-- Horizontal drag in both directions
-- Wheel navigation
-- Arrow, PageUp, PageDown, and Space keyboard controls
-- Adaptive speed and queued switching
-- Shortest-path programmatic navigation
-- Reduced-motion support
-
-Keep this public API available:
-
-```js
-window.fanPokerDeck.requestStep(1);
-window.fanPokerDeck.requestStep(-1);
-window.fanPokerDeck.goTo(3);
-```
-
-## Adapt content to the teaching domain
-
-For technical tutorials:
-
-- Prefer commands that can be copied directly.
-- Explain what success looks like after each important command.
-- Include one troubleshooting card when failure is common.
-- Never invent package names, flags, APIs, or version-specific behavior. Verify current details when tools allow.
-
-For conceptual lessons:
-
-- Begin with a concrete mental model.
-- Introduce terminology only when it becomes useful.
-- Include a comparison, example, or small retrieval question.
-
-For revision cards:
-
-- Keep the prompt or concept visible immediately.
-- Put the answer or explanation in the main body.
-- Use consistent symbols and tag labels across the set.
-
-## Quality checks
-
-Before returning the file:
-
-1. Parse every inline `<script>` with a JavaScript syntax checker.
-2. Confirm `cardData` exists and contains at least two meaningful cards.
-3. Confirm each card has a useful title or complete custom `html`.
-4. Confirm no removed UI selectors or elements were reintroduced: `toolbar`, `counter`, `motionState`, `pageNav`, `speedControl`, `.page-nav`, or `.page-button`.
-5. Confirm `window.fanPokerDeck` remains available.
-6. Confirm the output has no external runtime dependencies.
-7. Open or render the page when browser tooling is available and verify that the animation is not clipped.
