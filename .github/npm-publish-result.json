@@ -4,8 +4,8 @@
   "alreadyPublishedBeforeRun": "true",
   "publishStepOutcome": "skipped",
   "availableOnRegistry": "true",
-  "jsDelivr": "",
-  "unpkg": "",
-  "runId": "29572877562",
-  "commit": "0854ee261f3b8f7a5def31fdb1ac41bb73428c0e"
+  "jsDelivr": "true",
+  "unpkg": "true",
+  "runId": "29573011825",
+  "commit": "f44abe1e0ab41132cca2d93f3e6443839a1491a3"
 }
