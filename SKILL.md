@@ -1,21 +1,21 @@
 ---
 name: fan-poker-teaching-skill
-description: "Create embeddable interactive HTML lessons, tutorials, onboarding flows, revision cards, flashcards, and step-by-step guides with the bundled fan-poker Web Component. Use this skill whenever a user asks to turn knowledge, notes, documentation, an article, a process, or a learning topic into clickable, draggable, stacked, card-based, or poker-style teaching content. Prefer the compact <fan-poker>/<fan-card> API; use the legacy standalone template only when the user explicitly requires one offline file with no external script."
+description: "Create embeddable interactive HTML lessons, tutorials, onboarding flows, revision cards, flashcards, and step-by-step guides with the fan-poker Web Component. Use this skill whenever a user asks to turn knowledge, notes, documentation, an article, a process, or a learning topic into clickable, draggable, stacked, card-based, or poker-style teaching content. Prefer the compact <fan-poker>/<fan-card> API with the published fixed-version npm CDN; use the bundled standalone template only when the user explicitly requires one offline file with no external script."
 license: MIT
 ---
 
 # Fan Poker Teaching Skill
 
-Generate concise teaching content on top of the reusable `<fan-poker>` Web Component. Keep the animation implementation in `dist/fan-poker.js`; normally generate only the component import and card markup.
+Generate concise teaching content on top of the reusable `<fan-poker>` Web Component. Normally output only one module import and semantic card markup. Do not copy the animation engine into every answer.
 
 ## Default output
 
-Use this structure unless the user requests a different integration:
+Use the published fixed-version CDN unless the user supplies another hosting location:
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/gh/Hubujiu/fan-poker-teaching-skill@main/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js">
 </script>
 
 <fan-poker card-width="390px" card-height="520px">
@@ -29,7 +29,13 @@ Use this structure unless the user requests a different integration:
 </fan-poker>
 ```
 
-When the component is hosted beside the page, prefer a relative import such as `./dist/fan-poker.js` instead of the CDN URL.
+When the component is hosted beside the page, prefer a relative import such as `./dist/fan-poker.js`. When the user asks for npm or a framework project, use:
+
+```js
+import "@hubujiu/fan-poker-deck";
+```
+
+Keep production CDN examples pinned to a concrete version. Do not silently replace `@0.1.0` with `@latest`.
 
 ## Plan the lesson first
 
@@ -98,42 +104,24 @@ deck.addEventListener("cardchange", event => {
 });
 ```
 
-The `cards` property may be assigned an array for dynamic content:
+For dynamic data, assign an array to `deck.cards`. Use `content` for plain text and `html` for structured markup.
 
-```js
-deck.cards = [
-  { tag: "Git", title: "Working tree", content: "Files being edited." },
-  { tag: "Git", title: "Staging area", html: "<code>git add</code> prepares changes." }
-];
-```
+## Preserve the visual system
 
-## Preserve the component contract
+Do not add a top toolbar, visible page counter, speed selector, or bottom numbered navigation unless the user explicitly asks for it. Keep the transparent host background, single-sided fan, full-card rendering, depth-aware recycling, responsive sizing, and reduced-motion support.
 
-Do not copy or rewrite the animation engine into generated pages. Do not add a top toolbar, visible counter, or bottom numbered navigation. Do not assume a framework.
+## Offline fallback
 
-The component already provides:
-
-- single-sided fan geometry
-- full-card rendering
-- depth-aware front-card recycling
-- click, drag, wheel, and focused keyboard input
-- adaptive speed for repeated input
-- responsive measurement
-- transparent background
-- reduced-motion support
-- Shadow DOM style isolation
-
-## Offline standalone fallback
-
-When the user explicitly requires one completely offline HTML file, copy `assets/fan-poker-base.html` and replace only its `cardData` content zone. Explain that this fallback duplicates the animation code, while the Web Component version is better for reusable website integration.
+When the user explicitly requires one file that works without any network request, copy `assets/fan-poker-base.html` and replace only its `cardData` content zone. Explain that this fallback duplicates the engine, while the Web Component version is smaller and easier to update.
 
 ## Validate the result
 
-Confirm that:
+Before returning the page, confirm that:
 
-- the module import appears before the component is used
-- at least one `<fan-card>` exists
-- every card has a focused title and readable body
-- code blocks remain executable and properly escaped
-- width and height values include CSS units
-- the page contains no toolbar, page counter, or bottom pagination
+- the script import is present before the custom elements are used
+- all tags are closed correctly
+- every card has a useful title and focused body
+- card width and height include CSS units
+- code examples are escaped correctly inside HTML
+- no toolbar, page counter, or numbered pagination has returned
+- the output works as an embeddable fragment or complete page, according to the request
