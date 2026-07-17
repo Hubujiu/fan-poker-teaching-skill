@@ -1,1 +1,81 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fan Poker Teaching Skill Demo</title><style>*{box-sizing:border-box}html,body,iframe{width:100%;height:100%;margin:0;border:0;background:transparent}</style></head><body><iframe src="./assets/fan-poker-base.html" title="Fan Poker Teaching Skill interactive demo"></iframe></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fan Poker Teaching Skill · AI 交互式教学牌组</title>
+<meta name="description" content="把任意主题变成零依赖、单文件、可点击与拖动的扑克牌式交互教学 HTML。">
+<meta property="og:title" content="Fan Poker Teaching Skill">
+<meta property="og:description" content="Turn any topic into an interactive single-file teaching deck.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://hubujiu.github.io/fan-poker-teaching-skill/media/preview.svg">
+<meta name="theme-color" content="#e96d2f">
+<style>
+:root{--bg:#f7f4ee;--panel:#fff;--text:#171717;--muted:#666;--line:rgba(23,23,23,.14);--accent:#e96d2f;--radius:24px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}.nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 0}.brand{font-weight:850;letter-spacing:-.03em;text-decoration:none}.nav-links{display:flex;align-items:center;gap:18px;font-size:14px}.nav-links a{text-decoration:none;color:var(--muted)}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border:1px solid var(--text);border-radius:14px;background:var(--text);color:#fff;text-decoration:none;font-weight:750}.button.secondary{background:transparent;color:var(--text)}.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.9fr);gap:48px;align-items:center;padding:70px 0 60px}.eyebrow{display:inline-flex;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:13px;font-weight:750}.hero h1{max-width:720px;margin:22px 0 18px;font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.065em}.hero p{max-width:650px;margin:0;color:var(--muted);font-size:clamp(17px,2vw,21px);line-height:1.75}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:34px}.mini div{padding:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}.mini strong{display:block;margin-bottom:4px;color:var(--text);font-size:16px}.hero-art{width:100%;border:1px solid var(--line);border-radius:28px;background:#fff}.section{padding:72px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}.section h2{margin:0;font-size:clamp(32px,5vw,54px);letter-spacing:-.05em}.section-head p{max-width:520px;margin:0;color:var(--muted);line-height:1.7}.demo-shell{overflow:hidden;border:1px solid var(--line);border-radius:30px;background:rgba(255,255,255,.66)}.demo-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:#fff;font-size:13px}.dots{display:flex;gap:7px}.dots i{width:10px;height:10px;border-radius:50%;background:#dedbd4}.demo-shell iframe{display:block;width:100%;height:min(760px,78vh);border:0;background:transparent}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{padding:24px;border:1px solid var(--line);border-radius:22px;background:#fff}.card b{display:block;margin-bottom:10px;font-size:19px}.card p{margin:0;color:var(--muted);line-height:1.7}.install{display:grid;grid-template-columns:.85fr 1.15fr;gap:24px;align-items:stretch}.install-copy,.code{padding:28px;border:1px solid var(--line);border-radius:24px;background:#fff}.install-copy h2{font-size:38px}.install-copy p{color:var(--muted);line-height:1.75}.code{display:flex;align-items:center;background:#171717;color:#f3f3f3;overflow:auto}.code pre{margin:0;font:15px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}.examples{display:grid;grid-template-columns:1fr 1fr;gap:16px}.example{display:block;padding:24px;border:1px solid var(--line);border-radius:22px;background:#fff;text-decoration:none}.example small{color:var(--accent);font-weight:800;letter-spacing:.08em}.example h3{margin:12px 0 8px;font-size:25px}.example p{margin:0;color:var(--muted);line-height:1.65}.footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:32px 0 46px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}@media(max-width:850px){.hero{grid-template-columns:1fr;padding-top:40px}.hero-art{max-width:680px}.grid{grid-template-columns:1fr}.install{grid-template-columns:1fr}.examples{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.nav-links a:not(.button){display:none}}@media(max-width:520px){.wrap{width:min(100% - 20px,1120px)}.hero{gap:28px}.mini{grid-template-columns:1fr}.hero h1{font-size:48px}.demo-shell iframe{height:660px}.footer{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="wrap nav">
+  <a class="brand" href="#top">🃏 Fan Poker Teaching Skill</a>
+  <nav class="nav-links" aria-label="主导航">
+    <a href="#demo">在线演示</a><a href="#features">特性</a><a href="#install">安装</a>
+    <a class="button" href="https://github.com/Hubujiu/fan-poker-teaching-skill">View on GitHub</a>
+  </nav>
+</header>
+<main id="top">
+  <section class="wrap hero">
+    <div>
+      <span class="eyebrow">Agent Skill · Pure HTML · Zero dependencies</span>
+      <h1>把知识，变成一叠会动的牌。</h1>
+      <p>让 AI 以稳定的扑克牌动画底座生成教程、复习卡、产品引导和步骤说明。每次只聚焦一个知识点，内容可换，动画不散架。</p>
+      <div class="actions">
+        <a class="button" href="#demo">立即试玩</a>
+        <a class="button secondary" href="https://github.com/Hubujiu/fan-poker-teaching-skill">获取 Skill</a>
+      </div>
+      <div class="mini">
+        <div><strong>1 file</strong>单文件 HTML 输出</div>
+        <div><strong>0 deps</strong>无框架与 CDN</div>
+        <div><strong>4 inputs</strong>点击、拖动、滚轮、键盘</div>
+      </div>
+    </div>
+    <img class="hero-art" src="./media/preview.svg" alt="Fan Poker Teaching Skill 项目预览">
+  </section>
+
+  <section class="wrap section" id="demo">
+    <div class="section-head"><h2>直接上手，不看说明书。</h2><p>点击牌面切到下一张，左右拖动可前后翻牌。牌会沿纵深回到牌堆末尾，而不是凭空闪现。</p></div>
+    <div class="demo-shell">
+      <div class="demo-top"><span class="dots"><i></i><i></i><i></i></span><span>assets/fan-poker-base.html</span><a href="./assets/fan-poker-base.html">单独打开 ↗</a></div>
+      <iframe src="./assets/fan-poker-base.html" title="Fan Poker Teaching Skill 在线交互演示"></iframe>
+    </div>
+  </section>
+
+  <section class="wrap section" id="features">
+    <div class="section-head"><h2>内容归 AI，动效归底座。</h2><p>Skill 明确划出 AI CONTENT ZONE，默认只替换 cardData，降低生成时误改动画引擎的概率。</p></div>
+    <div class="grid">
+      <article class="card"><b>全程完整渲染</b><p>前牌、下一张和尾牌始终保留完整 DOM，快速切换也不会露出空白卡。</p></article>
+      <article class="card"><b>自适应操作速度</b><p>连续点击会进入队列并让当前动画提速，停止连点后再恢复基础节奏。</p></article>
+      <article class="card"><b>透明、响应式、可嵌入</b><p>适合博客、课程页和产品引导，也支持 prefers-reduced-motion。</p></article>
+    </div>
+  </section>
+
+  <section class="wrap section" id="install">
+    <div class="install">
+      <div class="install-copy"><h2>三分钟开始生成。</h2><p>克隆到 Agent 或 CLI 使用的 Skills 目录，然后直接描述主题、受众、卡片数量和内容要求。</p></div>
+      <div class="code"><pre><code>git clone https://github.com/Hubujiu/fan-poker-teaching-skill.git
+
+使用 fan-poker-teaching-deck skill，
+生成一份 Linux 部署 Docker 的交互式教学 HTML。</code></pre></div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="section-head"><h2>看看它能教什么。</h2><p>示例使用同一份稳定底座，只替换教学卡片数据。</p></div>
+    <div class="examples">
+      <a class="example" href="./examples/docker-lesson.html"><small>LESSON</small><h3>Linux 部署 Docker</h3><p>从环境确认、安装、启动服务，到运行第一个容器和 Compose 下一步。</p></a>
+      <a class="example" href="./examples/animation-features-demo.html"><small>SHOWCASE</small><h3>动画能力说明</h3><p>查看完整渲染、切牌队列、纵深回牌、输入方式和外部控制 API。</p></a>
+    </div>
+  </section>
+</main>
+<footer class="wrap footer"><span>MIT © Hubujiu</span><span>Made for lessons that deserve better than another long scroll.</span></footer>
+</body>
+</html>
