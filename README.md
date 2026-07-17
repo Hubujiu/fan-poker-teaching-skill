@@ -61,7 +61,7 @@ git clone https://github.com/Hubujiu/fan-poker-teaching-skill.git
 安装后直接对 AI 说：
 
 ```text
-使用 fan-poker-teaching-deck skill，生成一份 Linux 部署 Docker 的交互式教学 HTML。
+使用 fan-poker-teaching-skill，生成一份 Linux 部署 Docker 的交互式教学 HTML。
 ```
 
 或者：
@@ -165,6 +165,7 @@ npm test
 
 检查内容包括：
 
+- `SKILL.md` frontmatter、包名和引用资源是否一致
 - HTML 中的 JavaScript 是否能解析
 - `cardData` 是否存在且非空
 - 顶栏、计数器和底部页码导航是否被重新引入
