@@ -75,6 +75,32 @@ jobs:
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Verify jsDelivr and unpkg
+        id: cdn
+        if: always() && steps.verify.outputs.published == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const name = '${{ steps.package.outputs.name }}';
+          const version = '${{ steps.package.outputs.version }}';
+          const urls = {
+            jsdelivr: `https://cdn.jsdelivr.net/npm/${name}@${version}/dist/fan-poker.js`,
+            unpkg: `https://unpkg.com/${name}@${version}/dist/fan-poker.js`
+          };
+          for (const [key, url] of Object.entries(urls)) {
+            let ok = false;
+            for (let attempt = 0; attempt < 6 && !ok; attempt += 1) {
+              const response = await fetch(url, { redirect: 'follow' });
+              const body = await response.text();
+              ok = response.ok && body.includes('customElements.define("fan-poker"') && body.includes('customElements.define("fan-card"');
+              if (!ok) await new Promise(resolve => setTimeout(resolve, 10000));
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${ok}\n`);
+          }
+          NODE
+
       - name: Write publish result
         if: always()
         shell: bash
@@ -87,6 +113,8 @@ jobs:
             "alreadyPublishedBeforeRun": "${{ steps.existing.outputs.published }}",
             "publishStepOutcome": "${{ steps.publish.outcome }}",
             "availableOnRegistry": "${{ steps.verify.outputs.published }}",
+            "jsDelivr": "${{ steps.cdn.outputs.jsdelivr }}",
+            "unpkg": "${{ steps.cdn.outputs.unpkg }}",
             "runId": "${{ github.run_id }}",
             "commit": "${{ github.sha }}"
           }
@@ -99,6 +127,6 @@ jobs:
             git push
           fi
 
-      - name: Fail when package is unavailable
-        if: always() && steps.verify.outputs.published != 'true'
+      - name: Fail when release endpoints are unavailable
+        if: always() && (steps.verify.outputs.published != 'true' || steps.cdn.outputs.jsdelivr != 'true' || steps.cdn.outputs.unpkg != 'true')
         run: exit 1
