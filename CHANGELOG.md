@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.0 - 2026-07-17
+
+### Added
+
+- Stable `1.x` API contract for attributes, methods, events, CSS custom properties, and CSS Parts
+- Safe Node and SSR module imports
+- Named exports for `FanPokerElement`, `FanCardElement`, and `defineFanPokerElements()`
+- Idempotent automatic and explicit custom-element registration
+- Active-card live-region announcements
+- Card-group, keyboard-shortcut, and interactive-deck accessibility metadata
+- Node 20, 22, and 24 validation matrix
+- Distribution size budget
+- API, accessibility, framework/SSR, and versioning documentation
+
+### Changed
+
+- Updated the npm package, CDN examples, Agent Skill, landing page, and documentation to `1.0.0`
+- Expanded TypeScript declarations and Custom Elements Manifest exports
+- Added `docs` and package metadata to the npm distribution
+- Formalized the release quality gate around static, Node, Chromium, package, Registry, and CDN verification
+
+### Compatibility
+
+- Existing v0.2 markup, themes, runtime APIs, navigation methods, events, CSS variables, and CSS Parts remain compatible
+- Production CDN users only need to change the fixed version from `0.2.0` to `1.0.0`
+
 ## 0.2.0 - 2026-07-17
 
 ### Added
