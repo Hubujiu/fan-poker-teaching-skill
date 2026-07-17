@@ -1,5 +1,27 @@
 <!doctype html>
 <html><body>
+<script>
+  let smokeClock = performance.now();
+  const smokeTimers = new Map();
+  let smokeTimerId = 0;
+
+  window.requestAnimationFrame = (callback) => {
+    const id = ++smokeTimerId;
+    const timer = setTimeout(() => {
+      smokeTimers.delete(id);
+      smokeClock += 1000;
+      callback(smokeClock);
+    }, 0);
+    smokeTimers.set(id, timer);
+    return id;
+  };
+
+  window.cancelAnimationFrame = (id) => {
+    const timer = smokeTimers.get(id);
+    if (timer !== undefined) clearTimeout(timer);
+    smokeTimers.delete(id);
+  };
+</script>
 <script type="module" src="../dist/fan-poker.js"></script>
 <fan-poker id="deck" card-width="320px" card-height="430px" theme="dark">
   <fan-card tag="One" title="First" symbol="01">A</fan-card>
@@ -41,6 +63,7 @@
     const removed = deck.removeCard(0);
     checks.push(["removeCard", removed?.title === "Alpha" && deck.cardCount === 2]);
     checks.push(["cardschangeEvent", events.some(([name]) => name === "cardschange")]);
+    checks.push(["cardchangeEvent", events.some(([name, index]) => name === "cardchange" && index === 1)]);
 
     const ok = checks.every(([, value]) => value);
     result.textContent = JSON.stringify({ ok, checks, events });
