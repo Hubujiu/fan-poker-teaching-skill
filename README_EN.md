@@ -4,13 +4,12 @@
 
 **Import one module and turn any topic into an interactive teaching deck.**
 
-A dependency-free Web Component and Agent Skill for tutorials, lessons, onboarding flows and revision cards.
+A zero-runtime-dependency Web Component and Agent Skill for lessons, tutorials, onboarding flows and revision cards.
 
-[![npm](https://img.shields.io/npm/v/%40hubujiu%2Ffan-poker-deck?color=e96d2f)](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
-[![No runtime dependencies](https://img.shields.io/badge/runtime%20dependencies-0-2ea44f)](./package.json)
+[![npm](https://img.shields.io/npm/v/%40hubujiu%2Ffan-poker-deck)](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-[Live demo](https://hubujiu.github.io/fan-poker-teaching-skill/) · [npm](https://www.npmjs.com/package/@hubujiu/fan-poker-deck) · [Basic example](./examples/basic.html) · [JavaScript API](./examples/javascript-api.html) · [中文](./README.md)
+[Live demo](https://hubujiu.github.io/fan-poker-teaching-skill/) · [Basic example](./examples/basic.html) · [Runtime API](./examples/theme-and-runtime.html) · [中文](./README.md)
 
 </div>
 
@@ -19,23 +18,20 @@ A dependency-free Web Component and Agent Skill for tutorials, lessons, onboardi
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.2.0/dist/fan-poker.js">
 </script>
 
-<fan-poker card-width="390px" card-height="520px">
+<fan-poker card-width="390px" card-height="520px" theme="auto">
   <fan-card tag="Git" title="Working tree" symbol="01" accent="#f2a65a">
     Files currently being edited.
   </fan-card>
-
   <fan-card tag="Git" title="Staging area" symbol="02" accent="#7dcfb6">
     <code>git add</code> prepares selected changes.
   </fan-card>
 </fan-poker>
 ```
 
-The card count is derived automatically from the number of `<fan-card>` children.
-
-Install from npm when using a bundler:
+Or install from npm:
 
 ```bash
 npm install @hubujiu/fan-poker-deck
@@ -45,12 +41,26 @@ npm install @hubujiu/fan-poker-deck
 import "@hubujiu/fan-poker-deck";
 ```
 
-Pin a concrete CDN version in production so future releases do not silently change page behavior.
+## v0.2.0
 
-## API
+- Stable `auto`, `light`, and `dark` themes
+- Runtime card methods: `setCards`, `appendCard`, `updateCard`, `removeCard`, and `clear`
+- `cardschange` event
+- Expanded CSS parts for targeted styling
+- Improved TypeScript declarations
+- Custom Elements Manifest
+- Vue and React examples
+
+## Runtime API
 
 ```js
 const deck = document.querySelector("fan-poker");
+
+deck.setCards(cards);
+deck.appendCard(card);
+deck.updateCard(0, { title: "Updated" });
+deck.removeCard(1);
+deck.clear();
 
 deck.next();
 deck.previous();
@@ -58,42 +68,27 @@ deck.goTo(3);
 deck.reset();
 ```
 
-The component also supports a dynamic `cards` property and emits `ready`, `cardchangestart`, and `cardchange` events.
+Only pass trusted content to the `html` card field.
 
-## Why a Web Component
+## Styling
 
-- Works in plain HTML and modern frameworks
-- Uses Shadow DOM for style isolation
-- Has no runtime dependencies
-- Keeps the original fan, recycling, drag, wheel and keyboard interactions
-- Lets AI generate short semantic markup instead of duplicating the animation engine
-- Preserves the legacy standalone HTML template for fully offline output
+Use CSS custom properties for broad theming and `::part()` for targeted changes:
 
-## Agent Skill
-
-After installing this repository as a skill, ask your agent:
-
-```text
-Use fan-poker-teaching-skill to create an interactive lesson about deploying Docker on Linux.
+```css
+fan-poker { --fan-radius: 18px; }
+fan-poker::part(title) { letter-spacing: -0.02em; }
 ```
 
-The Skill generates the published npm CDN import and concise `<fan-poker>` / `<fan-card>` markup by default. It uses the bundled standalone template only when a fully offline single file is explicitly required.
+## Framework examples
 
-## Package
-
-Published as [`@hubujiu/fan-poker-deck`](https://www.npmjs.com/package/@hubujiu/fan-poker-deck), version `0.1.0`.
-
-Both fixed-version CDN endpoints are verified by the release workflow:
-
-```text
-https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js
-https://unpkg.com/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js
-```
+- Vue: [`examples/vue-example.vue`](./examples/vue-example.vue)
+- React: [`examples/react-example.jsx`](./examples/react-example.jsx)
 
 ## Development
 
 ```bash
 npm test
+npm pack --dry-run
 ```
 
 MIT © [Hubujiu](https://github.com/Hubujiu)
