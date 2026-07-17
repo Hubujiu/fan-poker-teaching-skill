@@ -1,0 +1,19 @@
+{
+  "name": "fan-poker-teaching-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agent Skill for generating dependency-free interactive HTML lessons as a single-sided fan poker deck.",
+  "scripts": {
+    "test": "node scripts/validate.mjs"
+  },
+  "keywords": [
+    "agent-skill",
+    "ai-skill",
+    "interactive-tutorial",
+    "education",
+    "html",
+    "flashcards",
+    "poker-cards"
+  ],
+  "license": "MIT"
+}
