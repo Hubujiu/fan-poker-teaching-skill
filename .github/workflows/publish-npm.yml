@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   release:
     types: [published]
+  push:
+    branches: [main]
+    paths:
+      - ".github/npm-publish-trigger"
 
 permissions:
   contents: read
