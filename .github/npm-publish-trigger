@@ -1,3 +1,3 @@
 publish @hubujiu/fan-poker-deck@0.2.0
-triggered: 2026-07-17T12:45:00Z
-mode: registry-and-cdn-verification
+triggered: 2026-07-17T12:50:00Z
+mode: idempotent-registry-and-cdn-verification
