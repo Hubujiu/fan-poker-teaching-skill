@@ -3,32 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Animation Features · Fan Poker Teaching Skill</title>
-<style>html,body{margin:0;min-height:100%;background:transparent}.status{max-width:680px;margin:80px auto;padding:24px;font:16px/1.7 system-ui;color:#333}</style>
+<title>动画能力说明 · Fan Poker Teaching Skill</title>
+<style>
+:root{--card-width:390px;--card-height:520px;--card-bg:#fff;--text:#171717;--muted:#737373;--line:rgba(23,23,23,.15);--accent:#e96d2f;--radius:24px}*{box-sizing:border-box}html,body{min-height:100%;margin:0;background:transparent}body{min-height:100dvh;padding:24px 12px 40px;overflow-x:hidden;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.demo{width:min(1040px,100%);margin:auto}.stage{position:relative;margin:auto;overflow:visible;perspective:1600px;touch-action:pan-y;user-select:none;contain:layout style}.deck{position:absolute;width:var(--card-width);height:var(--card-height);transform-origin:0 0;transform-style:preserve-3d}.card{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--card-bg);box-shadow:none;backface-visibility:hidden;transform-origin:50% 112%;container-type:size;will-change:transform;isolation:isolate}.card.is-current{cursor:grab}.deck.is-dragging .card.is-current{cursor:grabbing}.card-inner{display:flex;flex:1;flex-direction:column;min-height:0;pointer-events:none}.card.is-current .card-inner{pointer-events:auto}.card-cover{position:relative;flex:0 1 41%;min-height:min(156px,36%);padding:clamp(14px,6cqh,46px) clamp(14px,7cqw,54px);overflow:hidden;border-bottom:1px solid var(--line);background:var(--card-accent,#f2a65a)}.card-index{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:38px;padding:0 10px;border:1px solid rgba(23,23,23,.18);border-radius:999px;background:rgba(255,255,255,.84);color:#171717;font-size:12px;font-weight:800}.card-symbol{position:absolute;right:clamp(20px,5cqw,30px);bottom:clamp(12px,3cqh,20px);color:rgba(23,23,23,.74);font-family:Georgia,serif;font-size:clamp(58px,28cqh,126px);line-height:.88}.card-content{display:flex;flex:1;flex-direction:column;min-height:0;padding:clamp(14px,6cqh,46px) clamp(14px,7cqw,54px) clamp(20px,8cqh,68px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}.card-tag{margin:0 0 12px;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.card-title{margin:0;overflow-wrap:anywhere;font-size:clamp(18px,9cqw,42px);line-height:1.12;letter-spacing:-.04em}.card-description{margin:20px 0 0;overflow-wrap:anywhere;color:var(--muted);font-size:clamp(11px,3.8cqw,15px);line-height:1.75}.card-description pre{padding:14px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:rgba(127,127,127,.08);font-size:.88em}.card-description code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.card-footer{margin-top:auto;padding-top:30px;color:var(--muted);font-size:13px}@media(max-width:430px){:root{--radius:20px}body{padding-inline:6px}}@media(prefers-color-scheme:dark){:root{--card-bg:#1b1b1b;--text:#f3f3f3;--muted:#aaa;--line:rgba(255,255,255,.14)}}@media(prefers-reduced-motion:reduce){.card{will-change:auto}}
+</style>
 </head>
 <body>
-<div class="status" id="status">正在装载动画能力示例…</div>
+<main class="demo"><section class="stage" id="stage" aria-label="Fan Poker Teaching Skill 动画能力说明"><div class="deck" id="deck"></div></section></main>
 <script>
-const cards=[
-  {tag:"Render",title:"全程渲染",description:"每张牌始终保留完整 DOM、封面和正文，切换途中不会变成空白占位牌。",symbol:"A",accent:"#f2a65a"},
-  {tag:"Queue",title:"连续点击不丢请求",description:"快速点击会进入队列，当前动画也会自动提速，牌堆能跟上操作节奏。",symbol:"K",accent:"#7dcfb6"},
-  {tag:"Motion",title:"前牌沿纵深回到牌尾",description:"离场牌先抽出，再降低纵深，从后方顺滑放回最后一层，而不是平面飞走后突然出现。",symbol:"Q",accent:"#8e9aef"},
-  {tag:"Input",title:"四种切换方式",description:"点击、左右拖动、鼠标滚轮和键盘都能控制牌堆，不需要额外按钮。",symbol:"J",accent:"#f4978e"},
-  {tag:"API",title:"可由外部页面控制",symbol:"10",accent:"#90be6d",html:"<p class='card-tag'>API</p><h2 class='card-title'>可由外部页面控制</h2><div class='card-description'><pre><code>fanPokerDeck.requestStep(1)\nfanPokerDeck.requestStep(-1)\nfanPokerDeck.goTo(3)</code></pre><p>可接入课程目录、博客按钮或产品引导。</p></div>"},
-  {tag:"Layout",title:"透明且响应式",description:"页面本身不绘制底色，牌堆会按动画包围盒整体缩放，避免移动端拉伸或裁边。",symbol:"9",accent:"#f4d35e"}
+/* ================= AI CONTENT ZONE =================
+   Generate a new lesson by replacing cardData only.
+   =================================================== */
+const cardData=[
+ {tag:"Render",title:"全程渲染",description:"每张牌始终保留完整 DOM、封面和正文，切换途中不会变成空白占位牌。",symbol:"A",accent:"#f2a65a"},
+ {tag:"Queue",title:"连续点击不丢请求",description:"快速点击会进入队列，当前动画也会自动提速，牌堆能跟上操作节奏。",symbol:"K",accent:"#7dcfb6"},
+ {tag:"Motion",title:"前牌沿纵深回到牌尾",description:"离场牌先抽出，再降低纵深，从后方顺滑放回最后一层，而不是平面飞走后突然出现。",symbol:"Q",accent:"#8e9aef"},
+ {tag:"Input",title:"四种切换方式",description:"点击、左右拖动、鼠标滚轮和键盘都能控制牌堆，不需要额外按钮。",symbol:"J",accent:"#f4978e"},
+ {tag:"API",title:"可由外部页面控制",symbol:"10",accent:"#90be6d",html:`<p class="card-tag">API</p><h2 class="card-title">可由外部页面控制</h2><div class="card-description"><pre><code>fanPokerDeck.requestStep(1)
+fanPokerDeck.requestStep(-1)
+fanPokerDeck.goTo(3)</code></pre><p>可接入课程目录、博客按钮或产品引导。</p></div>`},
+ {tag:"Layout",title:"透明且响应式",description:"页面本身不绘制底色，牌堆会整体缩放，避免移动端拉伸或裁边。",symbol:"9",accent:"#f4d35e"}
 ];
-(async()=>{
-  try{
-    const response=await fetch("../assets/fan-poker-base.html");
-    if(!response.ok)throw new Error(`HTTP ${response.status}`);
-    let source=await response.text();
-    source=source.replace(/<title>[\s\S]*?<\/title>/,"<title>Animation Features · Fan Poker Teaching Skill</title>");
-    source=source.replace(/const cardData=\[[\s\S]*?\];/,`const cardData=${JSON.stringify(cards)};`);
-    document.open();document.write(source);document.close();
-  }catch(error){
-    document.querySelector("#status").innerHTML=`<h1>无法装载示例</h1><p>${error.message}</p><p>请通过 GitHub Pages 或本地 HTTP 服务器打开此文件。</p>`;
-  }
-})();
+const SPEED={normal:620,fast:360,turbo:180};
+class FanPokerDeck{
+ constructor({deck,stage,cards}){Object.assign(this,{deck,stage,cards,index:0,queue:[],active:null,drag:null,lastIntent:0,lastWheel:0,blockClickUntil:0});this.reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;this.nodes=cards.map((x,i)=>this.make(x,i));this.measure();this.idle();this.bind();new ResizeObserver(()=>{this.measure();if(!this.active&&!this.drag)this.idle()}).observe(deck)}
+ mod(n){return((n%this.cards.length)+this.cards.length)%this.cards.length}clamp(n){return Math.min(1,Math.max(0,n))}mix(a,b,t){return a+(b-a)*t}ease(t){t=this.clamp(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+ make(x,i){const c=document.createElement("article");c.className="card";c.dataset.index=i;c.setAttribute("aria-label",`第 ${i+1} 张，共 ${this.cards.length} 张`);const body=x.html||`<p class="card-tag">${x.tag||"Card"}</p><h2 class="card-title">${x.title||`Card ${i+1}`}</h2><p class="card-description">${x.description||"Add lesson content here."}</p><div class="card-footer">点击、拖动、滚轮或使用键盘切换</div>`;c.innerHTML=`<div class="card-inner"><div class="card-cover" style="--card-accent:${x.accent||"#f2a65a"}"><span class="card-index">${String(i+1).padStart(2,"0")}</span><span class="card-symbol" aria-hidden="true">${x.symbol||i+1}</span></div><div class="card-content">${body}</div></div>`;this.deck.append(c);return c}
+ pose(layer){const t=layer/Math.max(1,this.cards.length-1);return{x:40*t,y:11*t,z:-layer*.7,r:14*t,s:1-.016*t}}
+ lerp(a,b,t){return{x:this.mix(a.x,b.x,t),y:this.mix(a.y,b.y,t),z:this.mix(a.z,b.z,t),r:this.mix(a.r,b.r,t),s:this.mix(a.s,b.s,t)}}
+ tf(p){return`translate3d(${p.x}px,${p.y}px,${p.z}px) rotate(${p.r}deg) scale(${p.s})`}
+ layer(i,base=this.index){return this.mod(i-base)}
+ recycle(t,last){const front=this.pose(0),lift={x:-this.w*.29,y:-9,z:42,r:-5.5,s:1.006};if(t<=.3){const q=1-Math.pow(1-t/.3,3);return{p:this.lerp(front,lift,q),behind:false}}const q=(1-Math.cos(Math.PI*(t-.3)/.7))/2;return{p:{x:this.mix(lift.x,last.x,q),y:this.mix(lift.y,last.y,q)+Math.sin(Math.PI*q)*22,z:this.mix(lift.z,last.z-8,q),r:this.mix(lift.r,last.r,q),s:this.mix(lift.s,last.s,q)},behind:q>.2}}
+ measure(){this.w=this.deck.offsetWidth||390;this.h=this.deck.offsetHeight||520;const pad=Math.max(60,this.w*.33),available=Math.max(1,Math.min(document.documentElement.clientWidth-24,this.stage.parentElement.clientWidth));const fullW=this.w+pad*2+70,fullH=this.h+130,scale=Math.min(1,available/fullW);this.deck.style.left=`${pad*scale}px`;this.deck.style.top=`${55*scale}px`;this.deck.style.transform=`scale(${scale})`;this.stage.style.width=`${Math.ceil(fullW*scale)}px`;this.stage.style.height=`${Math.ceil(fullH*scale)}px`}
+ idle(){cancelAnimationFrame(this.frame);this.active=null;this.deck.classList.remove("is-animating","is-dragging");this.nodes.forEach((c,i)=>{const l=this.layer(i);c.style.transform=this.tf(this.pose(l));c.style.zIndex=this.cards.length-l;c.style.pointerEvents=l?"none":"auto";c.classList.toggle("is-current",!l);c.setAttribute("aria-hidden",l?"true":"false")})}
+ render(dir,t){const n=this.cards.length,last=this.pose(n-1),recycled=dir>0?this.index:this.mod(this.index-1);this.nodes.forEach((c,i)=>{const l=this.layer(i);c.style.boxShadow="none";if((dir>0&&l===0)||(dir<0&&i===recycled)){const r=this.recycle(dir>0?t:1-t,last);c.style.transform=this.tf(r.p);c.style.zIndex=r.behind?0:n+20;return}const from=this.pose(l),to=this.pose(dir>0?l-1:l+1),q=this.ease(this.clamp((t-.07)/.72));c.style.transform=this.tf(this.lerp(from,to,q));c.style.zIndex=n-l+(dir>0?2:0)})}
+ duration(){const now=performance.now(),gap=this.lastIntent?now-this.lastIntent:1e9;this.lastIntent=now;return gap<170?SPEED.turbo:gap<300?SPEED.fast:SPEED.normal}
+ requestStep(dir,source="manual",forced=null){if(this.cards.length<2||this.drag)return;const d=dir>=0?1:-1,ms=forced??this.duration();this.queue.push({d,ms,source});if(this.active){this.active.ms=Math.min(this.active.ms,ms);return}this.next()}
+ next(){if(this.active||!this.queue.length)return;const x=this.queue.shift();this.active={d:x.d,p:0,target:1,ms:this.reduced?1:x.ms,last:performance.now()};this.frame=requestAnimationFrame(t=>this.tick(t))}
+ tick(now){if(!this.active)return;const a=this.active,delta=Math.min(34,now-a.last);a.last=now;const sign=a.target>=a.p?1:-1;a.p+=delta/Math.max(1,a.ms)*sign;const done=sign>0?a.p>=a.target:a.p<=a.target;if(done)a.p=a.target;this.render(a.d,a.p);if(!done){this.frame=requestAnimationFrame(t=>this.tick(t));return}const complete=a.target===1,d=a.d;this.active=null;if(complete)this.index=this.mod(this.index+d);this.idle();if(this.queue.length)this.next()}
+ goTo(target){target=this.mod(target);this.queue.length=0;const f=this.mod(target-this.index),b=this.mod(this.index-target),d=f<=b?1:-1,steps=d>0?f:b;for(let i=0;i<steps;i++)this.queue.push({d,ms:SPEED.turbo,source:"jump"});this.next()}
+ bind(){this.stage.addEventListener("click",e=>{if(performance.now()<this.blockClickUntil||e.target.closest("a,button,input,textarea,select"))return;this.requestStep(1,"click")});this.stage.addEventListener("wheel",e=>{e.preventDefault();const now=performance.now();if(Math.abs(e.deltaY)<8||now-this.lastWheel<58)return;this.lastWheel=now;this.requestStep(e.deltaY>0?1:-1,"wheel")},{passive:false});addEventListener("keydown",e=>{if(["ArrowRight","ArrowDown","PageDown"," "].includes(e.key)){e.preventDefault();this.requestStep(1,"keyboard")}else if(["ArrowLeft","ArrowUp","PageUp"].includes(e.key)){e.preventDefault();this.requestStep(-1,"keyboard")}});this.stage.addEventListener("pointerdown",e=>{if(!e.target.closest(".card.is-current")||this.active)return;this.drag={id:e.pointerId,x:e.clientX,lastX:e.clientX,last:performance.now(),dx:0,v:0,moved:false};e.target.setPointerCapture?.(e.pointerId);this.deck.classList.add("is-dragging")});this.stage.addEventListener("pointermove",e=>{const d=this.drag;if(!d||d.id!==e.pointerId)return;const now=performance.now(),dt=Math.max(8,now-d.last);d.v=d.v*.7+((e.clientX-d.lastX)/dt)*.3;d.lastX=e.clientX;d.last=now;d.dx=e.clientX-d.x;d.moved||=Math.abs(d.dx)>4;this.render(d.dx<=0?1:-1,Math.min(1,Math.abs(d.dx)/(this.w*.72)))});const end=e=>{const d=this.drag;if(!d||d.id!==e.pointerId)return;this.drag=null;this.deck.classList.remove("is-dragging");const dir=d.dx<=0?1:-1,p=Math.min(1,Math.abs(d.dx)/(this.w*.72)),done=p>.22||Math.abs(d.v)>.5;this.active={d:dir,p,target:done?1:0,ms:this.reduced?1:(Math.abs(d.v)>1.15?SPEED.turbo:Math.abs(d.v)>.62?SPEED.fast:done?SPEED.normal:240),last:performance.now()};this.frame=requestAnimationFrame(t=>this.tick(t));if(d.moved)this.blockClickUntil=performance.now()+360};this.stage.addEventListener("pointerup",end);this.stage.addEventListener("pointercancel",end);addEventListener("resize",()=>this.measure())}
+}
+window.fanPokerDeck=new FanPokerDeck({deck:document.querySelector("#deck"),stage:document.querySelector("#stage"),cards:cardData});
 </script>
 </body>
 </html>
