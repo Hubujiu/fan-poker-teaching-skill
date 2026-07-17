@@ -1,0 +1,110 @@
+    return true;
+  }
+
+  reset() {
+    const target = this._normalizeStartIndex();
+    if (this._ready) return this.goTo(target);
+    this._index = target;
+    return true;
+  }
+
+  _createSourceCard(card) {
+    const element = document.createElement("fan-card");
+    for (const key of ["tag", "title", "symbol", "accent"]) {
+      element.setAttribute(key, card[key]);
+    }
+    if (card.html != null) {
+      element.dataset.contentMode = "html";
+      element.innerHTML = card.html;
+    } else {
+      element.dataset.contentMode = "text";
+      element.textContent = card.content;
+    }
+    return element;
+  }
+
+  _renderShell() {
+    this.shadowRoot.innerHTML = `
+      <style>${STYLES}</style>
+      <section class="stage" part="stage">
+        <div class="deck" part="deck"></div>
+        <div class="empty" part="empty" hidden>Add one or more &lt;fan-card&gt; elements.</div>
+      </section>
+    `;
+    this._stage = this.shadowRoot.querySelector(".stage");
+    this._deck = this.shadowRoot.querySelector(".deck");
+    this._empty = this.shadowRoot.querySelector(".empty");
+  }
+
+  _syncLabel() {
+    this.setAttribute("aria-label", this.getAttribute("aria-label") || "Interactive fan poker card deck");
+  }
+
+  _syncConfig() {
+    const width = this.getAttribute("card-width") || "390px";
+    const height = this.getAttribute("card-height") || "520px";
+    this.style.setProperty("--fan-card-width", width);
+    this.style.setProperty("--fan-card-height", height);
+  }
+
+  _bindEvents() {
+    if (this._eventsBound) return;
+    this._eventsBound = true;
+
+    this._stage.addEventListener("click", (event) => {
+      this.focus({ preventScroll: true });
+      if (performance.now() < this._blockClickUntil) return;
+      const interactive = event.composedPath().some(
+        (node) => node instanceof Element && node.matches?.("a, button, input, textarea, select")
+      );
+      if (!interactive) this._requestStep(1, "click");
+    });
+
+    this._stage.addEventListener(
+      "wheel",
+      (event) => {
+        if (!readBoolean(this, "wheel", true)) return;
+        event.preventDefault();
+        const now = performance.now();
+        if (Math.abs(event.deltaY) < 8 || now - this._lastWheel < 58) return;
+        this._lastWheel = now;
+        this._requestStep(event.deltaY > 0 ? 1 : -1, "wheel");
+      },
+      { passive: false }
+    );
+
+    this.addEventListener("keydown", (event) => {
+      if (!readBoolean(this, "keyboard", true)) return;
+      if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(event.key)) {
+        event.preventDefault();
+        this._requestStep(1, "keyboard");
+      } else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        this._requestStep(-1, "keyboard");
+      }
+    });
+
+    this._stage.addEventListener("pointerdown", (event) => {
+      if (!readBoolean(this, "draggable", true)) return;
+      const current = event.composedPath().find(
+        (node) => node instanceof Element && node.classList?.contains("is-current")
+      );
+      if (!current || this._active || this._queue.length || this._cards.length < 2) return;
+      this.focus({ preventScroll: true });
+      current.setPointerCapture?.(event.pointerId);
+      this._deck.classList.add("is-dragging");
+      this._drag = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        lastX: event.clientX,
+        lastTime: performance.now(),
+        velocityX: 0,
+        dx: 0,
+        moved: false
+      };
+    });
+
+    this._stage.addEventListener("pointermove", (event) => {
+      const drag = this._drag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const now = performance.now();
