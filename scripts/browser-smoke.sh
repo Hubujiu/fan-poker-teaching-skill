@@ -32,10 +32,21 @@ fi
   "http://127.0.0.1:${PORT}/scripts/browser-smoke.html" \
   > /tmp/fan-poker-browser-smoke.html
 
-cat /tmp/fan-poker-browser-smoke.html | grep -o '<pre id="result">[^<]*' || true
+mkdir -p .github
+python3 - <<'PY'
+from html import unescape
+from pathlib import Path
+import re
+
+body = Path('/tmp/fan-poker-browser-smoke.html').read_text(encoding='utf-8')
+match = re.search(r'<pre id="result">(.*?)</pre>', body, re.S)
+result = unescape(match.group(1).strip()) if match else '{"ok":false,"error":"result element not found"}'
+Path('.github/browser-smoke-result.txt').write_text(result + '\n', encoding='utf-8')
+print(result)
+PY
+
 if ! grep -q 'data-smoke="passed"' /tmp/fan-poker-browser-smoke.html; then
   echo "Browser smoke test failed" >&2
-  cat /tmp/fan-poker-browser-smoke.html >&2
   exit 1
 fi
 
