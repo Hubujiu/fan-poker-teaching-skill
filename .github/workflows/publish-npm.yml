@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - ".github/npm-publish-trigger"
+      - ".github/apply-v0.2-branch-trigger"
 
 permissions:
   contents: write
@@ -15,6 +16,7 @@ permissions:
 
 jobs:
   publish:
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, 'Run v0.2 branch build') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -137,3 +139,33 @@ jobs:
       - name: Fail when release endpoints are unavailable
         if: always() && (steps.verify.outputs.published != 'true' || steps.cdn.outputs.jsdelivr != 'true' || steps.cdn.outputs.unpkg != 'true')
         run: exit 1
+
+  build-v02:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'Run v0.2 branch build') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Assemble and validate v0.2 branch
+        run: |
+          git fetch origin agent/web-component-v0.2.0
+          git checkout -B agent/web-component-v0.2.0 origin/agent/web-component-v0.2.0
+          cat .github/v0.2-source-chunks/* > src/fan-poker.js
+          chmod +x scripts/browser-smoke.sh
+          npm run build
+          npm test
+          npm pack --dry-run
+          bash scripts/browser-smoke.sh
+          rm -rf .github/v0.2-source-chunks
+          rm -f .github/v0.2-source-ready
+          rm -f .github/workflows/apply-v0.2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Build Web Component v0.2.0"
+          git push origin HEAD:agent/web-component-v0.2.0
