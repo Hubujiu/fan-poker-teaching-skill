@@ -99,10 +99,17 @@ jobs:
 
             for (const [key, url] of Object.entries(urls)) {
               let ok = false;
-              for (let attempt = 0; attempt < 6 && !ok; attempt += 1) {
+              for (let attempt = 0; attempt < 8 && !ok; attempt += 1) {
                 const response = await fetch(url, { redirect: 'follow' });
                 const body = await response.text();
-                ok = response.ok && body.includes('customElements.define("fan-poker"') && body.includes('customElements.define("fan-card"');
+                const stableV1 =
+                  body.includes('export function defineFanPokerElements') &&
+                  body.includes('registry.define("fan-poker"') &&
+                  body.includes('registry.define("fan-card"');
+                const legacy =
+                  body.includes('customElements.define("fan-poker"') &&
+                  body.includes('customElements.define("fan-card"');
+                ok = response.ok && (stableV1 || legacy);
                 if (!ok) await new Promise(resolve => setTimeout(resolve, 10000));
               }
               fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${ok}\n`);
