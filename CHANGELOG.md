@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.1 - 2026-07-17
+
+### Security
+
+- Migrated npm publication from a long-lived write token to npm Trusted Publishing with GitHub Actions OIDC
+- Added an explicit OIDC environment check before publishing a new version
+- Documented the trusted publisher identity, release flow, credential retirement, and recovery steps
+- Expanded the project security policy for supported versions, vulnerability reports, trusted HTML, and supply-chain controls
+
+### Changed
+
+- The component runtime and stable `1.x` API contract are unchanged
+- Release result records now identify `npm-trusted-publishing-oidc` as the authentication model
+
 ## 1.0.0 - 2026-07-17
 
 ### Added
