@@ -1,11 +1,12 @@
 {
   "package": "@hubujiu/fan-poker-deck",
-  "version": "1.0.0",
-  "alreadyPublishedBeforeRun": "true",
-  "publishStepOutcome": "skipped",
+  "version": "1.0.1",
+  "authentication": "npm-trusted-publishing-oidc",
+  "alreadyPublishedBeforeRun": "false",
+  "publishStepOutcome": "success",
   "availableOnRegistry": "true",
   "jsDelivr": "true",
   "unpkg": "true",
-  "runId": "29586146162",
-  "commit": "2f4bf6be63cea41c6b19e8cec85d063c7024945e"
+  "runId": "29591408525",
+  "commit": "bdeb149cc79a2f5018e32614c369620abeea5fb9"
 }
