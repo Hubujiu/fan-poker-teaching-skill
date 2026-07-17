@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fan Poker theme and runtime API</title>
+  <script type="module" src="../dist/fan-poker.js"></script>
+  <style>
+    body { margin: 0; padding: 28px; font-family: system-ui, sans-serif; background: #f4f1eb; color: #171717; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+    button { padding: 10px 14px; border: 1px solid #171717; border-radius: 10px; background: #fff; cursor: pointer; }
+    fan-poker { max-width: 560px; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <button data-theme="auto">Auto</button>
+    <button data-theme="light">Light</button>
+    <button data-theme="dark">Dark</button>
+    <button id="add">Add card</button>
+    <button id="update">Update current</button>
+    <button id="remove">Remove current</button>
+  </div>
+
+  <fan-poker id="deck" card-width="390px" card-height="520px" theme="auto">
+    <fan-card tag="Theme" title="Automatic theme" symbol="01" accent="#f2a65a">
+      Use <code>theme="auto"</code> to follow the operating system.
+    </fan-card>
+    <fan-card tag="Runtime" title="Update cards" symbol="02" accent="#7dcfb6">
+      Add, update, or remove cards without rebuilding the component yourself.
+    </fan-card>
+  </fan-poker>
+
+  <script type="module">
+    const deck = document.querySelector("#deck");
+    let sequence = 3;
+
+    document.querySelectorAll("[data-theme]").forEach((button) => {
+      button.addEventListener("click", () => deck.setAttribute("theme", button.dataset.theme));
+    });
+
+    document.querySelector("#add").addEventListener("click", () => {
+      deck.appendCard({
+        tag: "New",
+        title: `Runtime card ${sequence}`,
+        content: "This card was appended with appendCard().",
+        symbol: String(sequence).padStart(2, "0"),
+        accent: "#8e9aef"
+      });
+      sequence += 1;
+    });
+
+    document.querySelector("#update").addEventListener("click", () => {
+      deck.updateCard(deck.currentIndex, { title: `Updated at ${new Date().toLocaleTimeString()}` });
+    });
+
+    document.querySelector("#remove").addEventListener("click", () => {
+      deck.removeCard(deck.currentIndex);
+    });
+  </script>
+</body>
+</html>
