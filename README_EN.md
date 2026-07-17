@@ -2,118 +2,63 @@
 
 # 🃏 Fan Poker Teaching Skill
 
-**Turn any topic into an interactive lesson that clicks, drags, fans out, and recycles like a deck of cards.**
+**Import one module and turn any topic into an interactive teaching deck.**
 
-[![Agent Skill](https://img.shields.io/badge/Agent%20Skill-SKILL.md-111111)](./SKILL.md)
-[![HTML](https://img.shields.io/badge/output-single--file%20HTML-E34F26?logo=html5&logoColor=white)](./assets/fan-poker-base.html)
-[![No Dependencies](https://img.shields.io/badge/dependencies-0-2ea44f)](./package.json)
-[![Validate](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml/badge.svg)](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+A dependency-free Web Component and Agent Skill for tutorials, lessons, onboarding flows and revision cards.
 
-[Live demo](https://hubujiu.github.io/fan-poker-teaching-skill/) · [Install](#installation) · [中文](./README.md)
-
-<a href="https://hubujiu.github.io/fan-poker-teaching-skill/"><img src="./media/preview.svg" alt="Fan Poker Teaching Skill preview" width="760" /></a>
+[Live demo](https://hubujiu.github.io/fan-poker-teaching-skill/) · [Basic example](./examples/basic.html) · [JavaScript API](./examples/javascript-api.html) · [中文](./README.md)
 
 </div>
 
-## Why this skill
+## Quick start
 
-Most AI-generated tutorials become long scrolling pages. This skill presents one focused idea at a time in a memorable single-sided fan deck.
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/gh/Hubujiu/fan-poker-teaching-skill@main/dist/fan-poker.js">
+</script>
 
-- Click, drag, wheel, or use the keyboard to move through cards.
-- The front card follows a full depth-aware path back into the deck.
-- The animation engine and AI-editable content are deliberately separated.
-- The output is one dependency-free HTML file with a transparent background.
-- There is no toolbar, page counter, or bottom pagination competing with the lesson.
-- Responsive sizing and reduced-motion support are built in.
-
-## Quick demo
-
-Open the [GitHub Pages demo](https://hubujiu.github.io/fan-poker-teaching-skill/) or inspect these files:
-
-| File | Purpose |
-|---|---|
-| [`index.html`](./index.html) | Project landing page and live preview |
-| [`examples/docker-lesson.html`](./examples/docker-lesson.html) | A realistic AI-authored lesson |
-| [`examples/animation-features-demo.html`](./examples/animation-features-demo.html) | Interaction and animation showcase |
-| [`assets/fan-poker-base.html`](./assets/fan-poker-base.html) | Clean reusable foundation |
-
-## Installation
-
-Clone the repository into the skills directory used by your Agent or CLI:
-
-```bash
-git clone https://github.com/Hubujiu/fan-poker-teaching-skill.git
+<fan-poker card-width="390px" card-height="520px">
+  <fan-card tag="Git" title="Working tree" symbol="01" accent="#f2a65a">
+    Files currently being edited.
+  </fan-card>
+  <fan-card tag="Git" title="Staging area" symbol="02" accent="#7dcfb6">
+    <code>git add</code> prepares selected changes.
+  </fan-card>
+</fan-poker>
 ```
 
-Then ask your agent:
+The card count is derived from the number of `<fan-card>` children.
 
-```text
-Use the fan-poker-teaching-skill to create an interactive HTML lesson about deploying Docker on Linux.
-```
-
-A skill is a self-contained folder with a `SKILL.md` file plus optional assets and references. Exact skill-directory locations vary between clients.
-
-## How it works
-
-```text
-Topic or source material
-        ↓
-Agent reads SKILL.md
-        ↓
-Copies assets/fan-poker-base.html
-        ↓
-Edits only cardData in the AI CONTENT ZONE
-        ↓
-Returns a runnable single-file HTML lesson
-```
-
-## Card authoring
-
-Use simple fields for normal cards:
+## API
 
 ```js
-{
-  tag: "Step",
-  title: "Check the Docker daemon",
-  description: "Run docker version and confirm that both client and server information are present.",
-  symbol: "03",
-  accent: "#7dcfb6"
-}
+const deck = document.querySelector("fan-poker");
+deck.next();
+deck.previous();
+deck.goTo(3);
+deck.reset();
 ```
 
-Use `html` for code blocks, lists, warnings, tables, and links. See [`references/card-data-schema.md`](./references/card-data-schema.md) for the complete schema and content-density guidance.
+The component also supports a `cards` property and emits `ready`, `cardchangestart`, and `cardchange` events.
 
-## External API
+## Why a Web Component
 
-```js
-window.fanPokerDeck.requestStep(1);   // next
-window.fanPokerDeck.requestStep(-1);  // previous
-window.fanPokerDeck.goTo(3);          // fourth card, shortest path
-```
+- Works in plain HTML and modern frameworks
+- Uses Shadow DOM for style isolation
+- Has no runtime dependencies
+- Keeps the original fan, recycling, drag, wheel and keyboard interactions
+- Lets AI generate short semantic markup instead of duplicating the animation engine
+- Preserves the legacy standalone HTML template for fully offline output
 
-## Validation
+## Package
 
-No dependency installation is required:
+The repository is prepared as `@hubujiu/fan-poker-deck` version `0.1.0`. npm publication requires the owner's npm authentication.
+
+## Development
 
 ```bash
 npm test
 ```
 
-The validator checks Skill frontmatter, referenced bundled files, JavaScript syntax, required deck markers, removed UI regressions, and the public control API.
-
-## Contributing
-
-Read [`CONTRIBUTING.md`](./CONTRIBUTING.md). Animation changes should include a visual explanation or preview. Lesson examples should remain accurate, focused, and readable.
-
-## License
-
 MIT © [Hubujiu](https://github.com/Hubujiu)
-
----
-
-<div align="center">
-
-**If this deck makes teaching a little more delightful, consider leaving a Star.** ⭐
-
-</div>
