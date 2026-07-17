@@ -1,0 +1,110 @@
+      );
+    }
+  }
+
+  _createRenderedCard(card, index) {
+    const article = document.createElement("article");
+    article.className = "card";
+    article.setAttribute("part", "card");
+    article.dataset.sourceIndex = String(index);
+    article.style.setProperty("--card-accent", card.accent);
+    article.innerHTML = `
+      <div class="card-inner" part="inner">
+        <header class="card-cover" part="cover">
+          <span class="card-index" part="index">${String(index + 1).padStart(2, "0")}</span>
+          <span class="card-symbol" part="symbol"></span>
+        </header>
+        <section class="card-content" part="content">
+          <p class="card-tag" part="tag"></p>
+          <h2 class="card-title" part="title"></h2>
+          <div class="card-body" part="body"></div>
+          <div class="card-footer" part="footer">Click, drag, wheel, or use the keyboard.</div>
+        </section>
+      </div>
+    `;
+    article.querySelector(".card-symbol").textContent = card.symbol;
+    article.querySelector(".card-tag").textContent = card.tag;
+    article.querySelector(".card-title").textContent = card.title;
+    copySafeChildren(card.element, article.querySelector(".card-body"));
+    return article;
+  }
+
+  _queueMeasure() {
+    cancelAnimationFrame(this._resizeFrame);
+    this._resizeFrame = requestAnimationFrame(() => this._measure());
+  }
+
+  _measure() {
+    const hostWidth = Math.max(1, this.clientWidth || this.parentElement?.clientWidth || 390);
+    const css = getComputedStyle(this);
+    const desiredWidth = parseFloat(css.getPropertyValue("--fan-card-width")) || 390;
+    const desiredHeight = parseFloat(css.getPropertyValue("--fan-card-height")) || 520;
+    const fanAllowance = Math.min(104, Math.max(34, desiredWidth * 0.22));
+    const scale = Math.min(1, Math.max(0.36, (hostWidth - 8) / (desiredWidth + fanAllowance)));
+    this._cardWidth = desiredWidth;
+    this._cardHeight = desiredHeight;
+    this._scale = scale;
+    this._deck.style.transform = `scale(${scale})`;
+    this._stage.style.width = `${Math.min(hostWidth, (desiredWidth + fanAllowance) * scale)}px`;
+    this._stage.style.height = `${(desiredHeight + 84) * scale}px`;
+    this._renderRest();
+  }
+
+  _normalizeStartIndex() {
+    if (!this._cards.length) return 0;
+    return this._mod(Number.parseInt(this.getAttribute("start-index") || "0", 10) || 0);
+  }
+
+  _normalizeExistingIndex(index) {
+    if (!this._cards.length) return -1;
+    const number = Number(index);
+    if (!Number.isFinite(number)) return -1;
+    const integer = Math.trunc(number);
+    if (integer < 0 || integer >= this._cards.length) return -1;
+    return integer;
+  }
+
+  _mod(value) {
+    const count = this._cards.length;
+    return count ? ((value % count) + count) % count : 0;
+  }
+
+  _offsetFor(sourceIndex, index = this._index) {
+    return this._mod(sourceIndex - index);
+  }
+
+  _fanPose(offset) {
+    const visibleOffset = Math.min(offset, 8);
+    const x = Math.min(92, visibleOffset * 14);
+    const y = Math.min(26, visibleOffset * 3.2);
+    const rotation = Math.min(13, visibleOffset * 1.65);
+    const scale = Math.max(0.86, 1 - visibleOffset * 0.018);
+    const z = -visibleOffset * 22;
+    return { x, y, rotation, scale, z };
+  }
+
+  _outgoingPose(progress, direction) {
+    const width = this._cardWidth || 390;
+    const height = this._cardHeight || 520;
+    if (direction > 0) {
+      if (progress < 0.48) {
+        const p = progress / 0.48;
+        return {
+          x: -width * 0.64 * this._easeOut(p),
+          y: height * 0.08 * p,
+          rotation: -19 * p,
+          scale: 1 - 0.02 * p,
+          z: 80 * p
+        };
+      }
+      const p = (progress - 0.48) / 0.52;
+      const back = this._fanPose(Math.max(1, this._cards.length - 1));
+      return {
+        x: this._lerp(-width * 0.64, back.x, this._easeInOut(p)),
+        y: this._lerp(height * 0.08, back.y, this._easeInOut(p)),
+        rotation: this._lerp(-19, back.rotation, this._easeInOut(p)),
+        scale: this._lerp(0.98, back.scale, this._easeInOut(p)),
+        z: this._lerp(80, back.z, p)
+      };
+    }
+
