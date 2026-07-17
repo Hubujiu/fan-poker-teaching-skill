@@ -7,11 +7,12 @@
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-SKILL.md-111111)](./SKILL.md)
 [![HTML](https://img.shields.io/badge/output-single--file%20HTML-E34F26?logo=html5&logoColor=white)](./assets/fan-poker-base.html)
 [![No Dependencies](https://img.shields.io/badge/dependencies-0-2ea44f)](./package.json)
+[![Validate](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml/badge.svg)](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-[Demo](#quick-demo) · [Install](#installation) · [中文](./README.md)
+[Live demo](https://hubujiu.github.io/fan-poker-teaching-skill/) · [Install](#installation) · [中文](./README.md)
 
-<img src="./media/preview.svg" alt="Fan Poker Teaching Skill preview" width="760" />
+<a href="https://hubujiu.github.io/fan-poker-teaching-skill/"><img src="./media/preview.svg" alt="Fan Poker Teaching Skill preview" width="760" /></a>
 
 </div>
 
@@ -28,12 +29,13 @@ Most AI-generated tutorials become long scrolling pages. This skill presents one
 
 ## Quick demo
 
-Open one of these files directly in a browser:
+Open the [GitHub Pages demo](https://hubujiu.github.io/fan-poker-teaching-skill/) or inspect these files:
 
 | File | Purpose |
 |---|---|
 | [`index.html`](./index.html) | Project landing page and live preview |
 | [`examples/docker-lesson.html`](./examples/docker-lesson.html) | A realistic AI-authored lesson |
+| [`examples/animation-features-demo.html`](./examples/animation-features-demo.html) | Interaction and animation showcase |
 | [`assets/fan-poker-base.html`](./assets/fan-poker-base.html) | Clean reusable foundation |
 
 ## Installation
@@ -47,7 +49,7 @@ git clone https://github.com/Hubujiu/fan-poker-teaching-skill.git
 Then ask your agent:
 
 ```text
-Use the fan-poker-teaching-deck skill to create an interactive HTML lesson about deploying Docker on Linux.
+Use the fan-poker-teaching-skill to create an interactive HTML lesson about deploying Docker on Linux.
 ```
 
 A skill is a self-contained folder with a `SKILL.md` file plus optional assets and references. Exact skill-directory locations vary between clients.
@@ -98,7 +100,7 @@ No dependency installation is required:
 npm test
 ```
 
-The validator checks JavaScript syntax, required markers, non-empty card data, removed UI regressions, and the public control API.
+The validator checks Skill frontmatter, referenced bundled files, JavaScript syntax, required deck markers, removed UI regressions, and the public control API.
 
 ## Contributing
 
