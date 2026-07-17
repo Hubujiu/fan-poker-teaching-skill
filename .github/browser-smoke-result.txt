@@ -1,1 +1,0 @@
-{"ok":false,"checks":[["defined",true],["shadow",true],["initialCount",true],["theme",true],["parts",true],["next",false],["setCards",true],["appendCard",true],["updateCard",true],["removeCard",true],["cardschangeEvent",true]],"events":[["cardschange",2],["cardschange",3],["cardschange",3],["cardschange",2]]}
