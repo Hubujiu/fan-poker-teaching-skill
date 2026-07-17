@@ -8,25 +8,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   static-validation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
           package-manager-cache: false
-      - name: Assemble staged readable source
-        if: ${{ hashFiles('.github/v0.2-source-ready') != '' }}
-        run: |
-          cat .github/v0.2-source-chunks/* > src/fan-poker.js
-          npm run build
       - name: Validate package and examples
         run: npm test
       - name: Verify package contents
@@ -37,45 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
           package-manager-cache: false
-      - name: Assemble staged readable source
-        if: ${{ hashFiles('.github/v0.2-source-ready') != '' }}
-        run: |
-          cat .github/v0.2-source-chunks/* > src/fan-poker.js
-          npm run build
       - name: Run Chromium browser smoke test
-        id: smoke
-        if: ${{ hashFiles('scripts/browser-smoke.sh') != '' }}
-        continue-on-error: true
         run: bash scripts/browser-smoke.sh
-      - name: Persist browser diagnostic on failure
-        if: ${{ github.event_name == 'pull_request' && steps.smoke.outcome == 'failure' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/browser-smoke-result.txt
-          if ! git diff --cached --quiet; then
-            git commit -m "Record browser smoke diagnostic"
-            git push origin HEAD:${{ github.event.pull_request.head.ref }}
-          fi
-      - name: Write validated generated source to PR branch
-        if: ${{ github.event_name == 'pull_request' && steps.smoke.outcome == 'success' && hashFiles('.github/v0.2-source-ready') != '' }}
-        run: |
-          rm -rf .github/v0.2-source-chunks
-          rm -f .github/v0.2-source-ready
-          rm -f .github/workflows/apply-v0.2.yml
-          rm -f .github/browser-smoke-result.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Build Web Component v0.2.0"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-      - name: Fail when browser smoke test fails
-        if: ${{ steps.smoke.outcome == 'failure' }}
-        run: exit 1
