@@ -8,39 +8,46 @@
 </fan-poker>
 <pre id="result">pending</pre>
 <script type="module">
-  await customElements.whenDefined("fan-poker");
-  const deck = document.querySelector("#deck");
-  const events = [];
-  deck.addEventListener("cardchange", (event) => events.push(["cardchange", event.detail.index]));
-  deck.addEventListener("cardschange", (event) => events.push(["cardschange", event.detail.cardCount]));
-  await new Promise((resolve) => setTimeout(resolve, 120));
+  const result = document.querySelector("#result");
 
-  const checks = [];
-  checks.push(["defined", Boolean(customElements.get("fan-poker"))]);
-  checks.push(["shadow", Boolean(deck.shadowRoot)]);
-  checks.push(["initialCount", deck.cardCount === 3]);
-  checks.push(["theme", deck.getAttribute("theme") === "dark"]);
-  checks.push(["parts", deck.shadowRoot.querySelector('[part="card"]') !== null]);
+  try {
+    await customElements.whenDefined("fan-poker");
+    const deck = document.querySelector("#deck");
+    const events = [];
+    deck.addEventListener("cardchange", (event) => events.push(["cardchange", event.detail.index]));
+    deck.addEventListener("cardschange", (event) => events.push(["cardschange", event.detail.cardCount]));
+    await new Promise((resolve) => setTimeout(resolve, 150));
 
-  deck.next();
-  await new Promise((resolve) => setTimeout(resolve, 760));
-  checks.push(["next", deck.currentIndex === 1]);
+    const checks = [];
+    checks.push(["defined", Boolean(customElements.get("fan-poker"))]);
+    checks.push(["shadow", Boolean(deck.shadowRoot)]);
+    checks.push(["initialCount", deck.cardCount === 3]);
+    checks.push(["theme", deck.getAttribute("theme") === "dark"]);
+    checks.push(["parts", deck.shadowRoot.querySelector('[part="card"]') !== null]);
 
-  deck.setCards([
-    { tag: "A", title: "Alpha", content: "One", symbol: "A" },
-    { tag: "B", title: "Beta", html: "<strong>Two</strong>", symbol: "B" }
-  ]);
-  checks.push(["setCards", deck.cardCount === 2 && deck.currentIndex === 0]);
+    deck.next();
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    checks.push(["next", deck.currentIndex === 1]);
 
-  const appended = deck.appendCard({ tag: "C", title: "Gamma", content: "Three" });
-  checks.push(["appendCard", appended === 2 && deck.cardCount === 3]);
-  checks.push(["updateCard", deck.updateCard(1, { title: "Beta 2" }) && deck.cards[1].title === "Beta 2"]);
-  const removed = deck.removeCard(0);
-  checks.push(["removeCard", removed.title === "Alpha" && deck.cardCount === 2]);
-  checks.push(["cardschangeEvent", events.some(([name]) => name === "cardschange")]);
+    deck.setCards([
+      { tag: "A", title: "Alpha", content: "One", symbol: "A" },
+      { tag: "B", title: "Beta", html: "<strong>Two</strong>", symbol: "B" }
+    ]);
+    checks.push(["setCards", deck.cardCount === 2 && deck.currentIndex === 0]);
 
-  const ok = checks.every(([, value]) => value);
-  document.querySelector("#result").textContent = JSON.stringify({ ok, checks, events });
-  document.documentElement.dataset.smoke = ok ? "passed" : "failed";
+    const appended = deck.appendCard({ tag: "C", title: "Gamma", content: "Three" });
+    checks.push(["appendCard", appended === 2 && deck.cardCount === 3]);
+    checks.push(["updateCard", deck.updateCard(1, { title: "Beta 2" }) && deck.cards[1].title === "Beta 2"]);
+    const removed = deck.removeCard(0);
+    checks.push(["removeCard", removed?.title === "Alpha" && deck.cardCount === 2]);
+    checks.push(["cardschangeEvent", events.some(([name]) => name === "cardschange")]);
+
+    const ok = checks.every(([, value]) => value);
+    result.textContent = JSON.stringify({ ok, checks, events });
+    document.documentElement.dataset.smoke = ok ? "passed" : "failed";
+  } catch (error) {
+    result.textContent = JSON.stringify({ ok: false, error: error?.stack || String(error) });
+    document.documentElement.dataset.smoke = "failed";
+  }
 </script>
 </body></html>
