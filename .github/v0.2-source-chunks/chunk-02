@@ -1,0 +1,110 @@
+`;
+
+const SPEED = Object.freeze({ normal: 620, fast: 360, turbo: 180 });
+const TRUE_VALUES = new Set(["", "true", "1", "yes", "on"]);
+const FALSE_VALUES = new Set(["false", "0", "no", "off"]);
+
+function readBoolean(element, attribute, fallback = true) {
+  if (!element.hasAttribute(attribute)) return fallback;
+  const value = element.getAttribute(attribute)?.trim().toLowerCase() ?? "";
+  if (FALSE_VALUES.has(value)) return false;
+  if (TRUE_VALUES.has(value)) return true;
+  return fallback;
+}
+
+function copySafeChildren(source, target) {
+  for (const node of source.childNodes) {
+    if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "SCRIPT") continue;
+    const clone = node.cloneNode(true);
+    if (clone.nodeType === Node.ELEMENT_NODE) {
+      clone.querySelectorAll?.("script").forEach((script) => script.remove());
+    }
+    target.append(clone);
+  }
+}
+
+function normalizeCardInput(card, index = 0) {
+  if (card == null || typeof card !== "object") {
+    throw new TypeError(`Card at index ${index} must be an object`);
+  }
+  return {
+    tag: card.tag == null ? "Card" : String(card.tag),
+    title: card.title == null ? `Card ${index + 1}` : String(card.title),
+    symbol: card.symbol == null ? String(index + 1) : String(card.symbol),
+    accent: card.accent == null ? "#f2a65a" : String(card.accent),
+    content: card.content == null ? "" : String(card.content),
+    html: card.html == null ? null : String(card.html)
+  };
+}
+
+class FanCardElement extends HTMLElement {
+  connectedCallback() {
+    this.hidden = true;
+  }
+}
+
+class FanPokerElement extends HTMLElement {
+  static get observedAttributes() {
+    return [
+      "card-width",
+      "card-height",
+      "start-index",
+      "keyboard",
+      "wheel",
+      "draggable",
+      "theme",
+      "aria-label"
+    ];
+  }
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._cards = [];
+    this._nodes = [];
+    this._index = 0;
+    this._queue = [];
+    this._active = null;
+    this._drag = null;
+    this._frame = 0;
+    this._resizeFrame = 0;
+    this._mutationFrame = 0;
+    this._lastIntent = 0;
+    this._lastWheel = 0;
+    this._blockClickUntil = 0;
+    this._ready = false;
+    this._suspendObserver = false;
+    this._reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this._onResize = () => this._queueMeasure();
+  }
+
+  connectedCallback() {
+    if (!this.shadowRoot.querySelector(".stage")) this._renderShell();
+    if (!this.hasAttribute("tabindex")) this.tabIndex = 0;
+    this.setAttribute("role", "region");
+    this._syncLabel();
+    this._syncConfig();
+    this._bindEvents();
+    this._observe();
+    this._rebuild({ preserveIndex: false, emit: false });
+  }
+
+  disconnectedCallback() {
+    cancelAnimationFrame(this._frame);
+    cancelAnimationFrame(this._resizeFrame);
+    cancelAnimationFrame(this._mutationFrame);
+    this._mutationObserver?.disconnect();
+    this._resizeObserver?.disconnect();
+    removeEventListener("resize", this._onResize);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue || !this.isConnected) return;
+    if (name === "aria-label") this._syncLabel();
+    if (name === "start-index") this.reset();
+    this._syncConfig();
+    this._queueMeasure();
+  }
+
+  get currentIndex() {
+    return this._index;
