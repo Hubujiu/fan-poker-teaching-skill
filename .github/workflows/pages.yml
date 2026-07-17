@@ -3,16 +3,24 @@ name: Deploy demo to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - "index.html"
+      - "media/**"
+      - "docs/**"
+      - "examples/**"
+      - "dist/**"
+      - "assets/**"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -23,12 +31,69 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
       - name: Configure Pages
+        id: configure
+        continue-on-error: true
         uses: actions/configure-pages@v5
-      - name: Upload static site
+
+      - name: Prepare static site
+        id: prepare
+        if: ${{ steps.configure.outcome == 'success' }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp index.html _site/
+          for directory in media docs examples dist assets; do
+            if [ -d "$directory" ]; then
+              cp -R "$directory" "_site/$directory"
+            fi
+          done
+          touch _site/.nojekyll
+          test -s _site/index.html
+          test -s _site/media/preview.svg
+
+      - name: Upload Pages artifact
+        id: upload
+        if: ${{ steps.prepare.outcome == 'success' }}
+        continue-on-error: true
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
-      - name: Deploy
+          path: _site
+
+      - name: Deploy to GitHub Pages
         id: deployment
+        if: ${{ steps.upload.outcome == 'success' }}
+        continue-on-error: true
         uses: actions/deploy-pages@v4
+
+      - name: Record Pages deployment result
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          mkdir -p .github
+          cat > .github/pages-deploy-result.json <<EOF
+          {
+            "configure": "${{ steps.configure.outcome }}",
+            "prepare": "${{ steps.prepare.outcome }}",
+            "upload": "${{ steps.upload.outcome }}",
+            "deployment": "${{ steps.deployment.outcome }}",
+            "pageUrl": "${{ steps.deployment.outputs.page_url }}",
+            "runId": "${{ github.run_id }}",
+            "commit": "${{ github.sha }}"
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/pages-deploy-result.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record GitHub Pages deployment result"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Fail when Pages deployment is incomplete
+        if: ${{ always() && (steps.configure.outcome != 'success' || steps.prepare.outcome != 'success' || steps.upload.outcome != 'success' || steps.deployment.outcome != 'success') }}
+        run: exit 1
