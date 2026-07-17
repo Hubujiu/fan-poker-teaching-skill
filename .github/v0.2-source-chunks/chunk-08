@@ -1,0 +1,66 @@
+        detail: {
+          index: target === 1 ? this._mod(this._index + direction) : this._index,
+          previousIndex,
+          cardCount: this.cardCount,
+          direction: direction > 0 ? "next" : "previous",
+          source
+        }
+      })
+    );
+
+    const tick = (now) => {
+      const active = this._active;
+      if (!active) return;
+      const elapsed = Math.max(0, now - active.started);
+      const fraction = Math.min(1, elapsed / Math.max(1, active.ms));
+      const progress = this._lerp(active.from, active.target, this._easeInOut(fraction));
+      this._renderTransition(active.direction, progress);
+      if (fraction < 1) {
+        this._frame = requestAnimationFrame(tick);
+        return;
+      }
+
+      const committed = active.target === 1;
+      const oldIndex = this._index;
+      if (committed) this._index = this._mod(this._index + active.direction);
+      this._active = null;
+      this._renderRest();
+
+      if (committed) {
+        this.dispatchEvent(
+          new CustomEvent("cardchange", {
+            bubbles: true,
+            composed: true,
+            detail: {
+              index: this._index,
+              previousIndex: oldIndex,
+              cardCount: this.cardCount,
+              direction: active.direction > 0 ? "next" : "previous",
+              source: active.source
+            }
+          })
+        );
+      }
+      this._startNext();
+    };
+
+    this._frame = requestAnimationFrame(tick);
+  }
+
+  _lerp(start, end, amount) {
+    return start + (end - start) * amount;
+  }
+
+  _easeInOut(value) {
+    return value < 0.5 ? 2 * value * value : 1 - ((-2 * value + 2) ** 2) / 2;
+  }
+
+  _easeOut(value) {
+    return 1 - (1 - value) ** 3;
+  }
+}
+
+if (!customElements.get("fan-card")) customElements.define("fan-card", FanCardElement);
+if (!customElements.get("fan-poker")) customElements.define("fan-poker", FanPokerElement);
+
+export { FanCardElement, FanPokerElement };
