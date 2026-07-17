@@ -15,15 +15,21 @@ const requiredFiles = [
 
 const errors = [];
 if (source !== dist) errors.push("dist/fan-poker.js is not built from src/fan-poker.js");
-for (const marker of [
-  'customElements.define("fan-poker"',
-  'customElements.define("fan-card"',
-  "next()",
-  "previous()",
-  "goTo(e)",
-  'new CustomEvent("cardchange"',
-  "attachShadow"
-]) if (!source.includes(marker)) errors.push(`component marker missing: ${marker}`);
+
+const componentChecks = [
+  ["fan-poker registration", /customElements\.define\(["']fan-poker["']/],
+  ["fan-card registration", /customElements\.define\(["']fan-card["']/],
+  ["next method", /next\(\)/],
+  ["previous method", /previous\(\)/],
+  ["goTo method", /goTo\([^)]*\)/],
+  ["reset method", /reset\(\)/],
+  ["cardchange event", /CustomEvent\(["']cardchange["']/],
+  ["Shadow DOM", /attachShadow\(/]
+];
+
+for (const [label, pattern] of componentChecks) {
+  if (!pattern.test(source)) errors.push(`component capability missing: ${label}`);
+}
 
 for (const forbidden of ["page-nav", "page-button", 'id="counter"', 'class="toolbar"']) {
   if (source.includes(forbidden)) errors.push(`removed UI returned: ${forbidden}`);
@@ -31,6 +37,8 @@ for (const forbidden of ["page-nav", "page-button", 'id="counter"', 'class="tool
 
 if (pkg.version !== "0.1.0") errors.push("package version must be 0.1.0");
 if (pkg.name !== "@hubujiu/fan-poker-deck") errors.push("unexpected package name");
+if (pkg.main !== "./dist/fan-poker.js") errors.push("package main must point to dist/fan-poker.js");
+if (pkg.types !== "./types/fan-poker.d.ts") errors.push("package types must point to the declaration file");
 if (!skill.includes("<fan-poker") || !skill.includes("<fan-card")) errors.push("SKILL.md does not teach the Web Component API");
 if (!readme.includes("dist/fan-poker.js")) errors.push("README does not include the component quick start");
 
