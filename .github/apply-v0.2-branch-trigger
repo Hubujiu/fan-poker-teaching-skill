@@ -1,1 +1,1 @@
-build agent/web-component-v0.2.0
+run agent/web-component-v0.2.0 validation
