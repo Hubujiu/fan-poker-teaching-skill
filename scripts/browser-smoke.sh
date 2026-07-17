@@ -25,11 +25,16 @@ fi
   --no-sandbox \
   --disable-gpu \
   --disable-dev-shm-usage \
-  --virtual-time-budget=3500 \
+  --virtual-time-budget=6000 \
   --dump-dom \
   "http://127.0.0.1:${PORT}/scripts/browser-smoke.html" \
   > /tmp/fan-poker-browser-smoke.html
 
-grep -q 'data-smoke="passed"' /tmp/fan-poker-browser-smoke.html
 cat /tmp/fan-poker-browser-smoke.html | grep -o '<pre id="result">[^<]*' || true
+if ! grep -q 'data-smoke="passed"' /tmp/fan-poker-browser-smoke.html; then
+  echo "Browser smoke test failed" >&2
+  cat /tmp/fan-poker-browser-smoke.html >&2
+  exit 1
+fi
+
 echo "Browser smoke test passed"
