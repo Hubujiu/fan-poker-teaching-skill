@@ -1,10 +1,10 @@
-name: Apply v0.2 payload
+name: Apply v0.2 source
 
 on:
   push:
     branches: [agent/web-component-v0.2.0]
     paths:
-      - ".github/v0.2-payload-ready"
+      - ".github/v0.2-source-ready"
 
 permissions:
   contents: write
@@ -21,11 +21,9 @@ jobs:
         with:
           node-version: "24"
           package-manager-cache: false
-      - name: Decode v0.2 source payload
+      - name: Assemble readable Web Component source
         run: |
-          cat .github/v0.2-payload-chunks/* > /tmp/fan-poker-v0.2.b64
-          base64 --decode /tmp/fan-poker-v0.2.b64 > /tmp/fan-poker-v0.2.tar.gz
-          tar --extract --gzip --file /tmp/fan-poker-v0.2.tar.gz
+          cat .github/v0.2-source-chunks/* > src/fan-poker.js
           chmod +x scripts/browser-smoke.sh
           npm run build
       - name: Validate generated repository
@@ -34,8 +32,8 @@ jobs:
         run: bash scripts/browser-smoke.sh
       - name: Commit generated v0.2 files
         run: |
-          rm -rf .github/v0.2-payload-chunks
-          rm .github/v0.2-payload-ready
+          rm -rf .github/v0.2-source-chunks
+          rm .github/v0.2-source-ready
           rm .github/workflows/apply-v0.2.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
