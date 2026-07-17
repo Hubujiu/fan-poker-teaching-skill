@@ -16,7 +16,7 @@ const errors = [];
 
 if (source !== dist) errors.push("dist/fan-poker.js does not match src/fan-poker.js");
 if (pkg.name !== "@hubujiu/fan-poker-deck") errors.push("unexpected package name");
-if (pkg.version !== "1.0.0") errors.push("package version must be 1.0.0");
+if (pkg.version !== "1.0.1") errors.push("package version must be 1.0.1");
 if (pkg.publishConfig?.access !== "public") errors.push("publishConfig.access must be public");
 if (pkg.publishConfig?.provenance !== true) errors.push("publishConfig.provenance must be true");
 if (pkg.customElements !== "./custom-elements.json") errors.push("customElements manifest is not declared");
@@ -84,6 +84,7 @@ const requiredFiles = [
   "docs/ACCESSIBILITY.md",
   "docs/FRAMEWORKS.md",
   "docs/VERSIONING.md",
+  "docs/PUBLISHING.md",
   "examples/basic.html",
   "examples/javascript-api.html",
   "examples/theme-and-runtime.html",
@@ -101,7 +102,7 @@ for (const file of requiredFiles) {
 }
 
 for (const document of [readme, readmeEnglish, skill]) {
-  if (!document.includes("@hubujiu/fan-poker-deck@1.0.0")) errors.push("stable documentation must use the fixed v1.0.0 CDN");
+  if (!document.includes("@hubujiu/fan-poker-deck@1.0.0")) errors.push("stable documentation must keep an exact v1 CDN pin");
 }
 
 for (const forbidden of ["page-nav", "page-button", 'id="counter"', 'class="toolbar"']) {
@@ -145,4 +146,4 @@ console.log("✓ source and dist match");
 console.log("✓ stable v1 module exports and SSR guards are present");
 console.log("✓ accessibility semantics and live status are present");
 console.log("✓ TypeScript and Custom Elements metadata match the v1 contract");
-console.log("✓ documentation, framework examples, and package metadata are ready for v1.0.0");
+console.log("✓ trusted publishing documentation and package metadata are ready for v1.0.1");
