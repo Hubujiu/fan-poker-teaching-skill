@@ -12,12 +12,22 @@
 - `ready`, `cardchangestart`, and `cardchange` events
 - TypeScript declarations
 - Basic markup and JavaScript API examples
-- npm package metadata for `@hubujiu/fan-poker-deck`
+- Public npm package [`@hubujiu/fan-poker-deck`](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
+- Fixed-version jsDelivr and unpkg distribution
+- Idempotent npm publishing and release endpoint verification
 
 ### Changed
 
-- The Agent Skill now generates compact Web Component markup by default.
+- The Agent Skill now generates compact Web Component markup from the published npm CDN by default.
+- The project landing page now runs the published `0.1.0` package.
+- Chinese and English documentation now recommend fixed versions for production use.
 - The standalone HTML deck remains available as an offline fallback.
+
+### Verified
+
+- npm Registry: `@hubujiu/fan-poker-deck@0.1.0`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js`
+- unpkg: `https://unpkg.com/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js`
 
 ## 0.0.1 - 2026-07-17
 
