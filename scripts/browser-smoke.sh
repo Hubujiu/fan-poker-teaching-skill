@@ -25,6 +25,8 @@ fi
   --no-sandbox \
   --disable-gpu \
   --disable-dev-shm-usage \
+  --force-prefers-reduced-motion=reduce \
+  --run-all-compositor-stages-before-draw \
   --virtual-time-budget=6000 \
   --dump-dom \
   "http://127.0.0.1:${PORT}/scripts/browser-smoke.html" \
