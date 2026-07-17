@@ -1,16 +1,20 @@
-# Fan Poker Deck v0.2.0
+# Fan Poker Deck v1.0.0
 
-This release turns the first reusable component into a more complete runtime building block. Decks can now follow or override the host page theme, update their card collection without manual DOM reconstruction, and provide richer metadata to TypeScript-aware editors and Custom Elements tooling.
+The first stable release turns the component API into a documented compatibility contract. It preserves the v0.2 card, theme, navigation, runtime, event, and styling APIs while adding safe Node/SSR imports, explicit module exports, stronger accessibility semantics, and a broader automated quality gate.
 
 ## Quick start
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.2.0/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js">
 </script>
 
-<fan-poker card-width="390px" card-height="520px" theme="auto">
+<fan-poker
+  card-width="390px"
+  card-height="520px"
+  theme="auto"
+  aria-label="Git basics lesson">
   <fan-card tag="Git" title="Working tree" symbol="01" accent="#f2a65a">
     Files currently being edited.
   </fan-card>
@@ -24,32 +28,36 @@ This release turns the first reusable component into a more complete runtime bui
 Or install it from npm:
 
 ```bash
-npm install @hubujiu/fan-poker-deck@0.2.0
+npm install @hubujiu/fan-poker-deck@1.0.0
 ```
 
+## Stable module exports
+
 ```js
-import "@hubujiu/fan-poker-deck";
+import {
+  FanPokerElement,
+  FanCardElement,
+  defineFanPokerElements
+} from "@hubujiu/fan-poker-deck";
 ```
+
+The package is safe to import in Node and SSR environments. It automatically registers the elements when a browser custom-element registry is available. Explicit registration is idempotent and may target a compatible registry.
 
 ## Highlights
 
-- Stable `theme="auto"`, `theme="light"`, and `theme="dark"` modes
-- Runtime collection APIs:
-  - `setCards(cards, options)`
-  - `appendCard(card)`
-  - `updateCard(index, patch)`
-  - `removeCard(index)`
-  - `clear()`
-- New `cardschange` event for synchronizing external state
-- Existing `next()`, `previous()`, `goTo()`, and `reset()` navigation APIs
-- Expanded Shadow DOM parts for targeted `::part()` styling
-- Improved TypeScript declarations
-- `custom-elements.json` manifest for editor and tooling integration
-- Vue and React integration examples
-- Theme and runtime editing example
-- Real Chromium smoke tests covering registration, Shadow DOM, themes, navigation, runtime mutations, and events
+- Stable `1.x` API contract
+- Safe Node and SSR import
+- Exported element constructors and registration function
+- Existing themes, dynamic-card methods, navigation methods, and events remain compatible
+- Polite live-region announcement of the active card and deck position
+- Interactive-deck, keyboard-shortcut, card-group, and active-card accessibility semantics
+- Expanded TypeScript declarations and Custom Elements Manifest exports
+- Node 20, 22, and 24 validation matrix
+- Real Chromium behavior and accessibility smoke test
+- 48 KiB distribution size budget
+- API, accessibility, framework/SSR, and versioning documentation
 
-## Runtime example
+## Runtime API
 
 ```js
 const deck = document.querySelector("fan-poker");
@@ -66,54 +74,43 @@ deck.removeCard(1);
 
 Only pass trusted content to the `html` field.
 
-## Styling
+## Accessibility
 
-```css
-fan-poker {
-  --fan-card-width: 420px;
-  --fan-card-height: 560px;
-  --fan-radius: 18px;
-}
+The component now exposes:
 
-fan-poker::part(title) {
-  letter-spacing: -0.02em;
-}
-```
+- `role="region"` and an interactive card-deck role description on the host;
+- keyboard shortcut metadata;
+- a group role and position-aware label on rendered cards;
+- `aria-hidden="true"` on non-current cards;
+- a polite live region that announces the active title and position;
+- immediate state completion when reduced motion is requested.
 
-## Fixes
+Authors should still provide a meaningful `aria-label`, image alternatives, semantic card content, and readable accent contrast.
 
-- Text updates no longer retain stale HTML state
-- Nested script elements are removed while card content is cloned into the rendered deck
-- Previous-card navigation now travels from the back of the fan toward the front
-- Browser testing uses a deterministic animation clock to avoid headless-renderer timing flakes
+## Upgrade from v0.2.0
 
-## Verified distribution
-
-The release workflow verified all public endpoints:
-
-- npm Registry: `@hubujiu/fan-poker-deck@0.2.0`
-- jsDelivr: `https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.2.0/dist/fan-poker.js`
-- unpkg: `https://unpkg.com/@hubujiu/fan-poker-deck@0.2.0/dist/fan-poker.js`
-
-## Upgrade from v0.1.0
-
-Change the fixed CDN version from `0.1.0` to `0.2.0`, or run:
+Change the fixed CDN version from `0.2.0` to `1.0.0`, or run:
 
 ```bash
-npm install @hubujiu/fan-poker-deck@0.2.0
+npm install @hubujiu/fan-poker-deck@1.0.0
 ```
 
-Existing `<fan-poker>` and `<fan-card>` markup and navigation APIs remain compatible.
+No changes are required to existing v0.2 markup or runtime calls.
 
-## Compatibility
+## Stable documentation
 
-The component targets modern browsers with Custom Elements, Shadow DOM, ES Modules, ResizeObserver, and CSS `color-mix()` support.
-
-## Documentation
-
+- API contract: `docs/API.md`
+- Accessibility: `docs/ACCESSIBILITY.md`
+- Framework and SSR integration: `docs/FRAMEWORKS.md`
+- Versioning policy: `docs/VERSIONING.md`
 - Chinese guide: `README.md`
 - English guide: `README_EN.md`
 - Agent instructions: `SKILL.md`
-- Theme and runtime example: `examples/theme-and-runtime.html`
-- Vue example: `examples/vue-example.vue`
-- React example: `examples/react-example.jsx`
+
+## Distribution endpoints
+
+The release workflow verifies:
+
+- npm Registry: `@hubujiu/fan-poker-deck@1.0.0`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js`
+- unpkg: `https://unpkg.com/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js`

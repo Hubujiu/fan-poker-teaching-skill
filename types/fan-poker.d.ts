@@ -11,6 +11,11 @@ export interface FanPokerCardInput {
   html?: string;
 }
 
+export interface FanPokerReadyDetail {
+  index: number;
+  cardCount: number;
+}
+
 export interface FanPokerChangeDetail {
   index: number;
   previousIndex: number;
@@ -29,6 +34,8 @@ export interface FanPokerCardsChangeDetail {
 export class FanCardElement extends HTMLElement {}
 
 export class FanPokerElement extends HTMLElement {
+  static readonly observedAttributes: string[];
+
   get currentIndex(): number;
   get cardCount(): number;
   get cards(): FanPokerCardInput[];
@@ -47,7 +54,7 @@ export class FanPokerElement extends HTMLElement {
 
   addEventListener(
     type: "ready",
-    listener: (event: CustomEvent<{ index: number; cardCount: number }>) => void,
+    listener: (event: CustomEvent<FanPokerReadyDetail>) => void,
     options?: boolean | AddEventListenerOptions
   ): void;
   addEventListener(
@@ -60,7 +67,14 @@ export class FanPokerElement extends HTMLElement {
     listener: (event: CustomEvent<FanPokerCardsChangeDetail>) => void,
     options?: boolean | AddEventListenerOptions
   ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): void;
 }
+
+export function defineFanPokerElements(registry?: CustomElementRegistry): boolean;
 
 declare global {
   interface HTMLElementTagNameMap {

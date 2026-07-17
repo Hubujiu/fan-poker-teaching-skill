@@ -23,7 +23,7 @@
   };
 </script>
 <script type="module" src="../dist/fan-poker.js"></script>
-<fan-poker id="deck" card-width="320px" card-height="430px" theme="dark">
+<fan-poker id="deck" card-width="320px" card-height="430px" theme="dark" aria-label="Smoke lesson">
   <fan-card tag="One" title="First" symbol="01">A</fan-card>
   <fan-card tag="Two" title="Second" symbol="02">B</fan-card>
   <fan-card tag="Three" title="Third" symbol="03">C</fan-card>
@@ -33,6 +33,7 @@
   const result = document.querySelector("#result");
 
   try {
+    const component = await import("../dist/fan-poker.js?browser-smoke=v1");
     await customElements.whenDefined("fan-poker");
     const deck = document.querySelector("#deck");
     const events = [];
@@ -42,14 +43,26 @@
 
     const checks = [];
     checks.push(["defined", Boolean(customElements.get("fan-poker"))]);
+    checks.push(["exports", typeof component.FanPokerElement === "function" && typeof component.FanCardElement === "function" && typeof component.defineFanPokerElements === "function"]);
+    checks.push(["idempotentRegistration", component.defineFanPokerElements() === true]);
     checks.push(["shadow", Boolean(deck.shadowRoot)]);
     checks.push(["initialCount", deck.cardCount === 3]);
     checks.push(["theme", deck.getAttribute("theme") === "dark"]);
-    checks.push(["parts", deck.shadowRoot.querySelector('[part="card"]') !== null]);
+    checks.push(["hostRole", deck.getAttribute("role") === "region"]);
+    checks.push(["roleDescription", deck.getAttribute("aria-roledescription") === "interactive card deck"]);
+    checks.push(["keyShortcuts", deck.getAttribute("aria-keyshortcuts")?.includes("ArrowRight")]);
+
+    const initialCards = [...deck.shadowRoot.querySelectorAll('[part="card"]')];
+    const status = deck.shadowRoot.querySelector('[part="status"]');
+    checks.push(["parts", initialCards.length === 3 && Boolean(status)]);
+    checks.push(["activeCardSemantics", initialCards[0].getAttribute("role") === "group" && initialCards[0].getAttribute("aria-roledescription") === "card"]);
+    checks.push(["singleAccessibleCard", initialCards.filter((card) => card.getAttribute("aria-hidden") === "false").length === 1]);
+    checks.push(["initialStatus", status.textContent.includes("First") && status.textContent.includes("1 of 3")]);
 
     deck.next();
     await new Promise((resolve) => setTimeout(resolve, 150));
     checks.push(["next", deck.currentIndex === 1]);
+    checks.push(["nextStatus", status.textContent.includes("Second") && status.textContent.includes("2 of 3")]);
 
     deck.setCards([
       { tag: "A", title: "Alpha", content: "One", symbol: "A" },

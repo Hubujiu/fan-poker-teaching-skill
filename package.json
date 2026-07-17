@@ -1,10 +1,11 @@
 {
   "name": "@hubujiu/fan-poker-deck",
-  "version": "0.2.0",
-  "description": "Dependency-free Web Component for interactive single-sided fan poker card lessons.",
+  "version": "1.0.0",
+  "description": "Dependency-free, accessible Web Component for interactive single-sided fan poker card lessons.",
   "type": "module",
   "main": "./dist/fan-poker.js",
   "module": "./dist/fan-poker.js",
+  "browser": "./dist/fan-poker.js",
   "types": "./types/fan-poker.d.ts",
   "customElements": "./custom-elements.json",
   "exports": {
@@ -13,7 +14,8 @@
       "import": "./dist/fan-poker.js",
       "default": "./dist/fan-poker.js"
     },
-    "./custom-elements.json": "./custom-elements.json"
+    "./custom-elements.json": "./custom-elements.json",
+    "./package.json": "./package.json"
   },
   "unpkg": "./dist/fan-poker.js",
   "jsdelivr": "./dist/fan-poker.js",
@@ -21,15 +23,23 @@
     "dist",
     "types",
     "src",
+    "docs",
     "custom-elements.json",
     "README.md",
     "README_EN.md",
     "LICENSE"
   ],
-  "sideEffects": true,
+  "sideEffects": [
+    "./dist/fan-poker.js",
+    "./src/fan-poker.js"
+  ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "npm run build && node scripts/validate.mjs",
+    "test": "npm run build && npm run test:static && npm run test:node && npm run test:size",
+    "test:static": "node scripts/validate.mjs",
+    "test:node": "node scripts/node-smoke.mjs",
+    "test:size": "node scripts/size-check.mjs",
+    "test:browser": "bash scripts/browser-smoke.sh",
     "prepublishOnly": "npm test"
   },
   "keywords": [
@@ -40,7 +50,9 @@
     "education",
     "html",
     "flashcards",
-    "poker-cards"
+    "poker-cards",
+    "accessible",
+    "ssr-safe"
   ],
   "homepage": "https://hubujiu.github.io/fan-poker-teaching-skill/",
   "repository": {
@@ -53,7 +65,8 @@
   "author": "Hubujiu",
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "engines": {
     "node": ">=18"
