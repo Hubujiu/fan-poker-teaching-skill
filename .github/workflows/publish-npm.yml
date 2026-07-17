@@ -10,7 +10,7 @@ on:
       - ".github/npm-publish-trigger"
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:
@@ -34,7 +36,66 @@ jobs:
       - name: Verify package contents
         run: npm pack --dry-run
 
+      - name: Read package metadata
+        id: package
+        shell: bash
+        run: |
+          echo "name=$(node -p \"require('./package.json').name\")" >> "$GITHUB_OUTPUT"
+          echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether this version already exists
+        id: existing
+        shell: bash
+        run: |
+          if npm view "${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}" version >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish public package with provenance
-        run: npm publish --access public
+        id: publish
+        if: steps.existing.outputs.published != 'true'
+        continue-on-error: true
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify registry state
+        id: verify
+        if: always()
+        shell: bash
+        run: |
+          if npm view "${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}" version >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Write publish result
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p .github
+          cat > .github/npm-publish-result.json <<EOF
+          {
+            "package": "${{ steps.package.outputs.name }}",
+            "version": "${{ steps.package.outputs.version }}",
+            "alreadyPublishedBeforeRun": "${{ steps.existing.outputs.published }}",
+            "publishStepOutcome": "${{ steps.publish.outcome }}",
+            "availableOnRegistry": "${{ steps.verify.outputs.published }}",
+            "runId": "${{ github.run_id }}",
+            "commit": "${{ github.sha }}"
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/npm-publish-result.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record npm publish result"
+            git push
+          fi
+
+      - name: Fail when package is unavailable
+        if: always() && steps.verify.outputs.published != 'true'
+        run: exit 1
