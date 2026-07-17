@@ -1,31 +1,37 @@
 ---
 name: fan-poker-teaching-skill
-description: "Create standalone interactive HTML lessons, tutorials, onboarding flows, explainers, revision cards, flashcards, step-by-step guides, and mini courses using the bundled single-sided fan poker deck animation. Use this skill whenever a user asks to turn knowledge, documentation, notes, an article, a process, or a learning topic into swipeable, clickable, stacked, card-based, or poker-style teaching content, even when they do not explicitly say 'skill'."
+description: "Create embeddable interactive HTML lessons, tutorials, onboarding flows, revision cards, flashcards, and step-by-step guides with the bundled fan-poker Web Component. Use this skill whenever a user asks to turn knowledge, notes, documentation, an article, a process, or a learning topic into clickable, draggable, stacked, card-based, or poker-style teaching content. Prefer the compact <fan-poker>/<fan-card> API; use the legacy standalone template only when the user explicitly requires one offline file with no external script."
 license: MIT
 ---
 
 # Fan Poker Teaching Skill
 
-Create complete, directly runnable teaching pages from `assets/fan-poker-base.html`. Treat the bundled HTML as the stable visual and animation foundation. Keep the page transparent, dependency-free, and free of top toolbars, page counters, and bottom page-number navigation.
+Generate concise teaching content on top of the reusable `<fan-poker>` Web Component. Keep the animation implementation in `dist/fan-poker.js`; normally generate only the component import and card markup.
 
-## Read bundled resources
+## Default output
 
-- Read `references/card-data-schema.md` before authoring cards that use custom HTML, code, tables, links, warnings, or dense content.
-- Use `examples/docker-lesson.html` as a content-quality reference when the user wants a technical step-by-step tutorial.
-- Use `examples/animation-features-demo.html` only to understand the intended visual behavior. Do not copy its placeholder teaching content unless relevant.
+Use this structure unless the user requests a different integration:
 
-## Default workflow
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/gh/Hubujiu/fan-poker-teaching-skill@main/dist/fan-poker.js">
+</script>
 
-1. Identify the topic, intended learner, desired depth, language, and any supplied source material.
-2. Copy `assets/fan-poker-base.html` to the requested output path.
-3. Edit the document `<title>`.
-4. Replace only the `cardData` array inside the `AI CONTENT ZONE` unless the user explicitly requests visual or behavioral changes.
-5. Preserve the animation class, geometry, responsive measurements, full-card rendering, input handling, and public control API.
-6. Validate the final HTML and return one complete `.html` file.
+<fan-poker card-width="390px" card-height="520px">
+  <fan-card tag="Topic" title="First idea" symbol="01" accent="#f2a65a">
+    Explain one focused learning job here.
+  </fan-card>
 
-When the request omits an audience or depth, choose a beginner-friendly explanation with practical examples. Do not block the task for minor missing details.
+  <fan-card tag="Practice" title="Try it" symbol="02" accent="#7dcfb6">
+    <pre><code>example command</code></pre>
+  </fan-card>
+</fan-poker>
+```
 
-## Plan the lesson before writing cards
+When the component is hosted beside the page, prefer a relative import such as `./dist/fan-poker.js` instead of the CDN URL.
+
+## Plan the lesson first
 
 Choose the smallest number of cards that teaches the topic clearly. Most lessons need 5 to 10 cards.
 
@@ -43,37 +49,91 @@ Do not force this sequence when the source material has a clearer natural order.
 
 ## Author one learning job per card
 
-Each card should answer one question, explain one concept, or ask the learner to perform one action. Split overloaded cards rather than shrinking text.
+Each `<fan-card>` should answer one question, explain one concept, or ask the learner to perform one action. Split overloaded cards rather than shrinking the text.
 
-Use simple fields for ordinary text:
+Supported attributes:
+
+- `tag`: short category label
+- `title`: card heading
+- `symbol`: large cover symbol or number
+- `accent`: CSS color for the cover
+
+The card body accepts normal HTML, including paragraphs, lists, links, images, code blocks, tables, and buttons. Do not include untrusted raw HTML.
+
+## Configure the deck
+
+Use these attributes on `<fan-poker>`:
+
+- `card-width`, default `390px`
+- `card-height`, default `520px`
+- `start-index`, zero-based, default `0`
+- `keyboard="false"` to disable keyboard controls
+- `wheel="false"` to disable wheel controls
+- `draggable="false"` to disable pointer dragging
+- `aria-label` to describe the lesson
+
+Card count is derived automatically from the number of `<fan-card>` children. Never generate a separate card-count setting.
+
+## JavaScript API
+
+Use the API only when the page needs external controls:
 
 ```js
-{
-  tag: "Step",
-  title: "Check the Docker daemon",
-  description: "Run docker version. Client and server output confirms that Docker is ready.",
-  symbol: "03",
-  accent: "#7dcfb6"
-}
+const deck = document.querySelector("fan-poker");
+
+deck.next();
+deck.previous();
+deck.goTo(3);
+deck.reset();
+
+console.log(deck.currentIndex);
+console.log(deck.cardCount);
 ```
 
-Use `html` for code, lists, warnings, tables, links, or structured practice:
+Listen for completed changes:
 
 ```js
-{
-  tag: "Practice",
-  title: "Run the first container",
-  symbol: "04",
-  accent: "#8e9aef",
-  html: `
-    <p class="card-tag">Practice</p>
-    <h2 class="card-title">Run the first container</h2>
-    <div class="card-description">
-      <pre><code>docker run --rm hello-world</code></pre>
-      <p>Confirm that the image downloads and the welcome message appears.</p>
-    </div>
-  `
-}
+deck.addEventListener("cardchange", event => {
+  console.log(event.detail.index);
+});
 ```
 
-Escape backticks and `${...}` inside JavaScript template literals. Keep code examples focused and executable with minimal modification.
+The `cards` property may be assigned an array for dynamic content:
+
+```js
+deck.cards = [
+  { tag: "Git", title: "Working tree", content: "Files being edited." },
+  { tag: "Git", title: "Staging area", html: "<code>git add</code> prepares changes." }
+];
+```
+
+## Preserve the component contract
+
+Do not copy or rewrite the animation engine into generated pages. Do not add a top toolbar, visible counter, or bottom numbered navigation. Do not assume a framework.
+
+The component already provides:
+
+- single-sided fan geometry
+- full-card rendering
+- depth-aware front-card recycling
+- click, drag, wheel, and focused keyboard input
+- adaptive speed for repeated input
+- responsive measurement
+- transparent background
+- reduced-motion support
+- Shadow DOM style isolation
+
+## Offline standalone fallback
+
+When the user explicitly requires one completely offline HTML file, copy `assets/fan-poker-base.html` and replace only its `cardData` content zone. Explain that this fallback duplicates the animation code, while the Web Component version is better for reusable website integration.
+
+## Validate the result
+
+Confirm that:
+
+- the module import appears before the component is used
+- at least one `<fan-card>` exists
+- every card has a focused title and readable body
+- code blocks remain executable and properly escaped
+- width and height values include CSS units
+- the page contains no toolbar, page counter, or bottom pagination
