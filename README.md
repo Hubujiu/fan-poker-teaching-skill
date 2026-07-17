@@ -6,13 +6,13 @@
 
 A dependency-free Web Component and Agent Skill for interactive lessons, tutorials, onboarding flows and revision cards.
 
-[![version](https://img.shields.io/badge/version-0.1.0-e96d2f)](./CHANGELOG.md)
+[![npm](https://img.shields.io/npm/v/%40hubujiu%2Ffan-poker-deck?color=e96d2f)](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
 [![Web Component](https://img.shields.io/badge/Web%20Component-fan--poker-111111)](./dist/fan-poker.js)
 [![No runtime dependencies](https://img.shields.io/badge/runtime%20dependencies-0-2ea44f)](./package.json)
 [![Validate](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml/badge.svg)](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-[在线演示](https://hubujiu.github.io/fan-poker-teaching-skill/) · [基础示例](./examples/basic.html) · [JavaScript API](./examples/javascript-api.html) · [English](./README_EN.md)
+[在线演示](https://hubujiu.github.io/fan-poker-teaching-skill/) · [npm](https://www.npmjs.com/package/@hubujiu/fan-poker-deck) · [基础示例](./examples/basic.html) · [JavaScript API](./examples/javascript-api.html) · [English](./README_EN.md)
 
 <img src="./media/preview.svg" alt="Fan Poker Teaching Skill preview" width="760" />
 
@@ -20,12 +20,12 @@ A dependency-free Web Component and Agent Skill for interactive lessons, tutoria
 
 ## 快速开始
 
-引入组件：
+只需引入一个固定版本的 ES Module：
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/gh/Hubujiu/fan-poker-teaching-skill@main/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js">
 </script>
 ```
 
@@ -48,9 +48,19 @@ A dependency-free Web Component and Agent Skill for interactive lessons, tutoria
 </fan-poker>
 ```
 
-卡片数量会根据 `<fan-card>` 自动计算，不需要额外配置。
+卡片数量根据 `<fan-card>` 自动计算，不需要额外配置。
 
-> 当前 GitHub CDN 地址适合预览和自托管。npm 包 `@hubujiu/fan-poker-deck` 已准备完成，发布后可改用固定版本 CDN。
+也可以通过 npm 安装：
+
+```bash
+npm install @hubujiu/fan-poker-deck
+```
+
+```js
+import "@hubujiu/fan-poker-deck";
+```
+
+生产环境建议锁定具体版本，例如 `@0.1.0`，避免未来升级悄悄改变页面行为。
 
 ## 为什么采用 Web Component
 
@@ -84,7 +94,7 @@ A dependency-free Web Component and Agent Skill for interactive lessons, tutoria
 | `wheel` | `true` | 支持鼠标滚轮切换 |
 | `draggable` | `true` | 支持左右拖动 |
 
-也可以通过 CSS 变量统一定制：
+也可以通过 CSS 变量定制：
 
 ```css
 fan-poker {
@@ -162,7 +172,7 @@ deck.addEventListener("cardchange", event => {
 使用 fan-poker-teaching-skill，生成一份 Linux 部署 Docker 的交互式教学卡片。
 ```
 
-Skill 默认只生成组件引入和卡片标签。只有明确要求完全离线的单文件时，才回退到内嵌动画模板。
+Skill 默认输出正式 npm CDN 引入和短组件标签。只有明确要求完全离线的单文件时，才回退到内嵌动画模板。
 
 ## 项目结构
 
@@ -180,8 +190,6 @@ fan-poker-teaching-skill/
 
 ## 开发与校验
 
-无需安装运行时依赖：
-
 ```bash
 npm test
 ```
@@ -191,9 +199,9 @@ npm test
 - 源码与 dist 是否一致
 - Custom Elements 是否注册
 - 公共 API 与事件是否存在
-- Skill 与 README 是否使用新组件 API
+- Skill 与 README 是否使用组件 API
 - 顶栏、计数器和底部导航是否回归
-- npm v0.1.0 元数据是否完整
+- npm 发布元数据是否完整
 
 ## 浏览器兼容性
 
@@ -201,9 +209,9 @@ npm test
 
 ## Roadmap
 
-- [x] v0.1.0：Web Component、尺寸配置、四种输入、公共 API、事件
+- [x] v0.1.0：Web Component、npm 发布、固定版本 CDN、尺寸配置、四种输入、公共 API、事件
 - [ ] v0.2.0：稳定主题令牌、更多动态数据能力、Vue / React 示例
-- [ ] v1.0.0：固定 API、完整浏览器测试、npm 正式发布
+- [ ] v1.0.0：稳定 API、完整浏览器自动化测试和兼容性矩阵
 
 ## License
 
