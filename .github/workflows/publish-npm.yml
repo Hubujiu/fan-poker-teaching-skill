@@ -56,13 +56,18 @@ jobs:
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish public package with provenance
+      - name: Verify GitHub OIDC environment
+        if: steps.existing.outputs.published != 'true'
+        shell: bash
+        run: |
+          test -n "$ACTIONS_ID_TOKEN_REQUEST_URL"
+          test -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+
+      - name: Publish public package with npm Trusted Publishing
         id: publish
         if: steps.existing.outputs.published != 'true'
         continue-on-error: true
-        run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
 
       - name: Wait for npm registry propagation
         id: verify
@@ -129,6 +134,7 @@ jobs:
           {
             "package": "${{ steps.package.outputs.name }}",
             "version": "${{ steps.package.outputs.version }}",
+            "authentication": "npm-trusted-publishing-oidc",
             "alreadyPublishedBeforeRun": "${{ steps.existing.outputs.published }}",
             "publishStepOutcome": "${{ steps.publish.outcome }}",
             "availableOnRegistry": "${{ steps.verify.outputs.published }}",
