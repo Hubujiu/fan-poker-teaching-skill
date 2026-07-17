@@ -4,35 +4,25 @@
 
 **一行引入，把任意知识变成可点击、可拖动、会回到牌尾的教学卡片。**
 
-A dependency-free Web Component and Agent Skill for interactive lessons, tutorials, onboarding flows and revision cards.
+零运行时依赖的 Web Component 与 AI Skill，适合教程、复习卡、产品引导和步骤说明。
 
-[![npm](https://img.shields.io/npm/v/%40hubujiu%2Ffan-poker-deck?color=e96d2f)](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
-[![Web Component](https://img.shields.io/badge/Web%20Component-fan--poker-111111)](./dist/fan-poker.js)
-[![No runtime dependencies](https://img.shields.io/badge/runtime%20dependencies-0-2ea44f)](./package.json)
+[![npm](https://img.shields.io/npm/v/%40hubujiu%2Ffan-poker-deck)](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
 [![Validate](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml/badge.svg)](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-[在线演示](https://hubujiu.github.io/fan-poker-teaching-skill/) · [npm](https://www.npmjs.com/package/@hubujiu/fan-poker-deck) · [基础示例](./examples/basic.html) · [JavaScript API](./examples/javascript-api.html) · [English](./README_EN.md)
-
-<img src="./media/preview.svg" alt="Fan Poker Teaching Skill preview" width="760" />
+[在线演示](https://hubujiu.github.io/fan-poker-teaching-skill/) · [基础示例](./examples/basic.html) · [运行时 API](./examples/theme-and-runtime.html) · [English](./README_EN.md)
 
 </div>
 
 ## 快速开始
 
-只需引入一个固定版本的 ES Module：
-
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.1.0/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@0.2.0/dist/fan-poker.js">
 </script>
-```
 
-然后直接写卡片：
-
-```html
-<fan-poker card-width="390px" card-height="520px">
+<fan-poker card-width="390px" card-height="520px" theme="auto">
   <fan-card tag="Git" title="工作区" symbol="01" accent="#f2a65a">
     工作区保存尚未提交的修改。
   </fan-card>
@@ -41,14 +31,8 @@ A dependency-free Web Component and Agent Skill for interactive lessons, tutoria
     <p><code>git add</code> 将修改放入暂存区。</p>
     <pre><code>git add README.md</code></pre>
   </fan-card>
-
-  <fan-card tag="Git" title="提交" symbol="03" accent="#8e9aef">
-    <code>git commit</code> 创建一次版本快照。
-  </fan-card>
 </fan-poker>
 ```
-
-卡片数量根据 `<fan-card>` 自动计算，不需要额外配置。
 
 也可以通过 npm 安装：
 
@@ -60,41 +44,65 @@ npm install @hubujiu/fan-poker-deck
 import "@hubujiu/fan-poker-deck";
 ```
 
-生产环境建议锁定具体版本，例如 `@0.1.0`，避免未来升级悄悄改变页面行为。
+卡片数量根据 `<fan-card>` 自动计算，不需要额外设置。
 
-## 为什么采用 Web Component
+## v0.2.0 新能力
 
-- **真正适合嵌入**：普通 HTML、Halo、Vue、React、Svelte、Astro 都能使用。
-- **生成内容更短**：AI 只生成 `<fan-card>`，不再复制整套动画代码。
-- **样式隔离**：Shadow DOM 防止博客主题、Bootstrap 或 Tailwind 污染牌面。
-- **零运行时依赖**：不加载框架和第三方动画库。
-- **原有动效保留**：单侧扇形、完整回牌、连续点击提速、拖动和键盘控制。
-- **仍有离线方案**：需要单个离线文件时，可继续使用 `assets/fan-poker-base.html`。
+- `theme="auto|light|dark"` 稳定主题模式
+- `setCards()`、`appendCard()`、`updateCard()`、`removeCard()`、`clear()`
+- `cardschange` 事件用于同步动态列表
+- 更多 Shadow DOM `part`，支持 `::part()` 精细定制
+- TypeScript 类型增强
+- `custom-elements.json`，便于编辑器和组件工具识别
+- Vue 与 React 接入示例
 
 ## 配置
 
-```html
-<fan-poker
-  card-width="390px"
-  card-height="520px"
-  start-index="0"
-  keyboard="true"
-  wheel="true"
-  draggable="true"
-  aria-label="Docker 入门教学">
-</fan-poker>
-```
-
 | 属性 | 默认值 | 说明 |
 |---|---:|---|
-| `card-width` | `390px` | 卡片宽度，必须包含 CSS 单位 |
-| `card-height` | `520px` | 卡片高度，必须包含 CSS 单位 |
+| `card-width` | `390px` | 卡片宽度，包含 CSS 单位 |
+| `card-height` | `520px` | 卡片高度，包含 CSS 单位 |
 | `start-index` | `0` | 初始卡片，下标从 0 开始 |
-| `keyboard` | `true` | 聚焦组件后支持方向键与空格 |
-| `wheel` | `true` | 支持鼠标滚轮切换 |
-| `draggable` | `true` | 支持左右拖动 |
+| `theme` | `auto` | `auto`、`light` 或 `dark` |
+| `keyboard` | `true` | 方向键、PageUp、PageDown 与空格 |
+| `wheel` | `true` | 鼠标滚轮切换 |
+| `draggable` | `true` | 左右拖动切换 |
 
-也可以通过 CSS 变量定制：
+## 运行时卡片
+
+```js
+const deck = document.querySelector("fan-poker");
+
+deck.setCards([
+  { tag: "Docker", title: "检查服务", content: "确认 daemon 已启动。", symbol: "01" },
+  { tag: "Docker", title: "运行容器", html: "<pre><code>docker run --rm hello-world</code></pre>", symbol: "02" }
+]);
+
+deck.appendCard({ tag: "Next", title: "Compose", content: "组织多容器应用。" });
+deck.updateCard(0, { title: "服务状态" });
+deck.removeCard(1);
+```
+
+动态 HTML 应只来自可信内容。
+
+## 导航 API 与事件
+
+```js
+deck.next();
+deck.previous();
+deck.goTo(3);
+deck.reset();
+
+deck.addEventListener("cardchange", (event) => {
+  console.log(event.detail.index);
+});
+
+deck.addEventListener("cardschange", (event) => {
+  console.log(event.detail.cardCount);
+});
+```
+
+## 样式定制
 
 ```css
 fan-poker {
@@ -107,120 +115,38 @@ fan-poker {
   --fan-accent: #e96d2f;
   --fan-radius: 24px;
 }
-```
 
-## JavaScript API
-
-```js
-const deck = document.querySelector("fan-poker");
-
-deck.next();
-deck.previous();
-deck.goTo(3);
-deck.reset();
-
-console.log(deck.currentIndex);
-console.log(deck.cardCount);
-```
-
-动态设置卡片：
-
-```js
-deck.cards = [
-  {
-    tag: "Docker",
-    title: "检查服务",
-    content: "确认 Docker daemon 已启动。",
-    symbol: "01",
-    accent: "#f2a65a"
-  },
-  {
-    tag: "Docker",
-    title: "运行容器",
-    html: "<pre><code>docker run --rm hello-world</code></pre>",
-    symbol: "02",
-    accent: "#7dcfb6"
-  }
-];
-```
-
-监听切换事件：
-
-```js
-deck.addEventListener("cardchange", event => {
-  console.log(event.detail);
-});
-```
-
-事件数据：
-
-```js
-{
-  index: 2,
-  previousIndex: 1,
-  cardCount: 6,
-  direction: "next",
-  source: "click"
+fan-poker::part(title) {
+  letter-spacing: -0.02em;
 }
 ```
 
+## Vue 与 React
+
+- Vue：[`examples/vue-example.vue`](./examples/vue-example.vue)
+- React：[`examples/react-example.jsx`](./examples/react-example.jsx)
+
+Vue + Vite 项目建议在编译配置中将 `fan-poker` 与 `fan-card` 标记为 Custom Elements。React 示例通过 `ref` 设置复杂的 `cards` 属性并监听原生事件。
+
 ## AI Skill
 
-安装仓库后，可以直接要求 AI：
+克隆仓库到 Agent 或 CLI 使用的 Skills 目录，然后描述主题：
 
 ```text
 使用 fan-poker-teaching-skill，生成一份 Linux 部署 Docker 的交互式教学卡片。
 ```
 
-Skill 默认输出正式 npm CDN 引入和短组件标签。只有明确要求完全离线的单文件时，才回退到内嵌动画模板。
+Skill 默认生成简短的组件引入和卡片标签。明确要求完全离线单文件时，才使用传统内嵌模板。
 
-## 项目结构
-
-```text
-fan-poker-teaching-skill/
-├── src/fan-poker.js             # Web Component 源码
-├── dist/fan-poker.js            # CDN 与 npm 分发文件
-├── types/fan-poker.d.ts         # TypeScript 类型
-├── examples/basic.html          # 基础标签用法
-├── examples/javascript-api.html # 动态数据与外部控制
-├── assets/fan-poker-base.html   # 传统离线单文件底座
-├── SKILL.md                     # AI 生成规范
-└── scripts/                     # 构建与校验
-```
-
-## 开发与校验
+## 开发
 
 ```bash
 npm test
+npm pack --dry-run
 ```
 
-它会重新生成 `dist/fan-poker.js`，并检查：
-
-- 源码与 dist 是否一致
-- Custom Elements 是否注册
-- 公共 API 与事件是否存在
-- Skill 与 README 是否使用组件 API
-- 顶栏、计数器和底部导航是否回归
-- npm 发布元数据是否完整
-
-## 浏览器兼容性
-
-目标为支持 Custom Elements、Shadow DOM、ResizeObserver 和 ES Modules 的现代浏览器。旧浏览器需要自行提供 polyfill。
-
-## Roadmap
-
-- [x] v0.1.0：Web Component、npm 发布、固定版本 CDN、尺寸配置、四种输入、公共 API、事件
-- [ ] v0.2.0：稳定主题令牌、更多动态数据能力、Vue / React 示例
-- [ ] v1.0.0：稳定 API、完整浏览器自动化测试和兼容性矩阵
+测试会检查源码与分发文件、主题和运行时 API、类型声明、Custom Elements Manifest、示例以及 npm 元数据。
 
 ## License
 
 MIT © [Hubujiu](https://github.com/Hubujiu)
-
----
-
-<div align="center">
-
-**这个组件对你的教程有帮助，可以点一个 Star，让更多内容创作者发现它。** ⭐
-
-</div>

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "README_EN.md",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "dist/fan-poker.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "FanPokerElement",
+          "tagName": "fan-poker",
+          "description": "Interactive single-sided fan poker teaching deck.",
+          "attributes": [
+            { "name": "card-width", "type": { "text": "string" }, "default": "390px" },
+            { "name": "card-height", "type": { "text": "string" }, "default": "520px" },
+            { "name": "start-index", "type": { "text": "number" }, "default": "0" },
+            { "name": "theme", "type": { "text": "\"auto\" | \"light\" | \"dark\"" }, "default": "auto" },
+            { "name": "keyboard", "type": { "text": "boolean" }, "default": "true" },
+            { "name": "wheel", "type": { "text": "boolean" }, "default": "true" },
+            { "name": "draggable", "type": { "text": "boolean" }, "default": "true" }
+          ],
+          "members": [
+            { "kind": "field", "name": "currentIndex", "readonly": true, "type": { "text": "number" } },
+            { "kind": "field", "name": "cardCount", "readonly": true, "type": { "text": "number" } },
+            { "kind": "field", "name": "cards", "type": { "text": "FanPokerCardInput[]" } },
+            { "kind": "method", "name": "setCards" },
+            { "kind": "method", "name": "appendCard" },
+            { "kind": "method", "name": "updateCard" },
+            { "kind": "method", "name": "removeCard" },
+            { "kind": "method", "name": "clear" },
+            { "kind": "method", "name": "next" },
+            { "kind": "method", "name": "previous" },
+            { "kind": "method", "name": "goTo" },
+            { "kind": "method", "name": "reset" }
+          ],
+          "events": [
+            { "name": "ready" },
+            { "name": "cardchangestart" },
+            { "name": "cardchange" },
+            { "name": "cardschange" }
+          ],
+          "cssParts": [
+            { "name": "stage" }, { "name": "deck" }, { "name": "card" }, { "name": "cover" },
+            { "name": "content" }, { "name": "tag" }, { "name": "title" }, { "name": "body" }, { "name": "footer" }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "FanCardElement",
+          "tagName": "fan-card",
+          "description": "Source card element consumed by fan-poker.",
+          "attributes": [
+            { "name": "tag", "type": { "text": "string" } },
+            { "name": "title", "type": { "text": "string" } },
+            { "name": "symbol", "type": { "text": "string" } },
+            { "name": "accent", "type": { "text": "string" } }
+          ]
+        }
+      ],
+      "exports": [
+        { "kind": "custom-element-definition", "name": "fan-poker", "declaration": { "name": "FanPokerElement", "module": "dist/fan-poker.js" } },
+        { "kind": "custom-element-definition", "name": "fan-card", "declaration": { "name": "FanCardElement", "module": "dist/fan-poker.js" } }
+      ]
+    }
+  ]
+}
