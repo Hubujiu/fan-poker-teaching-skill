@@ -1,62 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fan Poker theme and runtime API</title>
+  <title>Fan Poker Deck v2 custom worlds</title>
   <script type="module" src="../dist/fan-poker.js"></script>
   <style>
-    body { margin: 0; padding: 28px; font-family: system-ui, sans-serif; background: #f4f1eb; color: #171717; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
-    button { padding: 10px 14px; border: 1px solid #171717; border-radius: 10px; background: #fff; cursor: pointer; }
-    fan-poker { max-width: 560px; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; background:#eeeae3; }
+    fan-poker {
+      width:min(640px, calc(100vw - 20px));
+      --fan-card-radius: 30px;
+      --fan-scrollbar-accent: #ff6b35;
+    }
   </style>
 </head>
 <body>
-  <div class="toolbar">
-    <button data-theme="auto">Auto</button>
-    <button data-theme="light">Light</button>
-    <button data-theme="dark">Dark</button>
-    <button id="add">Add card</button>
-    <button id="update">Update current</button>
-    <button id="remove">Remove current</button>
-  </div>
+  <fan-poker id="deck" card-width="410px" card-height="540px" aria-label="Custom worlds">
+    <fan-card aria-label="Dark terminal">
+      <style>
+        :host {
+          display:block;
+          min-height:100%;
+          background:#0b110d;
+          color:#d7f9df;
+          font-family:ui-monospace, monospace;
+        }
 
-  <fan-poker id="deck" card-width="390px" card-height="520px" theme="auto">
-    <fan-card tag="Theme" title="Automatic theme" symbol="01" accent="#f2a65a">
-      Use <code>theme="auto"</code> to follow the operating system.
+        .terminal {
+          width:760px;
+          min-height:900px;
+          padding:24px;
+          background:#0b110d;
+        }
+      </style>
+      <section class="terminal">
+        <h1>Dark terminal world</h1>
+        <p>Move near the right or bottom edge to reveal floating scrollbars.</p>
+      </section>
     </fan-card>
-    <fan-card tag="Runtime" title="Update cards" symbol="02" accent="#7dcfb6">
-      Add, update, or remove cards without rebuilding the component yourself.
+
+    <fan-card aria-label="Paper article">
+      <style>
+        :host {
+          display:block;
+          min-height:100%;
+          background:#fbf2df;
+          color:#261f18;
+          font-family:Georgia, serif;
+        }
+
+        article { min-width:100%; min-height:800px; padding:38px; }
+        p { line-height:1.9; }
+      </style>
+      <article>
+        <h1>Paper article world</h1>
+        <p>Each card owns its complete visual language.</p>
+      </article>
     </fan-card>
   </fan-poker>
 
   <script type="module">
+    await customElements.whenDefined("fan-poker");
     const deck = document.querySelector("#deck");
-    let sequence = 3;
 
-    document.querySelectorAll("[data-theme]").forEach((button) => {
-      button.addEventListener("click", () => deck.setAttribute("theme", button.dataset.theme));
-    });
-
-    document.querySelector("#add").addEventListener("click", () => {
+    setTimeout(() => {
       deck.appendCard({
-        tag: "New",
-        title: `Runtime card ${sequence}`,
-        content: "This card was appended with appendCard().",
-        symbol: String(sequence).padStart(2, "0"),
-        accent: "#8e9aef"
+        label: "Runtime card",
+        html: `
+          <style>:host{display:block;min-height:100%;background:#d9f5ea;padding:30px}</style>
+          <h1>Added at runtime</h1>
+        `
       });
-      sequence += 1;
-    });
-
-    document.querySelector("#update").addEventListener("click", () => {
-      deck.updateCard(deck.currentIndex, { title: `Updated at ${new Date().toLocaleTimeString()}` });
-    });
-
-    document.querySelector("#remove").addEventListener("click", () => {
-      deck.removeCard(deck.currentIndex);
-    });
+    }, 1200);
   </script>
 </body>
 </html>
