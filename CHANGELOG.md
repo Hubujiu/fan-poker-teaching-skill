@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.3 - 2026-07-18
+
+### Fixed
+
+- Replaced the active-card focus outline with a compact focus indicator around the card index badge
+- Prevented the keyboard focus state from making every newly active card look permanently framed
+
+### Compatibility
+
+- Public markup, methods, events, CSS custom properties, CSS Parts, TypeScript declarations, and SSR behavior are unchanged
+
 ## 1.0.2 - 2026-07-18
 
 ### Fixed

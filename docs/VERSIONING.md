@@ -23,7 +23,7 @@ When practical, deprecated APIs remain available for at least one minor release 
 Production pages should pin the current tested version exactly:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js"></script>
 ```
 
 Using `@latest` is convenient for experiments but can introduce unreviewed changes. When a new version is adopted, update the documentation pins together with `package.json` so examples never lag behind the published package.

@@ -19,7 +19,7 @@
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js">
 </script>
 
 <fan-poker
@@ -43,7 +43,7 @@
 ## npm 使用
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.2
+npm install @hubujiu/fan-poker-deck@1.0.3
 ```
 
 ```js
@@ -62,14 +62,14 @@ import {
 
 该模块在 Node 和 SSR 环境中可安全导入。浏览器存在 `customElements` 时会自动注册；`defineFanPokerElements()` 可以安全重复调用。
 
-## 当前稳定版本：v1.0.2
+## 当前稳定版本：v1.0.3
 
 - 固定 `<fan-poker>` 与 `<fan-card>` 公共 API 合同
 - Node / SSR 安全导入
 - 显式导出两个元素类与幂等注册函数
 - 当前卡片位置的屏幕阅读器播报
 - `role`、`aria-roledescription`、`aria-keyshortcuts` 与活动卡片语义
-- 焦点框限定在当前卡片，不再包围整个扇形区域
+- 键盘焦点提示缩小到当前卡片左上角编号，不再给整张卡片描边
 - 松开鼠标或丢失指针捕获后会可靠结束拖动
 - 鼠标位于当前卡片内部时，滚轮优先滚动卡片内容
 - Node 20、22、24 测试矩阵

@@ -66,8 +66,9 @@
 
     const styleText = deck.shadowRoot.querySelector("style").textContent;
     checks.push([
-      "focusRingOnCurrentCard",
-      styleText.includes(":host(:focus-visible) .card.is-current") &&
+      "focusRingOnCardIndex",
+      styleText.includes(":host(:focus-visible) .card.is-current .card-index") &&
+        !styleText.includes(":host(:focus-visible) .card.is-current {") &&
         !styleText.includes(":host(:focus-visible) .stage")
     ]);
 

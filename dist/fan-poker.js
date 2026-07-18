@@ -34,9 +34,9 @@ const STYLES = String.raw`
     --fan-cover-text: #171717;
   }
 
-  :host(:focus-visible) .card.is-current {
+  :host(:focus-visible) .card.is-current .card-index {
     outline: 2px solid color-mix(in srgb, var(--fan-accent) 65%, transparent);
-    outline-offset: -4px;
+    outline-offset: 2px;
   }
 
   *, *::before, *::after { box-sizing: border-box; }

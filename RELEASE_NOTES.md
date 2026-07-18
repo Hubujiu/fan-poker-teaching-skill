@@ -1,33 +1,31 @@
-# Fan Poker Deck v1.0.2
+# Fan Poker Deck v1.0.3
 
-This patch fixes three interaction defects without changing the public `1.x` API.
+This patch removes the visible frame that followed every active card while preserving an accessible keyboard focus indicator.
 
 ## Fixed
 
-- The focus-visible outline is now drawn inside the current card instead of around the entire fan stage.
-- Mouse drags are cancelled when the primary button is released unexpectedly or pointer capture is lost.
-- Wheel input over the current card scrolls its content and no longer changes cards.
-- Nested scroll detection is limited to scroll containers inside the current card.
+- The full active card is no longer outlined when the deck has keyboard focus.
+- Keyboard focus is indicated with a compact outline around the active card's top-left index badge.
+- The original fixes for pointer cleanup and card-content wheel scrolling remain unchanged.
 
 ## Compatibility
 
-Markup, attributes, methods, events, CSS custom properties, CSS Parts, TypeScript declarations, and SSR behavior remain compatible with v1.0.0 and v1.0.1.
+There are no public API, markup, event, CSS custom property, CSS Part, TypeScript, or SSR contract changes.
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.2
+npm install @hubujiu/fan-poker-deck@1.0.3
 ```
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js">
 </script>
 ```
 
 ## Verification
 
 - Node 20, 22, and 24 validation
-- Node and SSR import checks
-- npm package payload and size checks
 - Chromium interaction and accessibility smoke tests
+- npm package payload and size checks
 - npm Registry, jsDelivr, and unpkg verification through Trusted Publishing

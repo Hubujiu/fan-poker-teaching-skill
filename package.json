@@ -1,6 +1,6 @@
 {
   "name": "@hubujiu/fan-poker-deck",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Dependency-free, accessible Web Component for interactive single-sided fan poker card lessons.",
   "type": "module",
   "main": "./dist/fan-poker.js",
