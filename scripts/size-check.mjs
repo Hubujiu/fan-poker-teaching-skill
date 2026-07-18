@@ -5,8 +5,12 @@ const { size } = await stat(file);
 const budget = 48 * 1024;
 
 if (size > budget) {
-  console.error(`✗ dist/fan-poker.js is ${size} bytes, above the ${budget}-byte v1 budget`);
+  console.error(
+    `✗ dist/fan-poker.js is ${size} bytes, above the ${budget}-byte v2 budget`
+  );
   process.exit(1);
 }
 
-console.log(`✓ distribution size ${size} bytes is within the ${budget}-byte budget`);
+console.log(
+  `✓ distribution size ${size} bytes is within the ${budget}-byte budget`
+);
