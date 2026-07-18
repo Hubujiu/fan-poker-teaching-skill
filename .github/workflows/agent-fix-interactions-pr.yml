@@ -1,0 +1,46 @@
+name: Apply interaction fixes on PR
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/agent-fix-interactions-pr.yml"
+      - "scripts/agent-fix-interactions.py"
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Apply fixes
+        run: python3 scripts/agent-fix-interactions.py
+
+      - name: Run package tests
+        run: npm test
+
+      - name: Run Chromium interaction smoke test
+        run: npm run test:browser
+
+      - name: Commit tested fixes
+        shell: bash
+        run: |
+          rm .github/workflows/agent-fix-interactions.yml
+          rm .github/workflows/agent-fix-interactions-pr.yml
+          rm scripts/agent-fix-interactions.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/fan-poker.js dist/fan-poker.js scripts/browser-smoke.html .github/workflows/agent-fix-interactions.yml .github/workflows/agent-fix-interactions-pr.yml scripts/agent-fix-interactions.py
+          git commit -m "Fix pointer and wheel interactions"
+          git push origin HEAD:${{ github.head_ref }}
