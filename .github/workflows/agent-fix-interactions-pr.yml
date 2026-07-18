@@ -31,7 +31,21 @@ jobs:
         run: npm test
 
       - name: Run Chromium interaction smoke test
+        id: browser-smoke
+        continue-on-error: true
         run: npm run test:browser
+
+      - name: Upload browser smoke result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: interaction-smoke-result
+          path: .github/browser-smoke-result.txt
+          if-no-files-found: warn
+
+      - name: Fail when browser smoke failed
+        if: steps.browser-smoke.outcome != 'success'
+        run: exit 1
 
       - name: Commit tested fixes
         shell: bash
