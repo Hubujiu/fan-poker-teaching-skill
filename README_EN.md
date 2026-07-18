@@ -19,7 +19,7 @@ A zero-runtime-dependency Web Component and Agent Skill with safe Node and SSR i
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js">
 </script>
 
 <fan-poker
@@ -42,7 +42,7 @@ The component calculates its card count from the `<fan-card>` children.
 ## npm
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.0
+npm install @hubujiu/fan-poker-deck@1.0.2
 ```
 
 ```js
@@ -61,13 +61,16 @@ import {
 
 The module is safe to import in Node and SSR environments. It automatically registers the elements when `customElements` exists, and `defineFanPokerElements()` is idempotent.
 
-## v1.0.0 stable contract
+## Current stable release: v1.0.2
 
 - Stable `<fan-poker>` and `<fan-card>` public API
 - Safe Node and SSR import
 - Exported element constructors and registration function
 - Live announcement of the active card and its position
 - Host, keyboard-shortcut, card-group, and active-card accessibility semantics
+- Focus indication stays inside the active card instead of outlining the full fan stage
+- Pointer drags reliably end after mouse release or lost pointer capture
+- Wheel input over the active card scrolls its content before any deck navigation
 - Node 20, 22, and 24 validation matrix
 - Real Chromium interaction and accessibility smoke test
 - 48 KiB distribution size budget

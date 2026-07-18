@@ -20,13 +20,13 @@ When practical, deprecated APIs remain available for at least one minor release 
 
 ## Fixed CDN versions
 
-Production pages should pin an exact version:
+Production pages should pin the current tested version exactly:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js"></script>
 ```
 
-Using `@latest` is convenient for experiments but can introduce unreviewed changes.
+Using `@latest` is convenient for experiments but can introduce unreviewed changes. When a new version is adopted, update the documentation pins together with `package.json` so examples never lag behind the published package.
 
 ## Release checklist
 
@@ -38,6 +38,7 @@ A stable release must pass:
 4. distribution size budget;
 5. npm package-content inspection;
 6. Chromium behavior and accessibility smoke tests;
-7. npm Registry, jsDelivr, and unpkg verification.
+7. npm Registry, jsDelivr, and unpkg verification;
+8. current-version checks for README, Skill, framework, and versioning examples.
 
 The checked-in `RELEASE_NOTES.md` is the canonical body for the matching GitHub Release.
