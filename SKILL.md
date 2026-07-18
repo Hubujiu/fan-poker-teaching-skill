@@ -1,6 +1,6 @@
 ---
 name: fan-poker-teaching-skill
-description: "Create embeddable interactive HTML lessons, tutorials, onboarding flows, revision cards, flashcards, and step-by-step guides with the fan-poker Web Component. Use this skill whenever a user asks to turn knowledge, notes, documentation, an article, a process, or a learning topic into clickable, draggable, stacked, card-based, or poker-style teaching content. Prefer the compact <fan-poker>/<fan-card> API with the fixed v1 npm CDN; use the legacy standalone template only when the user explicitly requires one offline file with no external script."
+description: "Create embeddable interactive HTML lessons, tutorials, onboarding flows, revision cards, flashcards, and step-by-step guides with the fan-poker Web Component. Use this skill whenever a user asks to turn knowledge, notes, documentation, an article, a process, or a learning topic into clickable, draggable, stacked, card-based, or poker-style teaching content. Prefer the compact <fan-poker>/<fan-card> API with the fixed current stable npm CDN; use the legacy standalone template only when the user explicitly requires one offline file with no external script."
 license: MIT
 ---
 
@@ -15,7 +15,7 @@ Use the fixed stable version:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js">
 </script>
 
 <fan-poker
@@ -59,7 +59,7 @@ Use these attributes on `<fan-poker>`:
 - `start-index`, zero-based, default `0`
 - `theme="auto|light|dark"`, default `auto`
 - `keyboard="false"` to disable keyboard controls
-- `wheel="false"` to disable wheel controls
+- `wheel="false"` to disable wheel controls; when enabled, wheel input inside the active card scrolls its content
 - `draggable="false"` to disable pointer dragging
 - `aria-label` with a short, meaningful lesson name
 
