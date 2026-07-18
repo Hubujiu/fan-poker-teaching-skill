@@ -19,7 +19,7 @@
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.0/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js">
 </script>
 
 <fan-poker
@@ -43,7 +43,7 @@
 ## npm 使用
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.0
+npm install @hubujiu/fan-poker-deck@1.0.2
 ```
 
 ```js
@@ -62,13 +62,16 @@ import {
 
 该模块在 Node 和 SSR 环境中可安全导入。浏览器存在 `customElements` 时会自动注册；`defineFanPokerElements()` 可以安全重复调用。
 
-## v1.0.0 稳定版
+## 当前稳定版本：v1.0.2
 
 - 固定 `<fan-poker>` 与 `<fan-card>` 公共 API 合同
 - Node / SSR 安全导入
 - 显式导出两个元素类与幂等注册函数
 - 当前卡片位置的屏幕阅读器播报
 - `role`、`aria-roledescription`、`aria-keyshortcuts` 与活动卡片语义
+- 焦点框限定在当前卡片，不再包围整个扇形区域
+- 松开鼠标或丢失指针捕获后会可靠结束拖动
+- 鼠标位于当前卡片内部时，滚轮优先滚动卡片内容
 - Node 20、22、24 测试矩阵
 - Chromium 交互与无障碍烟雾测试
 - 48 KiB 分发文件体积预算
@@ -83,7 +86,7 @@ import {
 | `start-index` | `0` | 初始卡片，下标从 0 开始 |
 | `theme` | `auto` | `auto`、`light` 或 `dark` |
 | `keyboard` | `true` | 键盘切换 |
-| `wheel` | `true` | 鼠标滚轮切换 |
+| `wheel` | `true` | 卡片内部滚动内容；牌组外露区域可滚轮切牌 |
 | `draggable` | `true` | 左右拖动切换 |
 | `aria-label` | 自动生成 | 牌组的无障碍名称 |
 
