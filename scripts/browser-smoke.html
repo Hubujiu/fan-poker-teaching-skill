@@ -24,7 +24,12 @@
 </script>
 <script type="module" src="../dist/fan-poker.js"></script>
 <fan-poker id="deck" card-width="320px" card-height="430px" theme="dark" aria-label="Smoke lesson">
-  <fan-card tag="One" title="First" symbol="01">A</fan-card>
+  <fan-card tag="One" title="First" symbol="01">
+    <p>Scrollable lesson line 01</p><p>Scrollable lesson line 02</p><p>Scrollable lesson line 03</p>
+    <p>Scrollable lesson line 04</p><p>Scrollable lesson line 05</p><p>Scrollable lesson line 06</p>
+    <p>Scrollable lesson line 07</p><p>Scrollable lesson line 08</p><p>Scrollable lesson line 09</p>
+    <p>Scrollable lesson line 10</p><p>Scrollable lesson line 11</p><p>Scrollable lesson line 12</p>
+  </fan-card>
   <fan-card tag="Two" title="Second" symbol="02">B</fan-card>
   <fan-card tag="Three" title="Third" symbol="03">C</fan-card>
 </fan-poker>
@@ -58,6 +63,63 @@
     checks.push(["activeCardSemantics", initialCards[0].getAttribute("role") === "group" && initialCards[0].getAttribute("aria-roledescription") === "card"]);
     checks.push(["singleAccessibleCard", initialCards.filter((card) => card.getAttribute("aria-hidden") === "false").length === 1]);
     checks.push(["initialStatus", status.textContent.includes("First") && status.textContent.includes("1 of 3")]);
+
+    const styleText = deck.shadowRoot.querySelector("style").textContent;
+    checks.push([
+      "focusRingOnCurrentCard",
+      styleText.includes(":host(:focus-visible) .card.is-current") &&
+        !styleText.includes(":host(:focus-visible) .stage")
+    ]);
+
+    const firstCard = initialCards[0];
+    const firstContent = firstCard.querySelector('[part="content"]');
+    firstContent.style.flex = "0 0 80px";
+    firstContent.style.height = "80px";
+    firstContent.style.maxHeight = "80px";
+    const firstBody = firstContent.querySelector('[part="body"]');
+    firstBody.style.flex = "0 0 800px";
+    firstBody.style.minHeight = "800px";
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const firstCover = firstCard.querySelector('[part="cover"]');
+    const wheelIndex = deck.currentIndex;
+    firstCover.dispatchEvent(
+      new WheelEvent("wheel", { deltaY: 120, bubbles: true, composed: true, cancelable: true })
+    );
+    checks.push([
+      "wheelScrollsCardContent",
+      deck.currentIndex === wheelIndex && firstContent.scrollTop > 0
+    ]);
+
+    firstCard.setPointerCapture = () => {};
+    firstCard.hasPointerCapture = () => false;
+    firstCard.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        pointerId: 41,
+        pointerType: "mouse",
+        isPrimary: true,
+        button: 0,
+        buttons: 1,
+        clientX: 180,
+        bubbles: true,
+        composed: true
+      })
+    );
+    firstCard.dispatchEvent(
+      new PointerEvent("pointermove", {
+        pointerId: 41,
+        pointerType: "mouse",
+        isPrimary: true,
+        buttons: 0,
+        clientX: 130,
+        bubbles: true,
+        composed: true
+      })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    checks.push([
+      "releasedPointerCancelsDrag",
+      deck._drag === null && !deck.shadowRoot.querySelector(".deck").classList.contains("is-dragging")
+    ]);
 
     deck.next();
     await new Promise((resolve) => setTimeout(resolve, 150));
