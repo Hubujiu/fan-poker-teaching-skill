@@ -1,152 +1,280 @@
 <!doctype html>
-<html><body>
-<script>
-  let smokeClock = performance.now();
-  const smokeTimers = new Map();
-  let smokeTimerId = 0;
-
-  window.requestAnimationFrame = (callback) => {
-    const id = ++smokeTimerId;
-    const timer = setTimeout(() => {
-      smokeTimers.delete(id);
-      smokeClock += 1000;
-      callback(smokeClock);
-    }, 0);
-    smokeTimers.set(id, timer);
-    return id;
-  };
-
-  window.cancelAnimationFrame = (id) => {
-    const timer = smokeTimers.get(id);
-    if (timer !== undefined) clearTimeout(timer);
-    smokeTimers.delete(id);
-  };
-</script>
+<html>
+<body>
 <script type="module" src="../dist/fan-poker.js"></script>
-<fan-poker id="deck" card-width="320px" card-height="430px" theme="dark" aria-label="Smoke lesson">
-  <fan-card tag="One" title="First" symbol="01">
-    <p>Scrollable lesson line 01</p><p>Scrollable lesson line 02</p><p>Scrollable lesson line 03</p>
-    <p>Scrollable lesson line 04</p><p>Scrollable lesson line 05</p><p>Scrollable lesson line 06</p>
-    <p>Scrollable lesson line 07</p><p>Scrollable lesson line 08</p><p>Scrollable lesson line 09</p>
-    <p>Scrollable lesson line 10</p><p>Scrollable lesson line 11</p><p>Scrollable lesson line 12</p>
+
+<fan-poker id="deck" card-width="320px" card-height="430px" aria-label="Smoke world deck">
+  <fan-card aria-label="First world">
+    <style>
+      :host { display:block; min-width:100%; min-height:100%; background:#101713; color:white; }
+      .world { min-width:760px; min-height:900px; padding:20px; background:#101713; }
+      button { padding:8px; }
+    </style>
+    <section class="world">
+      <h1>Custom world</h1>
+      <button type="button">Interactive</button>
+      <p>Full-card custom content</p>
+    </section>
   </fan-card>
-  <fan-card tag="Two" title="Second" symbol="02">B</fan-card>
-  <fan-card tag="Three" title="Third" symbol="03">C</fan-card>
+
+  <fan-card aria-label="Second world">
+    <style>:host{display:block;min-height:100%;background:#fff4df}</style>
+    <article><h1>Second</h1><p>Independent style world.</p></article>
+  </fan-card>
+
+  <fan-card aria-label="Third world">
+    <div>Third</div>
+  </fan-card>
 </fan-poker>
+
 <pre id="result">pending</pre>
+
 <script type="module">
   const result = document.querySelector("#result");
 
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   try {
-    const component = await import("../dist/fan-poker.js?browser-smoke=v1");
+    const component = await import("../dist/fan-poker.js?browser-smoke=v2");
     await customElements.whenDefined("fan-poker");
+
     const deck = document.querySelector("#deck");
     const events = [];
-    deck.addEventListener("cardchange", (event) => events.push(["cardchange", event.detail.index]));
-    deck.addEventListener("cardschange", (event) => events.push(["cardschange", event.detail.cardCount]));
-    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    deck.addEventListener("cardchange", (event) => {
+      events.push(["cardchange", event.detail.index, event.detail.source]);
+    });
+    deck.addEventListener("cardschange", (event) => {
+      events.push(["cardschange", event.detail.cardCount]);
+    });
+
+    await wait(120);
 
     const checks = [];
+    const cards = [...deck.shadowRoot.querySelectorAll('[part="card"]')];
+    const status = deck.shadowRoot.querySelector('[part="status"]');
+    const firstCard = cards[0];
+    const firstWorldHost = firstCard.querySelector('[part="world"]');
+    const firstWorldRoot = firstWorldHost.shadowRoot;
+    const firstScroll = firstWorldRoot.querySelector(".world-scroll");
+    const firstShell = firstWorldRoot.querySelector(".world-shell");
+    const horizontalBar = firstWorldRoot.querySelector('[part="horizontal-scrollbar"]');
+    const verticalBar = firstWorldRoot.querySelector('[part="vertical-scrollbar"]');
+    const worldStyleText = firstWorldRoot.querySelector("style").textContent;
+    const deckStyleText = deck.shadowRoot.querySelector("style").textContent;
+
     checks.push(["defined", Boolean(customElements.get("fan-poker"))]);
-    checks.push(["exports", typeof component.FanPokerElement === "function" && typeof component.FanCardElement === "function" && typeof component.defineFanPokerElements === "function"]);
+    checks.push([
+      "exports",
+      typeof component.FanPokerElement === "function" &&
+        typeof component.FanCardElement === "function" &&
+        typeof component.defineFanPokerElements === "function"
+    ]);
     checks.push(["idempotentRegistration", component.defineFanPokerElements() === true]);
     checks.push(["shadow", Boolean(deck.shadowRoot)]);
     checks.push(["initialCount", deck.cardCount === 3]);
-    checks.push(["theme", deck.getAttribute("theme") === "dark"]);
     checks.push(["hostRole", deck.getAttribute("role") === "region"]);
-    checks.push(["roleDescription", deck.getAttribute("aria-roledescription") === "interactive card deck"]);
-    checks.push(["keyShortcuts", deck.getAttribute("aria-keyshortcuts")?.includes("ArrowRight")]);
-
-    const initialCards = [...deck.shadowRoot.querySelectorAll('[part="card"]')];
-    const status = deck.shadowRoot.querySelector('[part="status"]');
-    checks.push(["parts", initialCards.length === 3 && Boolean(status)]);
-    checks.push(["activeCardSemantics", initialCards[0].getAttribute("role") === "group" && initialCards[0].getAttribute("aria-roledescription") === "card"]);
-    checks.push(["singleAccessibleCard", initialCards.filter((card) => card.getAttribute("aria-hidden") === "false").length === 1]);
-    checks.push(["initialStatus", status.textContent.includes("First") && status.textContent.includes("1 of 3")]);
-
-    const styleText = deck.shadowRoot.querySelector("style").textContent;
     checks.push([
-      "focusRingOnCardIndex",
-      styleText.includes(":host(:focus-visible) .card.is-current .card-index") &&
-        !styleText.includes(":host(:focus-visible) .card.is-current {") &&
-        !styleText.includes(":host(:focus-visible) .stage")
+      "roleDescription",
+      deck.getAttribute("aria-roledescription") === "interactive card deck"
+    ]);
+    checks.push([
+      "keyShortcuts",
+      deck.getAttribute("aria-keyshortcuts")?.includes("ArrowRight")
     ]);
 
-    const firstCard = initialCards[0];
-    const firstContent = firstCard.querySelector('[part="content"]');
-    firstContent.style.flex = "0 0 80px";
-    firstContent.style.height = "80px";
-    firstContent.style.maxHeight = "80px";
-    const firstBody = firstContent.querySelector('[part="body"]');
-    firstBody.style.flex = "0 0 800px";
-    firstBody.style.minHeight = "800px";
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    const firstCover = firstCard.querySelector('[part="cover"]');
-    const wheelIndex = deck.currentIndex;
-    firstCover.dispatchEvent(
-      new WheelEvent("wheel", { deltaY: 120, bubbles: true, composed: true, cancelable: true })
-    );
+    checks.push(["renderedCards", cards.length === 3]);
     checks.push([
-      "wheelScrollsCardContent",
-      deck.currentIndex === wheelIndex && firstContent.scrollTop > 0
+      "activeCardSemantics",
+      firstCard.getAttribute("role") === "group" &&
+        firstCard.getAttribute("aria-roledescription") === "card"
+    ]);
+    checks.push([
+      "singleAccessibleCard",
+      cards.filter((card) => card.getAttribute("aria-hidden") === "false").length === 1
+    ]);
+    checks.push([
+      "initialStatus",
+      status.textContent.includes("First world") &&
+        status.textContent.includes("1 of 3")
     ]);
 
-    firstCard.setPointerCapture = () => {};
-    firstCard.hasPointerCapture = () => false;
-    firstCard.dispatchEvent(
+    checks.push(["isolatedWorldShadow", Boolean(firstWorldRoot)]);
+    checks.push([
+      "customWorldPreserved",
+      Boolean(firstWorldRoot.querySelector("h1")) &&
+        firstWorldRoot.querySelector("h1").textContent === "Custom world"
+    ]);
+    checks.push([
+      "fixedTemplateRemoved",
+      !firstCard.querySelector('[part="cover"]') &&
+        !firstCard.querySelector('[part="title"]') &&
+        !firstCard.querySelector('[part="body"]')
+    ]);
+    checks.push([
+      "noFocusIndicator",
+      !deckStyleText.includes(":focus-visible) .card") &&
+        deckStyleText.includes(":host(:focus-visible)") &&
+        deckStyleText.includes("outline: none")
+    ]);
+
+    checks.push([
+      "nativeScrollbarsHidden",
+      worldStyleText.includes("scrollbar-width: none") &&
+        worldStyleText.includes(".world-scroll::-webkit-scrollbar")
+    ]);
+    checks.push([
+      "floatingScrollbarsPresent",
+      Boolean(horizontalBar) && Boolean(verticalBar)
+    ]);
+
+    await wait(80);
+    checks.push([
+      "overflowDetected",
+      horizontalBar.classList.contains("has-overflow") &&
+        verticalBar.classList.contains("has-overflow")
+    ]);
+
+    firstScroll.setPointerCapture = () => {};
+    firstScroll.hasPointerCapture = () => false;
+    firstScroll.releasePointerCapture = () => {};
+
+    firstScroll.dispatchEvent(
       new PointerEvent("pointerdown", {
-        pointerId: 41,
+        pointerId: 71,
         pointerType: "mouse",
         isPrimary: true,
         button: 0,
         buttons: 1,
-        clientX: 180,
+        clientX: 100,
+        clientY: 100,
         bubbles: true,
-        composed: true
+        composed: true,
+        cancelable: true
       })
     );
-    firstCard.dispatchEvent(
+
+    firstScroll.dispatchEvent(
       new PointerEvent("pointermove", {
-        pointerId: 41,
+        pointerId: 71,
         pointerType: "mouse",
         isPrimary: true,
-        buttons: 0,
-        clientX: 130,
+        button: 0,
+        buttons: 1,
+        clientX: 155,
+        clientY: 100,
         bubbles: true,
-        composed: true
+        composed: true,
+        cancelable: true
       })
     );
-    await new Promise((resolve) => setTimeout(resolve, 50));
+
     checks.push([
-      "releasedPointerCancelsDrag",
-      deck._drag === null && !deck.shadowRoot.querySelector(".deck").classList.contains("is-dragging")
+      "horizontalPanDirection",
+      firstScroll.scrollLeft > 0
+    ]);
+    checks.push([
+      "panShowsActiveScrollbar",
+      firstShell.classList.contains("panning-x")
+    ]);
+    checks.push([
+      "panDoesNotStartDeckDrag",
+      deck._drag === null
+    ]);
+
+    firstScroll.dispatchEvent(
+      new PointerEvent("pointerup", {
+        pointerId: 71,
+        pointerType: "mouse",
+        isPrimary: true,
+        button: 0,
+        buttons: 0,
+        clientX: 155,
+        clientY: 100,
+        bubbles: true,
+        composed: true,
+        cancelable: true
+      })
+    );
+
+    checks.push([
+      "panEndsCleanly",
+      !firstShell.classList.contains("panning-x")
+    ]);
+
+    const previousScrollTop = firstScroll.scrollTop;
+    firstScroll.scrollTop = previousScrollTop + 80;
+    firstScroll.dispatchEvent(new Event("scroll"));
+    checks.push([
+      "verticalScrollRemainsInsideWorld",
+      deck.currentIndex === 0 && firstScroll.scrollTop > previousScrollTop
     ]);
 
     deck.next();
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    await wait(80);
     checks.push(["next", deck.currentIndex === 1]);
-    checks.push(["nextStatus", status.textContent.includes("Second") && status.textContent.includes("2 of 3")]);
+    checks.push([
+      "nextStatus",
+      status.textContent.includes("Second world") &&
+        status.textContent.includes("2 of 3")
+    ]);
 
     deck.setCards([
-      { tag: "A", title: "Alpha", content: "One", symbol: "A" },
-      { tag: "B", title: "Beta", html: "<strong>Two</strong>", symbol: "B" }
+      {
+        label: "Alpha world",
+        html: "<style>:host{display:block;background:#fee;min-height:100%}</style><main>Alpha</main>"
+      },
+      {
+        label: "Beta world",
+        content: "Plain text"
+      }
     ]);
-    checks.push(["setCards", deck.cardCount === 2 && deck.currentIndex === 0]);
 
-    const appended = deck.appendCard({ tag: "C", title: "Gamma", content: "Three" });
+    await wait(40);
+    checks.push(["setCards", deck.cardCount === 2 && deck.currentIndex === 0]);
+    checks.push([
+      "setCardsHtml",
+      deck.shadowRoot
+        .querySelector('[part="card"] [part="world"]')
+        .shadowRoot.querySelector("main")?.textContent === "Alpha"
+    ]);
+
+    const appended = deck.appendCard({
+      label: "Gamma world",
+      html: "<section>Gamma</section>"
+    });
     checks.push(["appendCard", appended === 2 && deck.cardCount === 3]);
-    checks.push(["updateCard", deck.updateCard(1, { title: "Beta 2" }) && deck.cards[1].title === "Beta 2"]);
+
+    checks.push([
+      "updateCard",
+      deck.updateCard(1, { label: "Beta 2", html: "<strong>Two</strong>" }) &&
+        deck.cards[1].label === "Beta 2"
+    ]);
+
     const removed = deck.removeCard(0);
-    checks.push(["removeCard", removed?.title === "Alpha" && deck.cardCount === 2]);
-    checks.push(["cardschangeEvent", events.some(([name]) => name === "cardschange")]);
-    checks.push(["cardchangeEvent", events.some(([name, index]) => name === "cardchange" && index === 1)]);
+    checks.push([
+      "removeCard",
+      removed?.label === "Alpha world" && deck.cardCount === 2
+    ]);
+    checks.push([
+      "cardschangeEvent",
+      events.some(([name]) => name === "cardschange")
+    ]);
+    checks.push([
+      "cardchangeEvent",
+      events.some(([name, index]) => name === "cardchange" && index === 1)
+    ]);
 
     const ok = checks.every(([, value]) => value);
     result.textContent = JSON.stringify({ ok, checks, events });
     document.documentElement.dataset.smoke = ok ? "passed" : "failed";
   } catch (error) {
-    result.textContent = JSON.stringify({ ok: false, error: error?.stack || String(error) });
+    result.textContent = JSON.stringify({
+      ok: false,
+      error: error?.stack || String(error)
+    });
     document.documentElement.dataset.smoke = "failed";
   }
 </script>
-</body></html>
+</body>
+</html>
