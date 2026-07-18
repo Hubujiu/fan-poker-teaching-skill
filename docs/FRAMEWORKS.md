@@ -5,7 +5,7 @@ The package is safe to import in Node and SSR environments. In a browser it auto
 ## Plain HTML
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js"></script>
 ```
 
 ## Vite, Vue, React, Svelte, and Astro
@@ -13,7 +13,7 @@ The package is safe to import in Node and SSR environments. In a browser it auto
 Install once:
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.2
+npm install @hubujiu/fan-poker-deck@1.0.3
 ```
 
 Import the package from a client entry:
