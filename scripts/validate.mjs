@@ -16,7 +16,7 @@ const errors = [];
 
 if (source !== dist) errors.push("dist/fan-poker.js does not match src/fan-poker.js");
 if (pkg.name !== "@hubujiu/fan-poker-deck") errors.push("unexpected package name");
-if (pkg.version !== "1.0.1") errors.push("package version must be 1.0.1");
+if (pkg.version !== "1.0.2") errors.push("package version must be 1.0.2");
 if (pkg.publishConfig?.access !== "public") errors.push("publishConfig.access must be public");
 if (pkg.publishConfig?.provenance !== true) errors.push("publishConfig.provenance must be true");
 if (pkg.customElements !== "./custom-elements.json") errors.push("customElements manifest is not declared");
@@ -146,4 +146,4 @@ console.log("✓ source and dist match");
 console.log("✓ stable v1 module exports and SSR guards are present");
 console.log("✓ accessibility semantics and live status are present");
 console.log("✓ TypeScript and Custom Elements metadata match the v1 contract");
-console.log("✓ trusted publishing documentation and package metadata are ready for v1.0.1");
+console.log("✓ trusted publishing documentation and package metadata are ready for v1.0.2");

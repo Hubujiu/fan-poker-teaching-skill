@@ -1,43 +1,33 @@
-# Fan Poker Deck v1.0.1
+# Fan Poker Deck v1.0.2
 
-This security-focused patch keeps the v1.0 component code and public API unchanged while migrating npm publication to Trusted Publishing with GitHub Actions OIDC.
+This patch fixes three interaction defects without changing the public `1.x` API.
 
-## What changed
+## Fixed
 
-- Removed the npm write-token requirement from the publish job
-- Added an explicit GitHub OIDC environment check before a new version is published
-- Added `docs/PUBLISHING.md` with the trusted publisher identity and release process
-- Expanded `SECURITY.md` with supported-version, reporting, trusted-HTML, and supply-chain guidance
-- Added the authentication model to automated publication results
+- The focus-visible outline is now drawn inside the current card instead of around the entire fan stage.
+- Mouse drags are cancelled when the primary button is released unexpectedly or pointer capture is lost.
+- Wheel input over the current card scrolls its content and no longer changes cards.
+- Nested scroll detection is limited to scroll containers inside the current card.
 
-## Runtime compatibility
+## Compatibility
 
-There are no runtime, markup, TypeScript, event, CSS variable, or CSS Part changes from v1.0.0.
-
-Existing pages can remain pinned to v1.0.0. New installations may use:
+Markup, attributes, methods, events, CSS custom properties, CSS Parts, TypeScript declarations, and SSR behavior remain compatible with v1.0.0 and v1.0.1.
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.1
+npm install @hubujiu/fan-poker-deck@1.0.2
 ```
-
-Or the fixed CDN module:
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.1/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.2/dist/fan-poker.js">
 </script>
 ```
 
-## Supply-chain verification
-
-The release is accepted only after:
+## Verification
 
 - Node 20, 22, and 24 validation
 - Node and SSR import checks
-- npm package payload inspection
-- distribution size-budget validation
-- Chromium interaction and accessibility tests
-- npm Registry, jsDelivr, and unpkg verification
-
-The npm package is published by the `publish-npm.yml` GitHub Actions workflow using a short-lived OIDC credential tied to this repository and workflow.
+- npm package payload and size checks
+- Chromium interaction and accessibility smoke tests
+- npm Registry, jsDelivr, and unpkg verification through Trusted Publishing

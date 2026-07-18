@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.2 - 2026-07-18
+
+### Fixed
+
+- Kept the keyboard focus indicator on the active card instead of drawing a large frame around the full fan stage
+- Cancelled stale mouse drags when the primary button is no longer pressed or pointer capture is lost
+- Made wheel input inside the active card scroll card content instead of changing cards
+- Scoped nested-scroll detection to elements inside the active card
+
+### Validation
+
+- Added Chromium regression checks for focus-ring scope, card-content wheel scrolling, and released-pointer drag cleanup
+
 ## 1.0.1 - 2026-07-17
 
 ### Security
