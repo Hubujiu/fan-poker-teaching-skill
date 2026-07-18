@@ -1,7 +1,7 @@
 {
   "name": "@hubujiu/fan-poker-deck",
-  "version": "1.0.3",
-  "description": "Dependency-free, accessible Web Component for interactive single-sided fan poker card lessons.",
+  "version": "2.0.0",
+  "description": "Dependency-free Web Component for fan-shaped decks of isolated, fully custom scrollable card worlds.",
   "type": "module",
   "main": "./dist/fan-poker.js",
   "module": "./dist/fan-poker.js",
@@ -49,9 +49,10 @@
     "interactive-tutorial",
     "education",
     "html",
-    "flashcards",
+    "custom-card",
+    "scroll-container",
     "poker-cards",
-    "accessible",
+    "shadow-dom",
     "ssr-safe"
   ],
   "homepage": "https://hubujiu.github.io/fan-poker-teaching-skill/",
