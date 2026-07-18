@@ -1,44 +1,34 @@
-# Accessibility
+# Accessibility and interaction
 
-`fan-poker` is designed to remain operable without a pointer and to expose one active card at a time to assistive technology.
+`<fan-poker>` exposes a region with an interactive card-deck description. Only the current rendered card is accessible; rear cards are `aria-hidden` and their worlds are inert.
 
-## Keyboard controls
+Each source `<fan-card>` should include an `aria-label`. The active label and position are announced through a polite live region.
 
-- Right, Down, Page Down, or Space: next card
-- Left, Up, or Page Up: previous card
+## Keyboard
 
-The host is focusable by default and exposes `aria-keyshortcuts` for these commands. Set a meaningful `aria-label` on every deck.
+- Right / Down / Page Down: next card
+- Left / Up / Page Up: previous card
+- Home: first card
+- End: last card
 
-```html
-<fan-poker aria-label="Git basics lesson">
-  ...
-</fan-poker>
+The component intentionally draws no focus indicator. A product that requires a visible keyboard indication can style the host externally:
+
+```css
+fan-poker:focus-visible {
+  box-shadow: 0 0 0 3px rgba(233, 109, 47, .25);
+}
 ```
 
-## Screen reader behavior
+## Gesture priority
 
-- The host uses `role="region"` and an interactive card-deck role description.
-- Rendered cards use `role="group"` and a card role description.
-- Only the active rendered card has `aria-hidden="false"`.
-- A polite live region announces the active card title and its position in the deck.
-- The `status` Shadow Part is visually hidden by default and remains available to assistive technology.
+1. Buttons, links, form controls, `contenteditable`, and `[data-fan-interactive]` retain their own interaction.
+2. A card world with horizontal overflow owns horizontal panning.
+3. Otherwise, a horizontal drag on the current card navigates the deck.
+4. Vertical movement remains card scrolling.
+5. Clicking an exposed rear card navigates directly to it.
 
-## Reduced motion
+## Scrolling
 
-When `prefers-reduced-motion: reduce` is active, navigation animations complete almost immediately while preserving the same state changes and events.
+Native scrollbars are hidden, but the content remains a real `overflow: auto` region. Floating tracks appear when the pointer approaches the right or bottom edge, while scrolling, and while dragging a thumb.
 
-## Author responsibilities
-
-The component cannot repair inaccessible lesson content. Authors should:
-
-- keep card titles short and distinct;
-- provide alternative text for images;
-- use semantic headings, lists, links, and code blocks;
-- avoid relying on color alone;
-- verify accent colors maintain readable cover contrast;
-- avoid placing important controls inside non-current cards;
-- sanitize or trust any content supplied through the runtime `html` field.
-
-## Testing
-
-The repository browser smoke test checks keyboard-ready focus semantics, current-card visibility, live status output, reduced-motion navigation, runtime updates, and public events in Chromium.
+Do not rely only on the floating bar for content discovery. The card content should visually suggest that more material exists when scrolling is essential.
