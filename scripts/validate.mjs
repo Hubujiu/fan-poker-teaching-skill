@@ -12,11 +12,15 @@ const manifest = JSON.parse(await readFile(new URL("custom-elements.json", root)
 const readme = await readFile(new URL("README.md", root), "utf8");
 const readmeEnglish = await readFile(new URL("README_EN.md", root), "utf8");
 const skill = await readFile(new URL("SKILL.md", root), "utf8");
+const frameworks = await readFile(new URL("docs/FRAMEWORKS.md", root), "utf8");
+const versioning = await readFile(new URL("docs/VERSIONING.md", root), "utf8");
+const releaseNotes = await readFile(new URL("RELEASE_NOTES.md", root), "utf8");
+const landingPage = await readFile(new URL("index.html", root), "utf8");
 const errors = [];
 
 if (source !== dist) errors.push("dist/fan-poker.js does not match src/fan-poker.js");
 if (pkg.name !== "@hubujiu/fan-poker-deck") errors.push("unexpected package name");
-if (pkg.version !== "1.0.2") errors.push("package version must be 1.0.2");
+if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(pkg.version)) errors.push("package version must be valid semantic versioning");
 if (pkg.publishConfig?.access !== "public") errors.push("publishConfig.access must be public");
 if (pkg.publishConfig?.provenance !== true) errors.push("publishConfig.provenance must be true");
 if (pkg.customElements !== "./custom-elements.json") errors.push("customElements manifest is not declared");
@@ -101,8 +105,21 @@ for (const file of requiredFiles) {
   catch { errors.push(`required file missing: ${file}`); }
 }
 
-for (const document of [readme, readmeEnglish, skill]) {
-  if (!document.includes("@hubujiu/fan-poker-deck@1.0.0")) errors.push("stable documentation must keep an exact v1 CDN pin");
+const currentPackagePin = `${pkg.name}@${pkg.version}`;
+for (const [name, document] of [
+  ["README.md", readme],
+  ["README_EN.md", readmeEnglish],
+  ["SKILL.md", skill],
+  ["docs/FRAMEWORKS.md", frameworks],
+  ["docs/VERSIONING.md", versioning],
+  ["index.html", landingPage]
+]) {
+  if (!document.includes(currentPackagePin)) {
+    errors.push(`${name} must reference the current package version ${currentPackagePin}`);
+  }
+}
+if (!releaseNotes.startsWith(`# Fan Poker Deck v${pkg.version}\n`)) {
+  errors.push(`RELEASE_NOTES.md must target v${pkg.version}`);
 }
 
 for (const forbidden of ["page-nav", "page-button", 'id="counter"', 'class="toolbar"']) {
@@ -146,4 +163,4 @@ console.log("✓ source and dist match");
 console.log("✓ stable v1 module exports and SSR guards are present");
 console.log("✓ accessibility semantics and live status are present");
 console.log("✓ TypeScript and Custom Elements metadata match the v1 contract");
-console.log("✓ trusted publishing documentation and package metadata are ready for v1.0.2");
+console.log(`✓ documentation and package metadata consistently reference v${pkg.version}`);
