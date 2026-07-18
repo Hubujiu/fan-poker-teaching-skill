@@ -1,70 +1,49 @@
-# Framework and SSR integration
+# Framework integration
 
-The package is safe to import in Node and SSR environments. In a browser it automatically registers the custom elements. In Node, the same import exposes constructors and `defineFanPokerElements()` without requiring DOM globals.
+Install the pinned release:
+
+```bash
+npm install @hubujiu/fan-poker-deck@2.0.0
+```
+
+The package is safe to import during Node and SSR evaluation. Import it from a client entry to register the elements.
 
 ## Plain HTML
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js"></script>
 ```
 
 ## Vite, Vue, React, Svelte, and Astro
-
-Install once:
-
-```bash
-npm install @hubujiu/fan-poker-deck@1.0.3
-```
-
-Import the package from a client entry:
 
 ```js
 import "@hubujiu/fan-poker-deck";
 ```
 
-Vue compiler configuration should treat `fan-poker` and `fan-card` as native custom elements. See `examples/vue-example.vue`.
+Card markup is ordinary light DOM source markup. The component clones it into an isolated world Shadow Root when rendered.
 
-React can render the tags directly. Use a ref for methods and complex runtime card data, and subscribe to native Custom Events with `addEventListener`. See `examples/react-example.jsx`.
+## Next.js
 
-## Next.js and other SSR frameworks
+Import from a client component:
 
-A server-side import no longer throws:
-
-```js
-import {
-  FanPokerElement,
-  FanCardElement,
-  defineFanPokerElements
-} from "@hubujiu/fan-poker-deck";
-```
-
-The module returns without registering anything when `customElements` is unavailable. Registration happens automatically when the client bundle evaluates the module. A client component may also call the function explicitly:
-
-```js
+```tsx
 "use client";
 
-import { useEffect } from "react";
-import { defineFanPokerElements } from "@hubujiu/fan-poker-deck";
+import "@hubujiu/fan-poker-deck";
 
-export function FanPokerRegistration() {
-  useEffect(() => {
-    defineFanPokerElements();
-  }, []);
-  return null;
+export default function Deck() {
+  return (
+    <fan-poker card-width="390px" card-height="520px" aria-label="Lesson">
+      <fan-card aria-label="First world">
+        <style>{`
+          :host { display:block; min-height:100%; background:#fff8ed; }
+          main { min-width:100%; min-height:100%; padding:28px; }
+        `}</style>
+        <main>Complete custom card face</main>
+      </fan-card>
+    </fan-poker>
+  );
 }
 ```
 
-## Custom element registries
-
-The registration function is idempotent and accepts a compatible registry:
-
-```js
-const registry = new CustomElementRegistry();
-defineFanPokerElements(registry);
-```
-
-Browser support for scoped registries varies, so confirm target-browser behavior before depending on this pattern.
-
-## Hydration notes
-
-The source `<fan-card>` children remain in the light DOM and are hidden after connection. The visible animated cards are generated inside Shadow DOM. Server-rendered source cards therefore remain deterministic and can be hydrated without reproducing the internal animation markup.
+React users may need local JSX intrinsic-element declarations when their TypeScript setup does not consume the package declarations automatically.

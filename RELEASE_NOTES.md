@@ -1,31 +1,44 @@
-# Fan Poker Deck v1.0.3
+# Fan Poker Deck v2.0.0
 
-This patch removes the visible frame that followed every active card while preserving an accessible keyboard focus indicator.
+This major release turns every card into an isolated, fully user-defined world.
 
-## Fixed
+## Added
 
-- The full active card is no longer outlined when the deck has keyboard focus.
-- Keyboard focus is indicated with a compact outline around the active card's top-left index badge.
-- The original fixes for pointer cleanup and card-content wheel scrolling remain unchanged.
+- Complete card-face HTML and CSS ownership
+- One Shadow Root per card world
+- Real vertical and horizontal overflow inside the card boundary
+- Hidden native scrollbars
+- Floating glass-style scrollbars near the right and bottom edges
+- Direct horizontal content panning with same-direction thumb feedback
+- Gesture arbitration between horizontal card content and deck navigation
+- Exported scrollbar CSS Parts and styling variables
 
-## Compatibility
+## Removed
 
-There are no public API, markup, event, CSS custom property, CSS Part, TypeScript, or SSR contract changes.
+- Fixed cover, index, tag, title, body, and footer layout
+- Built-in card theme structure
+- Component focus outline
+- Wheel-based deck navigation
+
+## Migration
+
+v1 pages should either pin `@hubujiu/fan-poker-deck@1.0.3` or move their complete visual structure into each `<fan-card>`.
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.3
+npm install @hubujiu/fan-poker-deck@2.0.0
 ```
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js">
 </script>
 ```
 
 ## Verification
 
 - Node 20, 22, and 24 validation
-- Chromium interaction and accessibility smoke tests
+- Node and SSR import checks
+- Chromium custom-world, overflow, floating-scrollbar, and gesture tests
 - npm package payload and size checks
 - npm Registry, jsDelivr, and unpkg verification through Trusted Publishing

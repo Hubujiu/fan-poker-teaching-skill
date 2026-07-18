@@ -3,21 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fan Poker Web Component · Basic</title>
+  <title>Fan Poker Deck v2 basic</title>
   <script type="module" src="../dist/fan-poker.js"></script>
-  <style>html,body{margin:0;min-height:100%;background:transparent}body{padding:24px 8px}</style>
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      background: #f4f1eb;
+    }
+
+    fan-poker {
+      width: min(610px, calc(100vw - 20px));
+    }
+  </style>
 </head>
 <body>
-  <fan-poker card-width="390px" card-height="520px" aria-label="Git 基础教学牌组">
-    <fan-card tag="Git" title="工作区" symbol="01" accent="#f2a65a">
-      工作区保存你正在编辑、但尚未提交的文件变化。
+  <fan-poker card-width="390px" card-height="520px" aria-label="Git 入门">
+    <fan-card aria-label="工作区">
+      <style>
+        :host {
+          display: block;
+          min-height: 100%;
+          background: #fff8ed;
+          color: #171717;
+          font-family: system-ui, sans-serif;
+        }
+
+        article {
+          min-width: 100%;
+          min-height: 100%;
+          padding: 32px;
+        }
+
+        h1 { margin-top: 80px; font-size: 42px; }
+      </style>
+
+      <article>
+        <small>Git 01</small>
+        <h1>工作区</h1>
+        <p>保存尚未提交的文件变化。</p>
+      </article>
     </fan-card>
-    <fan-card tag="Git" title="暂存区" symbol="02" accent="#7dcfb6">
-      <p><code>git add</code> 把选中的修改放进暂存区。</p>
-      <pre><code>git add README.md</code></pre>
-    </fan-card>
-    <fan-card tag="Git" title="提交" symbol="03" accent="#8e9aef">
-      <p><code>git commit</code> 将暂存区内容保存为一次版本快照。</p>
+
+    <fan-card aria-label="暂存区">
+      <style>
+        :host {
+          display: block;
+          min-height: 100%;
+          background: #d9f5ea;
+          color: #13251f;
+          font-family: system-ui, sans-serif;
+        }
+
+        main {
+          min-width: 100%;
+          min-height: 100%;
+          padding: 28px;
+        }
+      </style>
+
+      <main>
+        <h1>暂存区</h1>
+        <p><code>git add</code> 选择下一次提交的内容。</p>
+      </main>
     </fan-card>
   </fan-poker>
 </body>

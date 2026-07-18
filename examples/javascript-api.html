@@ -3,39 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fan Poker Web Component · JavaScript API</title>
+  <title>Fan Poker Deck v2 JavaScript API</title>
   <script type="module" src="../dist/fan-poker.js"></script>
   <style>
-    body{margin:0;padding:24px 8px;font-family:system-ui;background:#f7f4ee;color:#171717}
-    .controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:12px}
-    button{padding:9px 14px;border:1px solid #ccc;border-radius:10px;background:#fff;cursor:pointer}
-    #status{text-align:center;color:#666}
+    body { margin:0; min-height:100vh; display:grid; place-items:center; background:#f4f1eb; }
+    fan-poker { width:min(620px, calc(100vw - 20px)); }
   </style>
 </head>
 <body>
-  <div class="controls">
-    <button data-action="previous">上一张</button>
-    <button data-action="next">下一张</button>
-    <button data-action="goto">跳到第 4 张</button>
-  </div>
-  <p id="status">等待组件就绪</p>
-  <fan-poker id="deck" card-width="360px" card-height="480px"></fan-poker>
+  <fan-poker id="deck" aria-label="Runtime deck"></fan-poker>
+
   <script type="module">
+    await customElements.whenDefined("fan-poker");
+
     const deck = document.querySelector("#deck");
-    deck.cards = [
-      { tag: "API", title: "next()", content: "切换到下一张。", symbol: "N", accent: "#f2a65a" },
-      { tag: "API", title: "previous()", content: "切换到上一张。", symbol: "P", accent: "#7dcfb6" },
-      { tag: "API", title: "goTo(index)", content: "沿最短路径跳转。", symbol: "G", accent: "#8e9aef" },
-      { tag: "Event", title: "cardchange", content: "切换完成后派发事件。", symbol: "E", accent: "#f4978e" }
-    ];
-    document.querySelector("[data-action=previous]").onclick = () => deck.previous();
-    document.querySelector("[data-action=next]").onclick = () => deck.next();
-    document.querySelector("[data-action=goto]").onclick = () => deck.goTo(3);
-    deck.addEventListener("ready", event => {
-      document.querySelector("#status").textContent = `已加载 ${event.detail.cardCount} 张卡片`;
-    });
-    deck.addEventListener("cardchange", event => {
-      document.querySelector("#status").textContent = `当前第 ${event.detail.index + 1} 张`;
+
+    deck.setCards([
+      {
+        label: "Dashboard",
+        html: `
+          <style>
+            :host { display:block; min-height:100%; background:#fff8ed; font-family:system-ui; }
+            main { min-width:100%; min-height:100%; padding:28px; }
+          </style>
+          <main><h1>Runtime dashboard</h1><button>Interactive button</button></main>
+        `
+      },
+      {
+        label: "Wide canvas",
+        html: `
+          <style>
+            :host { display:block; min-height:100%; background:#101713; color:#d7f9df; }
+            main { width:760px; min-height:100%; padding:24px; }
+          </style>
+          <main><h1>Horizontal world</h1><p>Drag in the card to scroll.</p></main>
+        `
+      }
+    ]);
+
+    deck.addEventListener("cardchange", (event) => {
+      console.log("active card", event.detail.index);
     });
   </script>
 </body>

@@ -3,50 +3,596 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fan Poker Deck · 可嵌入的交互式教学牌组</title>
+  <title>Fan Poker Deck v2 · 每张卡都是一个独立世界</title>
   <link rel="icon" type="image/x-icon" href="./media/favicon.ico?v=1">
   <link rel="shortcut icon" type="image/x-icon" href="./media/favicon.ico?v=1">
-  <meta name="description" content="一行引入，把教程、复习卡和步骤说明变成零依赖、支持 SSR 的扑克牌式 Web Component。">
-  <meta property="og:title" content="Fan Poker Deck v1.0.3">
-  <meta property="og:description" content="A stable, accessible, SSR-safe Web Component and Agent Skill for interactive teaching decks.">
+  <meta
+    name="description"
+    content="零依赖扑克牌式 Web Component。每张卡片拥有独立 Shadow Root、完整自定义卡面、内部滚动和浮动边缘滚动条。">
+  <meta property="og:title" content="Fan Poker Deck v2.0.0">
+  <meta
+    property="og:description"
+    content="A fan-shaped Web Component where every card is an isolated custom world.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://hubujiu.github.io/fan-poker-teaching-skill/media/preview.svg">
+  <meta
+    property="og:image"
+    content="https://hubujiu.github.io/fan-poker-teaching-skill/media/preview.svg">
   <meta name="theme-color" content="#e96d2f">
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js"></script>
+
+  <script
+    type="module"
+    src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js">
+  </script>
+
   <style>
-    :root{--bg:#f7f4ee;--panel:#fff;--text:#171717;--muted:#68645f;--line:rgba(23,23,23,.14);--accent:#e96d2f}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}.nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 0}.brand{font-weight:850;text-decoration:none;letter-spacing:-.03em}.links{display:flex;align-items:center;gap:18px}.links a{text-decoration:none;color:var(--muted);font-size:14px}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border:1px solid var(--text);border-radius:14px;background:var(--text);color:#fff!important;text-decoration:none;font-weight:750}.button.secondary{background:transparent;color:var(--text)!important}.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(390px,.9fr);gap:40px;align-items:center;padding:70px 0}.eyebrow{display:inline-flex;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:13px;font-weight:750}.hero h1{margin:22px 0 18px;font-size:clamp(46px,7vw,82px);line-height:.98;letter-spacing:-.065em}.hero p{margin:0;color:var(--muted);font-size:clamp(17px,2vw,21px);line-height:1.75}.actions,.demo-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:34px}.stats div{padding:14px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.stats strong{display:block;color:var(--text);font-size:17px}.section{padding:72px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px}.section h2{margin:0;font-size:clamp(34px,5vw,56px);letter-spacing:-.05em}.section-head p{max-width:520px;margin:0;color:var(--muted);line-height:1.7}.demo{padding:24px 8px;border:1px solid var(--line);border-radius:30px;background:rgba(255,255,255,.65)}.demo-actions{justify-content:center;margin:18px 0 0}.demo-actions button{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.feature,.code,.example{padding:24px;border:1px solid var(--line);border-radius:22px;background:#fff}.feature b{display:block;margin-bottom:10px;font-size:19px}.feature p,.example p{margin:0;color:var(--muted);line-height:1.7}.code{overflow:auto;background:#171717;color:#f3f3f3}.code pre{margin:0;font:14px/1.75 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.example{display:block;text-decoration:none}.example small{color:var(--accent);font-weight:800}.example h3{margin:10px 0;font-size:25px}.footer{display:flex;justify-content:space-between;gap:20px;padding:34px 0 48px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}@media(max-width:880px){.hero{grid-template-columns:1fr}.grid,.examples{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.links a:not(.button){display:none}}@media(max-width:520px){.wrap{width:min(100% - 20px,1120px)}.stats{grid-template-columns:1fr}.hero h1{font-size:48px}.footer{flex-direction:column}}
+    :root {
+      --bg: #f4f1eb;
+      --panel: #fff;
+      --text: #171717;
+      --muted: #6f6a63;
+      --line: rgba(23, 23, 23, .14);
+      --accent: #e96d2f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 0;
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: -.04em;
+      text-decoration: none;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .links a {
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 1px solid var(--text);
+      border-radius: 14px;
+      background: var(--text);
+      color: #fff !important;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--text) !important;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(470px, 1.1fr);
+      gap: 48px;
+      align-items: center;
+      padding: 62px 0 84px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 22px 0 18px;
+      font-size: clamp(48px, 7vw, 84px);
+      line-height: .98;
+      letter-spacing: -.068em;
+    }
+
+    .hero-copy > p {
+      max-width: 650px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.75;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-deck {
+      min-width: 0;
+    }
+
+    .hero-deck fan-poker {
+      width: min(650px, 100%);
+      --fan-card-width: min(410px, calc(100vw - 100px));
+      --fan-card-height: 550px;
+      --fan-card-radius: 28px;
+    }
+
+    .section {
+      padding: 78px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: clamp(36px, 5vw, 58px);
+      letter-spacing: -.055em;
+    }
+
+    .section-head p {
+      max-width: 550px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature,
+    .code,
+    .migration {
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #fff;
+    }
+
+    .feature b {
+      display: block;
+      margin-bottom: 11px;
+      font-size: 20px;
+    }
+
+    .feature p,
+    .migration p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .code {
+      overflow: auto;
+      background: #171717;
+      color: #f3f3f3;
+    }
+
+    .code pre {
+      margin: 0;
+      font: 14px/1.75 ui-monospace, SFMono-Regular, Consolas, monospace;
+      white-space: pre-wrap;
+    }
+
+    .migration {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .migration h3 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -.04em;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 36px 0 50px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 940px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-deck {
+        order: -1;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .wrap {
+        width: min(100% - 20px, 1160px);
+      }
+
+      .links a:not(.button) {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 24px;
+      }
+
+      .hero-deck fan-poker {
+        --fan-card-height: 520px;
+      }
+
+      .section-head,
+      .migration,
+      .footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
+
 <body>
-<header class="wrap nav"><a class="brand" href="#top">🃏 Fan Poker Deck</a><nav class="links"><a href="#demo">演示</a><a href="#quick">接入</a><a href="./docs/API.md">API</a><a class="button" href="https://github.com/Hubujiu/fan-poker-teaching-skill">GitHub</a></nav></header>
-<main id="top">
-  <section class="wrap hero">
-    <div><span class="eyebrow">v1.0.3 · Stable Web Component · OIDC Published</span><h1>一行引入，知识开始翻牌。</h1><p>动画留在组件里，AI 只生成标题与内容。稳定版支持 SSR 安全导入、明暗主题、运行时卡片 API 和完整无障碍语义。</p><div class="actions"><a class="button" href="#demo">立即试玩</a><a class="button secondary" href="#quick">复制代码</a></div><div class="stats"><div><strong>0 deps</strong>零运行时依赖</div><div><strong>SSR safe</strong>Node 可安全导入</div><div><strong>Stable API</strong>1.x 兼容合同</div></div></div>
-    <img src="./media/preview.svg" alt="Fan Poker Deck preview" style="width:100%;border:1px solid var(--line);border-radius:28px;background:#fff">
-  </section>
-  <section class="wrap section" id="demo"><div class="section-head"><h2>组件就在这一页运行。</h2><p>点击、拖动、滚轮或键盘切牌。当前卡片标题与位置也会通过礼貌 live region 提供给辅助技术。</p></div><div class="demo"><fan-poker id="demoDeck" card-width="390px" card-height="520px" theme="auto" aria-label="Fan Poker v1.0.3 功能演示"><fan-card tag="Stable" title="稳定 API" symbol="01" accent="#f2a65a">属性、方法、事件、CSS 变量与 Parts 进入 1.x 兼容合同。</fan-card><fan-card tag="SSR" title="安全导入" symbol="02" accent="#7dcfb6">Node 与 SSR 环境可导入模块，浏览器端继续自动注册组件。</fan-card><fan-card tag="A11y" title="无障碍语义" symbol="03" accent="#8e9aef">键盘快捷键、活动卡片语义与状态播报都由组件负责。</fan-card></fan-poker><div class="demo-actions"><button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="dark">Dark</button><button id="addCard">Add card</button></div></div></section>
-  <section class="wrap section" id="quick"><div class="section-head"><h2>复制，然后开始写卡片。</h2><p>固定版本地址适合生产页面，升级由你掌控。</p></div><div class="code"><pre><code>&lt;script type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js"&gt;
+  <header class="wrap nav">
+    <a class="brand" href="#top">Fan Poker Deck</a>
+
+    <nav class="links">
+      <a href="#worlds">卡片世界</a>
+      <a href="#quick">接入</a>
+      <a href="./docs/API.md">API</a>
+      <a
+        class="button"
+        href="https://github.com/Hubujiu/fan-poker-teaching-skill">
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow">v2.0.0 · Full-card custom worlds</span>
+
+        <h1>边界归组件，世界归卡片。</h1>
+
+        <p>
+          没有固定封面，没有强制标题区，也没有模板牢笼。
+          每张卡片都是独立 Shadow Root，拥有自己的 HTML、CSS、滚动与交互。
+        </p>
+
+        <div class="actions">
+          <a class="button" href="#worlds">立即试玩</a>
+          <a class="button secondary" href="#quick">复制代码</a>
+        </div>
+      </div>
+
+      <div class="hero-deck">
+        <fan-poker
+          id="demoDeck"
+          card-width="410px"
+          card-height="550px"
+          aria-label="Fan Poker v2.0.0 功能演示">
+
+          <fan-card aria-label="学习仪表盘">
+            <style>
+              :host {
+                display: block;
+                min-height: 100%;
+                background: #fff7e9;
+                color: #171717;
+                font-family: Inter, system-ui, sans-serif;
+              }
+
+              * { box-sizing: border-box; }
+
+              main {
+                min-width: 100%;
+                min-height: 100%;
+                padding: 28px;
+              }
+
+              small {
+                color: #e96d2f;
+                font-weight: 850;
+                letter-spacing: .13em;
+                text-transform: uppercase;
+              }
+
+              h2 {
+                margin: 18px 0 28px;
+                font-size: 40px;
+                line-height: 1;
+                letter-spacing: -.055em;
+              }
+
+              .stats {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+              }
+
+              article {
+                min-height: 130px;
+                padding: 18px;
+                border: 1px solid rgba(23, 23, 23, .12);
+                border-radius: 18px;
+                background: rgba(255, 255, 255, .7);
+              }
+
+              article b {
+                display: block;
+                margin-top: 24px;
+                font-size: 32px;
+              }
+            </style>
+
+            <main>
+              <small>Personal progress</small>
+              <h2>整个卡面都由你决定。</h2>
+
+              <div class="stats">
+                <article>连续学习<b>18 天</b></article>
+                <article>本周训练<b>4.6 h</b></article>
+              </div>
+            </main>
+          </fan-card>
+
+          <fan-card aria-label="终端横向世界">
+            <style>
+              :host {
+                display: block;
+                min-height: 100%;
+                background: #0b110d;
+                color: #d7f9df;
+                font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+              }
+
+              * { box-sizing: border-box; }
+
+              .terminal {
+                width: 760px;
+                min-height: 820px;
+                padding: 24px;
+                background: #0b110d;
+              }
+
+              h2 {
+                margin: 0 0 26px;
+                color: #74c69d;
+                font-size: 15px;
+              }
+
+              pre {
+                width: 100%;
+                padding: 18px;
+                border: 1px solid rgba(215, 249, 223, .14);
+                border-radius: 14px;
+                background: #060a07;
+                line-height: 1.8;
+                white-space: pre-wrap;
+              }
+
+              .row {
+                display: flex;
+                gap: 12px;
+                margin-top: 32px;
+              }
+
+              .commit {
+                min-width: 130px;
+                padding: 12px;
+                border: 1px solid rgba(215, 249, 223, .18);
+                border-radius: 10px;
+                text-align: center;
+              }
+            </style>
+
+            <section class="terminal">
+              <h2>把鼠标靠近右边或底边</h2>
+
+              <pre>fox@lab:~$ npm view @hubujiu/fan-poker-deck version
+2.0.0</pre>
+
+              <div class="row">
+                <div class="commit">custom world</div>
+                <div class="commit">isolated CSS</div>
+                <div class="commit">floating bars</div>
+                <div class="commit">gesture priority</div>
+              </div>
+            </section>
+          </fan-card>
+
+          <fan-card aria-label="长文章世界">
+            <style>
+              :host {
+                display: block;
+                min-height: 100%;
+                background: #f8f0df;
+                color: #261f18;
+                font-family: Georgia, "Songti SC", serif;
+              }
+
+              article {
+                min-width: 100%;
+                min-height: 900px;
+                padding: 38px;
+              }
+
+              h2 {
+                margin: 0 0 22px;
+                font-size: 40px;
+                line-height: 1.08;
+              }
+
+              p {
+                font-size: 16px;
+                line-height: 1.95;
+              }
+            </style>
+
+            <article>
+              <h2>一张卡，也可以是一篇完整文章。</h2>
+              <p>
+                内容超过卡片边界后仍然留在自己的世界中。
+                原生滚动条不会常驻，边缘浮动控件只在需要时出现。
+              </p>
+              <p>
+                牌组只负责空间秩序，不再替内容决定视觉结构。
+              </p>
+              <p>
+                继续向下滚动，可以验证整个卡面只有一个滚动容器。
+              </p>
+            </article>
+          </fan-card>
+        </fan-poker>
+      </div>
+    </section>
+
+    <section class="wrap section" id="worlds">
+      <div class="section-head">
+        <h2>卡片不再是模板。</h2>
+        <p>
+          仪表盘、文章、终端、表单、小游戏或另一个 Web Component，
+          都可以成为完整卡面。不同卡片的样式互不串色。
+        </p>
+      </div>
+
+      <div class="grid">
+        <article class="feature">
+          <b>完整自定义</b>
+          <p>组件不插入固定封面、标题、正文或页脚。</p>
+        </article>
+
+        <article class="feature">
+          <b>独立世界</b>
+          <p>每张卡片拥有自己的 Shadow Root 和视觉规则。</p>
+        </article>
+
+        <article class="feature">
+          <b>边缘滚动</b>
+          <p>隐藏原生滚动条，只在右边或底边浮出玻璃式控件。</p>
+        </article>
+
+        <article class="feature">
+          <b>手势仲裁</b>
+          <p>横向内容优先滚动，不再与牌组切换争抢鼠标。</p>
+        </article>
+
+        <article class="feature">
+          <b>SSR safe</b>
+          <p>Node 与服务端渲染环境仍可安全导入模块。</p>
+        </article>
+
+        <article class="feature">
+          <b>0 deps</b>
+          <p>没有运行时依赖，也没有内置设计系统包袱。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap section" id="quick">
+      <div class="section-head">
+        <h2>复制，然后建立世界。</h2>
+        <p>生产页面固定版本地址，升级节奏留在自己手里。</p>
+      </div>
+
+      <div class="code">
+        <pre><code>&lt;script type="module"
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js"&gt;
 &lt;/script&gt;
 
-&lt;fan-poker card-width="390px" card-height="520px" theme="auto" aria-label="Git 教程"&gt;
-  &lt;fan-card tag="Git" title="工作区" accent="#f2a65a"&gt;
-    工作区保存尚未提交的修改。
+&lt;fan-poker card-width="390px" card-height="520px" aria-label="课程"&gt;
+  &lt;fan-card aria-label="第一章"&gt;
+    &lt;style&gt;
+      :host {
+        display: block;
+        min-height: 100%;
+        background: #fff8ed;
+      }
+
+      main {
+        min-width: 100%;
+        min-height: 100%;
+        padding: 28px;
+      }
+    &lt;/style&gt;
+
+    &lt;main&gt;整个卡面由你决定。&lt;/main&gt;
   &lt;/fan-card&gt;
-&lt;/fan-poker&gt;</code></pre></div></section>
-  <section class="wrap section"><div class="section-head"><h2>v1.0.3 的稳定底座。</h2></div><div class="grid"><article class="feature"><b>SSR 安全</b><p>Node 导入不再依赖 HTMLElement、customElements 或 matchMedia 全局变量。</p></article><article class="feature"><b>无障碍状态</b><p>非当前卡片对辅助技术隐藏，当前标题与位置通过 live region 播报。</p></article><article class="feature"><b>安全发布</b><p>npm Trusted Publishing 使用 GitHub OIDC 短期凭证，不再保存长期发布 Token。</p></article></div></section>
-  <section class="wrap section"><div class="section-head"><h2>文档与示例。</h2></div><div class="examples"><a class="example" href="./docs/API.md"><small>CONTRACT</small><h3>稳定 API</h3><p>属性、方法、事件和样式合同。</p></a><a class="example" href="./docs/FRAMEWORKS.md"><small>SSR</small><h3>框架接入</h3><p>Vue、React、Next.js 与显式注册。</p></a><a class="example" href="./docs/ACCESSIBILITY.md"><small>A11Y</small><h3>无障碍</h3><p>键盘、播报和内容作者责任。</p></a></div></section>
-</main>
-<footer class="wrap footer"><span>MIT © Hubujiu</span><span>Built for lessons that deserve better than another long scroll.</span></footer>
-<script type="module">
-  await customElements.whenDefined("fan-poker");
-  const deck = document.querySelector("#demoDeck");
-  document.querySelectorAll("[data-theme]").forEach((button) => button.addEventListener("click", () => deck.setAttribute("theme", button.dataset.theme)));
-  let sequence = 4;
-  document.querySelector("#addCard").addEventListener("click", () => {
-    deck.appendCard({ tag: "New", title: `Runtime card ${sequence}`, content: "This card was added without rebuilding the page.", symbol: String(sequence).padStart(2, "0"), accent: "#f4978e" });
-    sequence += 1;
-  });
-</script>
+&lt;/fan-poker&gt;</code></pre>
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <div class="migration">
+        <div>
+          <h3>旧页面暂时不能迁移？</h3>
+          <p>继续固定 v1.0.3，等卡片结构改造完成后再进入 v2。</p>
+        </div>
+
+        <a class="button secondary" href="./docs/VERSIONING.md">
+          查看迁移指南
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <span>MIT © Hubujiu</span>
+    <span>Every card deserves its own physics.</span>
+  </footer>
 </body>
 </html>

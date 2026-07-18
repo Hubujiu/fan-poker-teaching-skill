@@ -1,14 +1,27 @@
-export type FanPokerTheme = "auto" | "light" | "dark";
 export type FanPokerDirection = "next" | "previous";
-export type FanPokerChangeSource = "api" | "click" | "drag" | "wheel" | "keyboard" | "goto";
+export type FanPokerChangeSource = "api" | "drag" | "keyboard" | "goto";
 
 export interface FanPokerCardInput {
-  tag?: string;
-  title?: string;
-  symbol?: string;
-  accent?: string;
-  content?: string;
+  /** Accessible name announced for the card. */
+  label?: string;
+
+  /** Complete custom card-face markup. Styles are isolated inside the card world. */
   html?: string;
+
+  /** Plain-text card content. Ignored when html is supplied. */
+  content?: string;
+
+  /** @deprecated Use label. Retained as a migration alias. */
+  title?: string;
+
+  /** @deprecated v2 no longer renders a fixed tag region. */
+  tag?: string;
+
+  /** @deprecated v2 no longer renders a fixed symbol region. */
+  symbol?: string;
+
+  /** @deprecated Style the custom card world directly. */
+  accent?: string;
 }
 
 export interface FanPokerReadyDetail {
@@ -41,7 +54,11 @@ export class FanPokerElement extends HTMLElement {
   get cards(): FanPokerCardInput[];
   set cards(value: FanPokerCardInput[]);
 
-  setCards(cards: FanPokerCardInput[], options?: { preserveIndex?: boolean }): this;
+  setCards(
+    cards: FanPokerCardInput[],
+    options?: { preserveIndex?: boolean }
+  ): this;
+
   appendCard(card: FanPokerCardInput): number;
   updateCard(index: number, patch: Partial<FanPokerCardInput>): boolean;
   removeCard(index: number): FanPokerCardInput | null;
@@ -57,16 +74,19 @@ export class FanPokerElement extends HTMLElement {
     listener: (event: CustomEvent<FanPokerReadyDetail>) => void,
     options?: boolean | AddEventListenerOptions
   ): void;
+
   addEventListener(
     type: "cardchangestart" | "cardchange",
     listener: (event: CustomEvent<FanPokerChangeDetail>) => void,
     options?: boolean | AddEventListenerOptions
   ): void;
+
   addEventListener(
     type: "cardschange",
     listener: (event: CustomEvent<FanPokerCardsChangeDetail>) => void,
     options?: boolean | AddEventListenerOptions
   ): void;
+
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
@@ -74,7 +94,9 @@ export class FanPokerElement extends HTMLElement {
   ): void;
 }
 
-export function defineFanPokerElements(registry?: CustomElementRegistry): boolean;
+export function defineFanPokerElements(
+  registry?: CustomElementRegistry
+): boolean;
 
 declare global {
   interface HTMLElementTagNameMap {

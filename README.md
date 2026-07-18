@@ -1,56 +1,56 @@
-<div align="center">
+# Fan Poker Deck
 
-# 🃏 Fan Poker Teaching Skill
+一个零依赖 Web Component，用扑克牌式扇形动画承载**完全由使用者定义的卡片世界**。
 
-**一行引入，把任意知识变成可点击、可拖动、会回到牌尾的教学卡片。**
+从 v2 开始，组件不再强制封面、编号、标签、标题、正文或页脚。`<fan-poker>` 只维护卡片边界、圆角、牌堆排列、切牌动画和滚动协调；每个 `<fan-card>` 内部的 HTML 与 CSS 都会进入独立 Shadow Root。
 
-零运行时依赖、支持 SSR 安全导入的 Web Component 与 AI Skill。
-
-[![npm](https://img.shields.io/npm/v/%40hubujiu%2Ffan-poker-deck)](https://www.npmjs.com/package/@hubujiu/fan-poker-deck)
-[![Validate](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml/badge.svg)](https://github.com/Hubujiu/fan-poker-teaching-skill/actions/workflows/validate.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-
-[在线演示](https://hubujiu.github.io/fan-poker-teaching-skill/) · [API 合同](./docs/API.md) · [框架与 SSR](./docs/FRAMEWORKS.md) · [无障碍](./docs/ACCESSIBILITY.md) · [English](./README_EN.md)
-
-</div>
-
-## 快速开始
+## CDN
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js">
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js">
 </script>
+```
 
-<fan-poker
-  card-width="390px"
-  card-height="520px"
-  theme="auto"
-  aria-label="Git 基础教学牌组">
-  <fan-card tag="Git" title="工作区" symbol="01" accent="#f2a65a">
-    工作区保存尚未提交的修改。
-  </fan-card>
+```html
+<fan-poker card-width="390px" card-height="520px" aria-label="学习卡片">
+  <fan-card aria-label="学习仪表盘">
+    <style>
+      :host {
+        display: block;
+        min-height: 100%;
+        background: #fff8ed;
+        color: #171717;
+        font-family: system-ui, sans-serif;
+      }
 
-  <fan-card tag="Git" title="暂存区" symbol="02" accent="#7dcfb6">
-    <p><code>git add</code> 将修改放入暂存区。</p>
-    <pre><code>git add README.md</code></pre>
+      main {
+        min-width: 100%;
+        min-height: 100%;
+        padding: 28px;
+      }
+    </style>
+
+    <main>
+      <h1>整个卡面都由你决定</h1>
+      <button>卡片内部按钮</button>
+    </main>
   </fan-card>
 </fan-poker>
 ```
 
-卡片数量根据 `<fan-card>` 自动计算。
-
-## npm 使用
+## npm
 
 ```bash
-npm install @hubujiu/fan-poker-deck@1.0.3
+npm install @hubujiu/fan-poker-deck@2.0.0
 ```
 
 ```js
 import "@hubujiu/fan-poker-deck";
 ```
 
-也可以显式使用稳定导出：
+Node 与 SSR 环境可安全导入：
 
 ```js
 import {
@@ -60,112 +60,74 @@ import {
 } from "@hubujiu/fan-poker-deck";
 ```
 
-该模块在 Node 和 SSR 环境中可安全导入。浏览器存在 `customElements` 时会自动注册；`defineFanPokerElements()` 可以安全重复调用。
+## v2 的卡片模型
 
-## 当前稳定版本：v1.0.3
+- 每张卡片拥有独立 Shadow Root，卡片之间的 CSS 不会互相污染
+- 用户 HTML 占据整个卡面，组件不插入固定标题区或正文区
+- 内容超出边界时，卡片内部正常滚动
+- 原生滚动条被隐藏，鼠标靠近右边缘或底边时显示浮动滚动条
+- 横向溢出存在时，横拖优先滚动卡片内容，不会误触牌组切换
+- 横向拖动方向与底部滑块一致
+- 不显示组件焦点框
+- 按钮、链接、表单、编辑器与嵌套组件可留在自己的卡片世界中
 
-- 固定 `<fan-poker>` 与 `<fan-card>` 公共 API 合同
-- Node / SSR 安全导入
-- 显式导出两个元素类与幂等注册函数
-- 当前卡片位置的屏幕阅读器播报
-- `role`、`aria-roledescription`、`aria-keyshortcuts` 与活动卡片语义
-- 键盘焦点提示缩小到当前卡片左上角编号，不再给整张卡片描边
-- 松开鼠标或丢失指针捕获后会可靠结束拖动
-- 鼠标位于当前卡片内部时，滚轮优先滚动卡片内容
-- Node 20、22、24 测试矩阵
-- Chromium 交互与无障碍烟雾测试
-- 48 KiB 分发文件体积预算
-- API、框架、无障碍与版本策略文档
+## 切牌
 
-## 配置
+- 在没有横向溢出的当前卡片上左右拖动
+- 点击露出的后方卡片
+- 使用方向键、Page Up / Page Down、Home / End
+- 调用 `next()`、`previous()` 或 `goTo(index)`
 
-| 属性 | 默认值 | 说明 |
-|---|---:|---|
-| `card-width` | `390px` | 卡片宽度，包含 CSS 单位 |
-| `card-height` | `520px` | 卡片高度，包含 CSS 单位 |
-| `start-index` | `0` | 初始卡片，下标从 0 开始 |
-| `theme` | `auto` | `auto`、`light` 或 `dark` |
-| `keyboard` | `true` | 键盘切换 |
-| `wheel` | `true` | 卡片内部滚动内容；牌组外露区域可滚轮切牌 |
-| `draggable` | `true` | 左右拖动切换 |
-| `aria-label` | 自动生成 | 牌组的无障碍名称 |
+当前卡片存在横向溢出时，横拖属于卡片内部。此时可点击后方卡片、使用键盘或调用 API 切牌。
 
-## 运行时 API
+## JavaScript API
 
 ```js
 const deck = document.querySelector("fan-poker");
 
 deck.setCards([
-  { tag: "Docker", title: "检查服务", content: "确认 daemon 已启动。" },
-  { tag: "Docker", title: "运行容器", html: "<pre><code>docker run --rm hello-world</code></pre>" }
+  {
+    label: "仪表盘",
+    html: `
+      <style>
+        :host { display:block; min-height:100%; background:#111; color:white; }
+        main { min-width:720px; min-height:100%; padding:24px; }
+      </style>
+      <main>完全自定义的横向画布</main>
+    `
+  },
+  {
+    label: "纯文本",
+    content: "content 会按纯文本处理"
+  }
 ]);
 
-deck.appendCard({ tag: "Next", title: "Compose", content: "组织多容器应用。" });
-deck.updateCard(0, { title: "服务状态" });
-deck.removeCard(1);
-
-deck.next();
-deck.previous();
-deck.goTo(3);
-deck.reset();
-```
-
-`html` 字段不会自动清洗，只能传入可信内容。普通文本优先使用 `content`。
-
-## 事件
-
-```js
-deck.addEventListener("cardchange", (event) => {
-  console.log(event.detail.index, event.detail.source);
+deck.appendCard({
+  label: "新卡片",
+  html: "<article>Runtime card</article>"
 });
 
-deck.addEventListener("cardschange", (event) => {
-  console.log(event.detail.cardCount);
-});
+deck.goTo(1);
 ```
 
-完整字段见 [`docs/API.md`](./docs/API.md)。
+详见：
 
-## 样式定制
+- [稳定 API](./docs/API.md)
+- [无障碍与交互](./docs/ACCESSIBILITY.md)
+- [框架接入](./docs/FRAMEWORKS.md)
+- [v1 → v2 迁移](./docs/VERSIONING.md)
 
-```css
-fan-poker {
-  --fan-card-width: 420px;
-  --fan-card-height: 560px;
-  --fan-radius: 18px;
-}
+## 当前稳定版本：v2.0.0
 
-fan-poker::part(title) {
-  letter-spacing: -0.02em;
-}
+v1.0.3 仍可用于依赖旧版固定卡面结构的页面：
+
+```html
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js">
+</script>
 ```
-
-稳定 CSS Parts 包括 `stage`、`deck`、`card`、`cover`、`content`、`title`、`body`、`footer`、`status` 等。
-
-## 框架接入
-
-- Vue：[`examples/vue-example.vue`](./examples/vue-example.vue)
-- React：[`examples/react-example.jsx`](./examples/react-example.jsx)
-- SSR / Next.js：[`docs/FRAMEWORKS.md`](./docs/FRAMEWORKS.md)
-
-## AI Skill
-
-```text
-使用 fan-poker-teaching-skill，生成一份 Linux 部署 Docker 的交互式教学卡片。
-```
-
-Skill 默认生成固定版本 CDN 与简短组件标签。明确要求完全离线单文件时，才使用传统内嵌模板。
-
-## 开发与发布质量门
-
-```bash
-npm test
-npm run test:browser
-npm pack --dry-run
-```
-
-测试覆盖源码与分发一致性、稳定 API、Node/SSR 导入、类型声明、Custom Elements Manifest、包体积、示例和 Chromium 交互。
 
 ## License
 
-MIT © [Hubujiu](https://github.com/Hubujiu)
+MIT

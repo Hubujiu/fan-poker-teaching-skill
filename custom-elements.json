@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "readme": "README_EN.md",
+  "readme": "README.md",
   "modules": [
     {
       "kind": "javascript-module",
@@ -9,64 +9,371 @@
         {
           "kind": "class",
           "name": "FanPokerElement",
+          "description": "A fan-shaped card deck whose cards are isolated, fully custom scrollable worlds.",
           "tagName": "fan-poker",
-          "description": "Accessible interactive single-sided fan poker teaching deck.",
+          "customElement": true,
           "attributes": [
-            { "name": "card-width", "type": { "text": "string" }, "default": "390px" },
-            { "name": "card-height", "type": { "text": "string" }, "default": "520px" },
-            { "name": "start-index", "type": { "text": "number" }, "default": "0" },
-            { "name": "theme", "type": { "text": "\"auto\" | \"light\" | \"dark\"" }, "default": "auto" },
-            { "name": "keyboard", "type": { "text": "boolean" }, "default": "true" },
-            { "name": "wheel", "type": { "text": "boolean" }, "default": "true" },
-            { "name": "draggable", "type": { "text": "boolean" }, "default": "true" },
-            { "name": "aria-label", "type": { "text": "string" }, "default": "Interactive fan poker card deck" }
+            {
+              "name": "card-width",
+              "description": "CSS length used for every card width."
+            },
+            {
+              "name": "card-height",
+              "description": "CSS length used for every card height."
+            },
+            {
+              "name": "start-index",
+              "description": "Zero-based initial card index."
+            },
+            {
+              "name": "keyboard",
+              "description": "Enable or disable deck keyboard navigation."
+            },
+            {
+              "name": "draggable",
+              "description": "Enable or disable horizontal deck drag navigation."
+            },
+            {
+              "name": "fan-offset",
+              "description": "Horizontal spacing between exposed cards."
+            },
+            {
+              "name": "aria-label",
+              "description": "Accessible label for the deck region."
+            }
           ],
           "members": [
-            { "kind": "field", "name": "currentIndex", "readonly": true, "type": { "text": "number" } },
-            { "kind": "field", "name": "cardCount", "readonly": true, "type": { "text": "number" } },
-            { "kind": "field", "name": "cards", "type": { "text": "FanPokerCardInput[]" } },
-            { "kind": "method", "name": "setCards" },
-            { "kind": "method", "name": "appendCard" },
-            { "kind": "method", "name": "updateCard" },
-            { "kind": "method", "name": "removeCard" },
-            { "kind": "method", "name": "clear" },
-            { "kind": "method", "name": "next" },
-            { "kind": "method", "name": "previous" },
-            { "kind": "method", "name": "goTo" },
-            { "kind": "method", "name": "reset" }
+            {
+              "kind": "field",
+              "name": "currentIndex",
+              "type": {
+                "text": "number"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "cardCount",
+              "type": {
+                "text": "number"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "cards",
+              "type": {
+                "text": "FanPokerCardInput[]"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setCards",
+              "parameters": [
+                {
+                  "name": "cards",
+                  "type": {
+                    "text": "FanPokerCardInput[]"
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": {
+                    "text": "{ preserveIndex?: boolean }"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "this"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "appendCard",
+              "parameters": [
+                {
+                  "name": "card",
+                  "type": {
+                    "text": "FanPokerCardInput"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "updateCard",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "patch",
+                  "type": {
+                    "text": "Partial<FanPokerCardInput>"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "removeCard",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "FanPokerCardInput | null"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "clear",
+              "return": {
+                "type": {
+                  "text": "this"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "next",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "previous",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "goTo",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "reset",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
           ],
           "events": [
-            { "name": "ready", "type": { "text": "CustomEvent<FanPokerReadyDetail>" } },
-            { "name": "cardchangestart", "type": { "text": "CustomEvent<FanPokerChangeDetail>" } },
-            { "name": "cardchange", "type": { "text": "CustomEvent<FanPokerChangeDetail>" } },
-            { "name": "cardschange", "type": { "text": "CustomEvent<FanPokerCardsChangeDetail>" } }
+            {
+              "name": "ready",
+              "type": {
+                "text": "CustomEvent<FanPokerReadyDetail>"
+              }
+            },
+            {
+              "name": "cardchangestart",
+              "type": {
+                "text": "CustomEvent<FanPokerChangeDetail>"
+              }
+            },
+            {
+              "name": "cardchange",
+              "type": {
+                "text": "CustomEvent<FanPokerChangeDetail>"
+              }
+            },
+            {
+              "name": "cardschange",
+              "type": {
+                "text": "CustomEvent<FanPokerCardsChangeDetail>"
+              }
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--fan-card-width",
+              "default": "390px"
+            },
+            {
+              "name": "--fan-card-height",
+              "default": "520px"
+            },
+            {
+              "name": "--fan-card-radius",
+              "default": "24px"
+            },
+            {
+              "name": "--fan-card-line",
+              "default": "rgba(23, 23, 23, 0.15)"
+            },
+            {
+              "name": "--fan-card-background",
+              "default": "#ffffff"
+            },
+            {
+              "name": "--fan-offset-x",
+              "default": "28px"
+            },
+            {
+              "name": "--fan-offset-y",
+              "default": "6px"
+            },
+            {
+              "name": "--fan-rotation",
+              "default": "2.1deg"
+            },
+            {
+              "name": "--fan-scrollbar-accent",
+              "default": "#e96d2f"
+            },
+            {
+              "name": "--fan-scrollbar-track",
+              "default": "rgba(255, 255, 255, 0.22)"
+            },
+            {
+              "name": "--fan-scrollbar-thumb",
+              "default": "rgba(24, 24, 24, 0.58)"
+            },
+            {
+              "name": "--fan-scrollbar-size",
+              "default": "12px"
+            }
           ],
           "cssParts": [
-            { "name": "stage" }, { "name": "deck" }, { "name": "card" }, { "name": "inner" },
-            { "name": "cover" }, { "name": "index" }, { "name": "symbol" }, { "name": "content" },
-            { "name": "tag" }, { "name": "title" }, { "name": "body" }, { "name": "footer" },
-            { "name": "status" }, { "name": "empty" }
+            {
+              "name": "stage",
+              "description": "Deck stage."
+            },
+            {
+              "name": "deck",
+              "description": "Card stack container."
+            },
+            {
+              "name": "card",
+              "description": "Rendered physical card boundary."
+            },
+            {
+              "name": "world",
+              "description": "Host of one isolated custom card world."
+            },
+            {
+              "name": "vertical-scrollbar",
+              "description": "Floating vertical scrollbar track."
+            },
+            {
+              "name": "horizontal-scrollbar",
+              "description": "Floating horizontal scrollbar track."
+            },
+            {
+              "name": "vertical-thumb",
+              "description": "Floating vertical scrollbar thumb."
+            },
+            {
+              "name": "horizontal-thumb",
+              "description": "Floating horizontal scrollbar thumb."
+            },
+            {
+              "name": "status",
+              "description": "Polite live region."
+            },
+            {
+              "name": "empty",
+              "description": "Empty-state message."
+            }
           ]
         },
         {
           "kind": "class",
           "name": "FanCardElement",
+          "description": "Declarative source container for one isolated custom card world.",
           "tagName": "fan-card",
-          "description": "Source card element consumed by fan-poker.",
+          "customElement": true,
           "attributes": [
-            { "name": "tag", "type": { "text": "string" } },
-            { "name": "title", "type": { "text": "string" } },
-            { "name": "symbol", "type": { "text": "string" } },
-            { "name": "accent", "type": { "text": "string" } }
+            {
+              "name": "aria-label",
+              "description": "Accessible card name."
+            }
           ]
         }
       ],
       "exports": [
-        { "kind": "js", "name": "FanPokerElement", "declaration": { "name": "FanPokerElement", "module": "dist/fan-poker.js" } },
-        { "kind": "js", "name": "FanCardElement", "declaration": { "name": "FanCardElement", "module": "dist/fan-poker.js" } },
-        { "kind": "js", "name": "defineFanPokerElements", "declaration": { "name": "defineFanPokerElements", "module": "dist/fan-poker.js" } },
-        { "kind": "custom-element-definition", "name": "fan-poker", "declaration": { "name": "FanPokerElement", "module": "dist/fan-poker.js" } },
-        { "kind": "custom-element-definition", "name": "fan-card", "declaration": { "name": "FanCardElement", "module": "dist/fan-poker.js" } }
+        {
+          "kind": "custom-element-definition",
+          "name": "fan-poker",
+          "declaration": {
+            "name": "FanPokerElement",
+            "module": "dist/fan-poker.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "fan-card",
+          "declaration": {
+            "name": "FanCardElement",
+            "module": "dist/fan-poker.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "FanPokerElement",
+          "declaration": {
+            "name": "FanPokerElement",
+            "module": "dist/fan-poker.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "FanCardElement",
+          "declaration": {
+            "name": "FanCardElement",
+            "module": "dist/fan-poker.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "defineFanPokerElements",
+          "declaration": {
+            "name": "defineFanPokerElements",
+            "module": "dist/fan-poker.js"
+          }
+        }
       ]
     }
   ]
