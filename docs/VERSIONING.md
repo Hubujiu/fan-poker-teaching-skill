@@ -1,44 +1,62 @@
-# Versioning policy
+# Versioning and migration
 
-The npm package follows Semantic Versioning.
+Fan Poker Deck follows semantic versioning.
 
-## Patch releases
-
-Patch releases may include bug fixes, documentation corrections, performance improvements, test improvements, and internal refactoring that preserve the public contract.
-
-## Minor releases
-
-Minor releases may add optional attributes, methods, events, event fields, CSS custom properties, CSS Parts, exports, examples, or tooling metadata. Existing behavior remains compatible.
-
-## Major releases
-
-A major release is required to remove or rename a documented public attribute, method, event, event-detail field, module export, CSS custom property, or CSS Part, or to substantially change its meaning.
-
-## Deprecation
-
-When practical, deprecated APIs remain available for at least one minor release and are documented in the changelog before removal in a later major version.
-
-## Fixed CDN versions
-
-Production pages should pin the current tested version exactly:
+## Current production pin
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@1.0.3/dist/fan-poker.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js"></script>
 ```
 
-Using `@latest` is convenient for experiments but can introduce unreviewed changes. When a new version is adopted, update the documentation pins together with `package.json` so examples never lag behind the published package.
+## v1 → v2
 
-## Release checklist
+v2 is a major release because it removes the fixed visual card template.
 
-A stable release must pass:
+Removed presentation contract:
 
-1. source and distribution equality;
-2. API-contract validation;
-3. Node/SSR import tests;
-4. distribution size budget;
-5. npm package-content inspection;
-6. Chromium behavior and accessibility smoke tests;
-7. npm Registry, jsDelivr, and unpkg verification;
-8. current-version checks for README, Skill, framework, and versioning examples.
+- `tag`
+- `title` as a rendered heading
+- `symbol`
+- `accent`
+- fixed cover, index, title, body, and footer Parts
+- component-managed light/dark card theme
 
-The checked-in `RELEASE_NOTES.md` is the canonical body for the matching GitHub Release.
+The JavaScript runtime still accepts `title` as an accessible-label alias during migration, but it does not render a title block.
+
+### v1
+
+```html
+<fan-card tag="Git" title="Working tree" symbol="01" accent="#f2a65a">
+  Uncommitted changes.
+</fan-card>
+```
+
+### v2
+
+```html
+<fan-card aria-label="Working tree">
+  <style>
+    :host {
+      display: block;
+      min-height: 100%;
+      background: #f2a65a;
+    }
+
+    article {
+      min-width: 100%;
+      min-height: 100%;
+      padding: 28px;
+    }
+  </style>
+
+  <article>
+    <small>Git</small>
+    <h1>Working tree</h1>
+    <p>Uncommitted changes.</p>
+  </article>
+</fan-card>
+```
+
+Pin `@hubujiu/fan-poker-deck@1.0.3` until a page has migrated its card markup.
+
+Minor releases add compatible API or styling hooks. Patch releases fix defects without intentionally changing the v2 contract.
