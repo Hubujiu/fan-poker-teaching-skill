@@ -1,4 +1,4 @@
-const moduleUrl = new URL("../dist/fan-poker.js", import.meta.url);
+const moduleUrl = new URL("../dist/fan-poker-fixed.js", import.meta.url);
 const component = await import(`${moduleUrl.href}?node-smoke=${Date.now()}`);
 
 const failures = [];
