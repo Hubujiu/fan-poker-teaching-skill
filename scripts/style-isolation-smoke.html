@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<body>
+<div id="outside-world" class="world">Outside world</div>
+<div id="outside-dynamic" class="dynamic-world">Outside dynamic world</div>
+
+<script type="module" src="../dist/fan-poker-fixed.js"></script>
+
+<fan-poker id="deck" card-width="320px" card-height="430px" aria-label="Style isolation deck">
+  <fan-card aria-label="Isolated world">
+    <style>
+      :host { display: block; min-height: 100%; background: #fff; }
+      .world { min-height: 900px; color: rgb(12, 34, 56); }
+    </style>
+    <section class="world">Inside world</section>
+  </fan-card>
+</fan-poker>
+
+<pre id="result">pending</pre>
+
+<script type="module">
+  const result = document.querySelector("#result");
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  try {
+    await import(`../dist/fan-poker-fixed.js?style-smoke=${Date.now()}`);
+    await customElements.whenDefined("fan-poker");
+    await wait(160);
+
+    const deck = document.querySelector("#deck");
+    const sourceStyle = deck.querySelector(":scope > fan-card style");
+    const worldHost = deck.shadowRoot.querySelector('[part="card"] [part="world"]');
+    const worldRoot = worldHost.shadowRoot;
+    const renderedStyle = worldRoot.querySelector(".world-canvas style");
+    const insideWorld = worldRoot.querySelector(".world");
+    const outsideWorld = document.querySelector("#outside-world");
+
+    const checks = [
+      ["sourceStyleQuarantined", sourceStyle?.getAttribute("media") === "not all"],
+      ["outsideStyleNotLeaked", getComputedStyle(outsideWorld).minHeight !== "900px"],
+      ["renderedStyleRestored", !renderedStyle?.hasAttribute("media")],
+      ["insideStyleApplied", getComputedStyle(insideWorld).minHeight === "900px"],
+      ["publicHtmlClean", !deck.cards[0].html.includes('media="not all"')]
+    ];
+
+    deck.setCards([
+      {
+        label: "Dynamic isolated world",
+        html: '<style>.dynamic-world{min-height:777px}</style><main class="dynamic-world">Dynamic</main>'
+      }
+    ]);
+
+    await wait(120);
+
+    const dynamicSourceStyle = deck.querySelector(":scope > fan-card style");
+    const dynamicWorldRoot = deck.shadowRoot
+      .querySelector('[part="card"] [part="world"]')
+      .shadowRoot;
+    const dynamicRenderedStyle = dynamicWorldRoot.querySelector(".world-canvas style");
+    const dynamicInside = dynamicWorldRoot.querySelector(".dynamic-world");
+    const dynamicOutside = document.querySelector("#outside-dynamic");
+
+    checks.push(
+      ["dynamicSourceQuarantined", dynamicSourceStyle?.getAttribute("media") === "not all"],
+      ["dynamicOutsideNotLeaked", getComputedStyle(dynamicOutside).minHeight !== "777px"],
+      ["dynamicRenderedStyleRestored", !dynamicRenderedStyle?.hasAttribute("media")],
+      ["dynamicInsideStyleApplied", getComputedStyle(dynamicInside).minHeight === "777px"]
+    );
+
+    const ok = checks.every(([, value]) => value);
+    result.textContent = JSON.stringify({ ok, checks });
+    document.documentElement.dataset.styleSmoke = ok ? "passed" : "failed";
+  } catch (error) {
+    result.textContent = JSON.stringify({
+      ok: false,
+      error: error?.stack || String(error)
+    });
+    document.documentElement.dataset.styleSmoke = "failed";
+  }
+</script>
+</body>
+</html>
