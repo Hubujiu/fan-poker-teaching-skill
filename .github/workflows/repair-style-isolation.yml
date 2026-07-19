@@ -248,3 +248,5 @@ jobs:
           git add src/fan-poker.js dist/fan-poker.js scripts/browser-smoke.html index.html .github/workflows/pages.yml .github/workflows/repair-style-isolation.yml
           git commit -m "Fix source card style isolation"
           git push
+
+# Trigger after workflow registration
