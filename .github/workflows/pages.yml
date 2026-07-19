@@ -67,17 +67,12 @@ jobs:
           ]
           lines[title_index + 1:title_index + 1] = links
 
-          head_end = next(index for index, line in enumerate(lines) if "</head>" in line)
-          isolation_fallback = [
-              '  <style id="demo-style-isolation-fallback">',
-              '    body > main { min-width: 0 !important; min-height: 0 !important; padding: 0 !important; }',
-              '    body .section h2 { color: var(--text) !important; line-height: normal !important; }',
-              '    body .grid > article.feature { min-width: 0 !important; min-height: 0 !important; }',
-              '    body .code > pre { width: auto !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; }',
-              '  </style>',
-          ]
-          lines[head_end:head_end] = isolation_fallback
-          page.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          html = "\n".join(lines) + "\n"
+          old_entry = 'src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js"'
+          new_entry = 'src="./dist/fan-poker-fixed.js?v=style-isolation-fix"'
+          if html.count(old_entry) != 1:
+              raise RuntimeError("Expected exactly one demo module entry")
+          page.write_text(html.replace(old_entry, new_entry, 1), encoding="utf-8")
           PY
 
           touch _site/.nojekyll
@@ -85,8 +80,10 @@ jobs:
           test -s _site/media/preview.svg
           test -s _site/favicon.ico
           test -s _site/favicon.png
+          test -s _site/dist/fan-poker-fixed.js
           grep -Fq '/fan-poker-teaching-skill/favicon.png?v=3' _site/index.html
-          grep -Fq 'demo-style-isolation-fallback' _site/index.html
+          grep -Fq './dist/fan-poker-fixed.js?v=style-isolation-fix' _site/index.html
+          ! grep -Fq 'demo-style-isolation-fallback' _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
@@ -97,20 +94,26 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Verify published favicon and demo styles
+      - name: Verify published demo
         shell: bash
         run: |
           site="https://hubujiu.github.io/fan-poker-teaching-skill"
           for attempt in $(seq 1 18); do
             page_ok=false
+            module_ok=false
             png_ok=false
             ico_ok=false
 
             if curl -fsSL -H 'Cache-Control: no-cache' "$site/?verify=${{ github.sha }}-$attempt" -o /tmp/page.html; then
               if grep -Fq '/fan-poker-teaching-skill/favicon.png?v=3' /tmp/page.html \
-                && grep -Fq 'demo-style-isolation-fallback' /tmp/page.html; then
+                && grep -Fq './dist/fan-poker-fixed.js?v=style-isolation-fix' /tmp/page.html \
+                && ! grep -Fq 'demo-style-isolation-fallback' /tmp/page.html; then
                 page_ok=true
               fi
+            fi
+
+            if curl -fsSL -H 'Cache-Control: no-cache' "$site/dist/fan-poker-fixed.js?verify=${{ github.sha }}-$attempt" -o /tmp/fan-poker-fixed.js; then
+              grep -Fq 'source-style-isolation' /tmp/fan-poker-fixed.js && module_ok=true
             fi
 
             if curl -fsSL -H 'Cache-Control: no-cache' "$site/favicon.png?verify=${{ github.sha }}-$attempt" -o /tmp/favicon.png; then
@@ -131,14 +134,14 @@ jobs:
           PY
             fi
 
-            if $page_ok && $png_ok && $ico_ok; then
+            if $page_ok && $module_ok && $png_ok && $ico_ok; then
               echo "Published demo verified on attempt $attempt"
               exit 0
             fi
 
-            echo "Waiting for Pages propagation: page=$page_ok png=$png_ok ico=$ico_ok"
+            echo "Waiting for Pages propagation: page=$page_ok module=$module_ok png=$png_ok ico=$ico_ok"
             sleep 10
           done
 
-          echo "GitHub Pages did not expose the expected demo files in time" >&2
+          echo "GitHub Pages did not expose the fixed demo in time" >&2
           exit 1
