@@ -3,22 +3,22 @@
   "version": "2.0.0",
   "description": "Dependency-free Web Component for fan-shaped decks of isolated, fully custom scrollable card worlds.",
   "type": "module",
-  "main": "./dist/fan-poker.js",
-  "module": "./dist/fan-poker.js",
-  "browser": "./dist/fan-poker.js",
+  "main": "./dist/fan-poker-fixed.js",
+  "module": "./dist/fan-poker-fixed.js",
+  "browser": "./dist/fan-poker-fixed.js",
   "types": "./types/fan-poker.d.ts",
   "customElements": "./custom-elements.json",
   "exports": {
     ".": {
       "types": "./types/fan-poker.d.ts",
-      "import": "./dist/fan-poker.js",
-      "default": "./dist/fan-poker.js"
+      "import": "./dist/fan-poker-fixed.js",
+      "default": "./dist/fan-poker-fixed.js"
     },
     "./custom-elements.json": "./custom-elements.json",
     "./package.json": "./package.json"
   },
-  "unpkg": "./dist/fan-poker.js",
-  "jsdelivr": "./dist/fan-poker.js",
+  "unpkg": "./dist/fan-poker-fixed.js",
+  "jsdelivr": "./dist/fan-poker-fixed.js",
   "files": [
     "dist",
     "types",
@@ -31,7 +31,9 @@
   ],
   "sideEffects": [
     "./dist/fan-poker.js",
-    "./src/fan-poker.js"
+    "./dist/fan-poker-fixed.js",
+    "./src/fan-poker.js",
+    "./src/fan-poker-fixed.js"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
