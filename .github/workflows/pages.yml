@@ -66,6 +66,17 @@ jobs:
               '  <link rel="apple-touch-icon" href="/fan-poker-teaching-skill/favicon.png?v=3">',
           ]
           lines[title_index + 1:title_index + 1] = links
+
+          head_end = next(index for index, line in enumerate(lines) if "</head>" in line)
+          isolation_fallback = [
+              '  <style id="demo-style-isolation-fallback">',
+              '    body > main { min-width: 0 !important; min-height: 0 !important; padding: 0 !important; }',
+              '    body .section h2 { color: var(--text) !important; line-height: normal !important; }',
+              '    body .grid > article.feature { min-width: 0 !important; min-height: 0 !important; }',
+              '    body .code > pre { width: auto !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; }',
+              '  </style>',
+          ]
+          lines[head_end:head_end] = isolation_fallback
           page.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
 
@@ -75,6 +86,7 @@ jobs:
           test -s _site/favicon.ico
           test -s _site/favicon.png
           grep -Fq '/fan-poker-teaching-skill/favicon.png?v=3' _site/index.html
+          grep -Fq 'demo-style-isolation-fallback' _site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
@@ -85,7 +97,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Verify published favicon
+      - name: Verify published favicon and demo styles
         shell: bash
         run: |
           site="https://hubujiu.github.io/fan-poker-teaching-skill"
@@ -95,7 +107,10 @@ jobs:
             ico_ok=false
 
             if curl -fsSL -H 'Cache-Control: no-cache' "$site/?verify=${{ github.sha }}-$attempt" -o /tmp/page.html; then
-              grep -Fq '/fan-poker-teaching-skill/favicon.png?v=3' /tmp/page.html && page_ok=true
+              if grep -Fq '/fan-poker-teaching-skill/favicon.png?v=3' /tmp/page.html \
+                && grep -Fq 'demo-style-isolation-fallback' /tmp/page.html; then
+                page_ok=true
+              fi
             fi
 
             if curl -fsSL -H 'Cache-Control: no-cache' "$site/favicon.png?verify=${{ github.sha }}-$attempt" -o /tmp/favicon.png; then
@@ -117,7 +132,7 @@ jobs:
             fi
 
             if $page_ok && $png_ok && $ico_ok; then
-              echo "Published favicon verified on attempt $attempt"
+              echo "Published demo verified on attempt $attempt"
               exit 0
             fi
 
@@ -125,5 +140,5 @@ jobs:
             sleep 10
           done
 
-          echo "GitHub Pages did not expose the expected favicon files in time" >&2
+          echo "GitHub Pages did not expose the expected demo files in time" >&2
           exit 1
