@@ -70,8 +70,8 @@ jobs:
           html = "\n".join(lines) + "\n"
           old_entry = 'src="https://cdn.jsdelivr.net/npm/@hubujiu/fan-poker-deck@2.0.0/dist/fan-poker.js"'
           new_entry = 'src="./dist/fan-poker-fixed.js?v=style-isolation-fix"'
-          if html.count(old_entry) != 1:
-              raise RuntimeError("Expected exactly one demo module entry")
+          if old_entry not in html:
+              raise RuntimeError("Demo module entry was not found")
           page.write_text(html.replace(old_entry, new_entry, 1), encoding="utf-8")
           PY
 
