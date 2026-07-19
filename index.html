@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Fan Poker Deck v2 · 每张卡都是一个独立世界</title>
+  <title>Fan Poker Deck v2 · 成品卡片交互演示</title>
   <link rel="icon" type="image/x-icon" href="./media/favicon.ico?v=1">
   <link rel="shortcut icon" type="image/x-icon" href="./media/favicon.ico?v=1">
   <meta
     name="description"
-    content="零依赖扑克牌式 Web Component。每张卡片拥有独立 Shadow Root、完整自定义卡面、内部滚动和浮动边缘滚动条。">
+    content="零依赖扑克牌式 Web Component。直接体验仪表盘、课程、终端和文章四种完整卡片成品。">
   <meta property="og:title" content="Fan Poker Deck v2.0.0">
   <meta
     property="og:description"
-    content="A fan-shaped Web Component where every card is an isolated custom world.">
+    content="A fan-shaped Web Component with complete, isolated and interactive card worlds.">
   <meta property="og:type" content="website">
   <meta
     property="og:image"
@@ -27,9 +27,9 @@
   <style>
     :root {
       --bg: #f4f1eb;
-      --panel: #fff;
+      --panel: #ffffff;
       --text: #171717;
-      --muted: #6f6a63;
+      --muted: #716c65;
       --line: rgba(23, 23, 23, .14);
       --accent: #e96d2f;
     }
@@ -43,21 +43,17 @@
       overflow-x: hidden;
       background: var(--bg);
       color: var(--text);
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
     }
 
     a { color: inherit; }
 
+    button { font: inherit; }
+
     .wrap {
-      width: min(1160px, calc(100% - 32px));
-      margin: auto;
+      width: min(1180px, calc(100% - 32px));
+      margin-inline: auto;
     }
 
     .nav {
@@ -107,10 +103,10 @@
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(0, .9fr) minmax(470px, 1.1fr);
-      gap: 48px;
-      align-items: center;
-      padding: 62px 0 84px;
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+      gap: 56px;
+      align-items: end;
+      padding: 72px 0 82px;
     }
 
     .eyebrow {
@@ -124,14 +120,15 @@
     }
 
     h1 {
-      margin: 22px 0 18px;
-      font-size: clamp(48px, 7vw, 84px);
-      line-height: .98;
-      letter-spacing: -.068em;
+      max-width: 820px;
+      margin: 22px 0 20px;
+      font-size: clamp(52px, 8vw, 96px);
+      line-height: .94;
+      letter-spacing: -.07em;
     }
 
     .hero-copy > p {
-      max-width: 650px;
+      max-width: 690px;
       margin: 0;
       color: var(--muted);
       font-size: clamp(17px, 2vw, 21px);
@@ -145,19 +142,27 @@
       margin-top: 30px;
     }
 
-    .hero-deck {
-      min-width: 0;
+    .hero-note {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .72);
     }
 
-    .hero-deck fan-poker {
-      width: min(650px, 100%);
-      --fan-card-width: min(410px, calc(100vw - 100px));
-      --fan-card-height: 550px;
-      --fan-card-radius: 28px;
+    .hero-note b {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .hero-note p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
     }
 
     .section {
-      padding: 78px 0;
+      padding: 76px 0;
     }
 
     .section-head {
@@ -165,20 +170,141 @@
       align-items: end;
       justify-content: space-between;
       gap: 28px;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
 
-    .section h2 {
+    .section-head h2 {
       margin: 0;
-      font-size: clamp(36px, 5vw, 58px);
+      font-size: clamp(38px, 5vw, 62px);
       letter-spacing: -.055em;
     }
 
     .section-head p {
-      max-width: 550px;
+      max-width: 570px;
       margin: 0;
       color: var(--muted);
       line-height: 1.75;
+    }
+
+    .demo-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      min-height: 660px;
+      padding: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: #fff;
+    }
+
+    .demo-guide {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 8px 4px 8px 8px;
+    }
+
+    .demo-guide h3 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: -.04em;
+    }
+
+    .demo-guide p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .gesture-list {
+      display: grid;
+      gap: 10px;
+      margin: 26px 0;
+    }
+
+    .gesture-list span {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .deck-controls {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .deck-controls button {
+      min-height: 42px;
+      border: 1px solid var(--text);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .deck-controls button:hover {
+      background: var(--text);
+      color: #fff;
+    }
+
+    .deck-position {
+      min-width: 54px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .demo-stage {
+      min-width: 0;
+      min-height: 610px;
+      padding: 20px 0 0 4px;
+    }
+
+    .demo-stage fan-poker {
+      display: block;
+      width: min(760px, 100%);
+      --fan-card-width: min(430px, calc(100vw - 120px));
+      --fan-card-height: 570px;
+      --fan-card-radius: 27px;
+      --fan-offset-x: 31px;
+      --fan-offset-y: 7px;
+      --fan-rotation: 2.25deg;
+      --fan-scrollbar-accent: #e96d2f;
+    }
+
+    .card-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .card-tabs button {
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .card-tabs button[aria-current="true"] {
+      border-color: var(--text);
+      background: var(--text);
+      color: #fff;
     }
 
     .grid {
@@ -244,13 +370,24 @@
       font-size: 14px;
     }
 
-    @media (max-width: 940px) {
-      .hero {
+    @media (max-width: 980px) {
+      .hero,
+      .demo-shell {
         grid-template-columns: 1fr;
       }
 
-      .hero-deck {
-        order: -1;
+      .demo-shell {
+        min-height: 0;
+      }
+
+      .demo-guide {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .demo-stage {
+        min-height: 610px;
       }
 
       .grid {
@@ -258,9 +395,9 @@
       }
     }
 
-    @media (max-width: 620px) {
+    @media (max-width: 660px) {
       .wrap {
-        width: min(100% - 20px, 1160px);
+        width: min(100% - 20px, 1180px);
       }
 
       .links a:not(.button) {
@@ -268,18 +405,30 @@
       }
 
       .hero {
-        padding-top: 24px;
-      }
-
-      .hero-deck fan-poker {
-        --fan-card-height: 520px;
+        padding-top: 34px;
       }
 
       .section-head,
       .migration,
-      .footer {
+      .footer,
+      .demo-guide {
         align-items: flex-start;
+        grid-template-columns: 1fr;
         flex-direction: column;
+      }
+
+      .demo-shell {
+        padding: 16px;
+      }
+
+      .demo-stage {
+        min-height: 570px;
+        padding-top: 4px;
+      }
+
+      .demo-stage fan-poker {
+        --fan-card-height: 530px;
+        --fan-offset-x: 18px;
       }
     }
   </style>
@@ -289,15 +438,11 @@
   <header class="wrap nav">
     <a class="brand" href="#top">Fan Poker Deck</a>
 
-    <nav class="links">
-      <a href="#worlds">卡片世界</a>
+    <nav class="links" aria-label="主导航">
+      <a href="#worlds">成品演示</a>
+      <a href="#features">特性</a>
       <a href="#quick">接入</a>
-      <a href="./docs/API.md">API</a>
-      <a
-        class="button"
-        href="https://github.com/Hubujiu/fan-poker-teaching-skill">
-        GitHub
-      </a>
+      <a class="button" href="https://github.com/Hubujiu/fan-poker-teaching-skill">GitHub</a>
     </nav>
   </header>
 
@@ -305,247 +450,448 @@
     <section class="wrap hero">
       <div class="hero-copy">
         <span class="eyebrow">v2.0.0 · Full-card custom worlds</span>
-
-        <h1>边界归组件，世界归卡片。</h1>
-
+        <h1>不是卡片模板，是完整界面。</h1>
         <p>
-          没有固定封面，没有强制标题区，也没有模板牢笼。
-          每张卡片都是独立 Shadow Root，拥有自己的 HTML、CSS、滚动与交互。
+          每一张牌都可以是仪表盘、课程页面、终端、文章或另一个 Web Component。
+          下面不是静态截图，而是一组可以拖动、切换和内部滚动的完整成品。
         </p>
 
         <div class="actions">
-          <a class="button" href="#worlds">立即试玩</a>
-          <a class="button secondary" href="#quick">复制代码</a>
+          <a class="button" href="#worlds">查看成品演示</a>
+          <a class="button secondary" href="#quick">复制接入代码</a>
         </div>
       </div>
 
-      <div class="hero-deck">
-        <fan-poker
-          id="demoDeck"
-          card-width="410px"
-          card-height="550px"
-          aria-label="Fan Poker v2.0.0 功能演示">
-
-          <fan-card aria-label="学习仪表盘">
-            <style>
-              :host {
-                display: block;
-                min-height: 100%;
-                background: #fff7e9;
-                color: #171717;
-                font-family: Inter, system-ui, sans-serif;
-              }
-
-              * { box-sizing: border-box; }
-
-              main {
-                min-width: 100%;
-                min-height: 100%;
-                padding: 28px;
-              }
-
-              small {
-                color: #e96d2f;
-                font-weight: 850;
-                letter-spacing: .13em;
-                text-transform: uppercase;
-              }
-
-              h2 {
-                margin: 18px 0 28px;
-                font-size: 40px;
-                line-height: 1;
-                letter-spacing: -.055em;
-              }
-
-              .stats {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-              }
-
-              article {
-                min-height: 130px;
-                padding: 18px;
-                border: 1px solid rgba(23, 23, 23, .12);
-                border-radius: 18px;
-                background: rgba(255, 255, 255, .7);
-              }
-
-              article b {
-                display: block;
-                margin-top: 24px;
-                font-size: 32px;
-              }
-            </style>
-
-            <main>
-              <small>Personal progress</small>
-              <h2>整个卡面都由你决定。</h2>
-
-              <div class="stats">
-                <article>连续学习<b>18 天</b></article>
-                <article>本周训练<b>4.6 h</b></article>
-              </div>
-            </main>
-          </fan-card>
-
-          <fan-card aria-label="终端横向世界">
-            <style>
-              :host {
-                display: block;
-                min-height: 100%;
-                background: #0b110d;
-                color: #d7f9df;
-                font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-              }
-
-              * { box-sizing: border-box; }
-
-              .terminal {
-                width: 760px;
-                min-height: 820px;
-                padding: 24px;
-                background: #0b110d;
-              }
-
-              h2 {
-                margin: 0 0 26px;
-                color: #74c69d;
-                font-size: 15px;
-              }
-
-              pre {
-                width: 100%;
-                padding: 18px;
-                border: 1px solid rgba(215, 249, 223, .14);
-                border-radius: 14px;
-                background: #060a07;
-                line-height: 1.8;
-                white-space: pre-wrap;
-              }
-
-              .row {
-                display: flex;
-                gap: 12px;
-                margin-top: 32px;
-              }
-
-              .commit {
-                min-width: 130px;
-                padding: 12px;
-                border: 1px solid rgba(215, 249, 223, .18);
-                border-radius: 10px;
-                text-align: center;
-              }
-            </style>
-
-            <section class="terminal">
-              <h2>把鼠标靠近右边或底边</h2>
-
-              <pre>fox@lab:~$ npm view @hubujiu/fan-poker-deck version
-2.0.0</pre>
-
-              <div class="row">
-                <div class="commit">custom world</div>
-                <div class="commit">isolated CSS</div>
-                <div class="commit">floating bars</div>
-                <div class="commit">gesture priority</div>
-              </div>
-            </section>
-          </fan-card>
-
-          <fan-card aria-label="长文章世界">
-            <style>
-              :host {
-                display: block;
-                min-height: 100%;
-                background: #f8f0df;
-                color: #261f18;
-                font-family: Georgia, "Songti SC", serif;
-              }
-
-              article {
-                min-width: 100%;
-                min-height: 900px;
-                padding: 38px;
-              }
-
-              h2 {
-                margin: 0 0 22px;
-                font-size: 40px;
-                line-height: 1.08;
-              }
-
-              p {
-                font-size: 16px;
-                line-height: 1.95;
-              }
-            </style>
-
-            <article>
-              <h2>一张卡，也可以是一篇完整文章。</h2>
-              <p>
-                内容超过卡片边界后仍然留在自己的世界中。
-                原生滚动条不会常驻，边缘浮动控件只在需要时出现。
-              </p>
-              <p>
-                牌组只负责空间秩序，不再替内容决定视觉结构。
-              </p>
-              <p>
-                继续向下滚动，可以验证整个卡面只有一个滚动容器。
-              </p>
-            </article>
-          </fan-card>
-        </fan-poker>
-      </div>
+      <aside class="hero-note">
+        <b>先看成品，再看 API</b>
+        <p>
+          “成品演示”入口现在会直接落到交互牌组，不再跳到只有文字说明的功能网格。
+        </p>
+      </aside>
     </section>
 
     <section class="wrap section" id="worlds">
       <div class="section-head">
-        <h2>卡片不再是模板。</h2>
+        <h2>四张完整卡片，直接试玩。</h2>
         <p>
-          仪表盘、文章、终端、表单、小游戏或另一个 Web Component，
-          都可以成为完整卡面。不同卡片的样式互不串色。
+          点击后面的牌、拖动当前牌，或使用下方按钮切换。终端和文章卡片还可以在卡片内部滚动。
         </p>
       </div>
 
+      <div class="demo-shell">
+        <aside class="demo-guide">
+          <div>
+            <h3>这才是成品演示</h3>
+            <p>牌组只负责动画与边界，每张卡片内部都是独立、完整的界面。</p>
+
+            <div class="gesture-list" aria-label="交互方式">
+              <span>拖动当前卡片切换</span>
+              <span>点击后方卡片跳转</span>
+              <span>方向键与按钮均可用</span>
+              <span>卡片内容独立滚动</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="deck-controls" aria-label="卡片切换按钮">
+              <button type="button" id="previousCard">上一张</button>
+              <span class="deck-position" id="deckPosition">1 / 4</span>
+              <button type="button" id="nextCard">下一张</button>
+            </div>
+
+            <div class="card-tabs" aria-label="直接选择卡片">
+              <button type="button" data-card-index="0" aria-current="true">仪表盘</button>
+              <button type="button" data-card-index="1">课程</button>
+              <button type="button" data-card-index="2">终端</button>
+              <button type="button" data-card-index="3">文章</button>
+            </div>
+          </div>
+        </aside>
+
+        <div class="demo-stage">
+          <fan-poker
+            id="finishedDeck"
+            card-width="430px"
+            card-height="570px"
+            aria-label="四种完整卡片成品演示">
+
+            <fan-card aria-label="个人学习仪表盘">
+              <style>
+                :host {
+                  display: block;
+                  min-height: 100%;
+                  background: #fff8ed;
+                  color: #191714;
+                  font-family: Inter, system-ui, sans-serif;
+                }
+
+                .world-dashboard {
+                  min-width: 100%;
+                  min-height: 100%;
+                  padding: 30px;
+                }
+
+                .world-dashboard .kicker {
+                  color: #e96d2f;
+                  font-size: 12px;
+                  font-weight: 900;
+                  letter-spacing: .14em;
+                  text-transform: uppercase;
+                }
+
+                .world-dashboard .title {
+                  margin: 14px 0 24px;
+                  font-size: 38px;
+                  line-height: 1;
+                  letter-spacing: -.055em;
+                }
+
+                .world-dashboard .stats {
+                  display: grid;
+                  grid-template-columns: repeat(2, 1fr);
+                  gap: 12px;
+                }
+
+                .world-dashboard .stat {
+                  min-height: 118px;
+                  padding: 17px;
+                  border: 1px solid rgba(25, 23, 20, .12);
+                  border-radius: 18px;
+                  background: rgba(255, 255, 255, .72);
+                  color: #6e665d;
+                  font-size: 13px;
+                }
+
+                .world-dashboard .stat strong {
+                  display: block;
+                  margin-top: 20px;
+                  color: #191714;
+                  font-size: 30px;
+                  letter-spacing: -.04em;
+                }
+
+                .world-dashboard .progress {
+                  margin-top: 14px;
+                  padding: 18px;
+                  border-radius: 18px;
+                  background: #191714;
+                  color: #fff;
+                }
+
+                .world-dashboard .progress-row {
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 10px;
+                  font-size: 13px;
+                  font-weight: 800;
+                }
+
+                .world-dashboard .track {
+                  height: 9px;
+                  overflow: hidden;
+                  border-radius: 999px;
+                  background: rgba(255, 255, 255, .18);
+                }
+
+                .world-dashboard .fill {
+                  width: 72%;
+                  height: 100%;
+                  border-radius: inherit;
+                  background: #f29a63;
+                }
+              </style>
+
+              <div class="world-dashboard">
+                <span class="kicker">Personal progress</span>
+                <div class="title">今天也在向前。</div>
+
+                <div class="stats">
+                  <div class="stat">连续学习<strong>18 天</strong></div>
+                  <div class="stat">本周训练<strong>4.6 h</strong></div>
+                  <div class="stat">GitHub 提交<strong>23 次</strong></div>
+                  <div class="stat">博客更新<strong>5 篇</strong></div>
+                </div>
+
+                <div class="progress">
+                  <div class="progress-row"><span>本周计划</span><span>72%</span></div>
+                  <div class="track"><div class="fill"></div></div>
+                </div>
+              </div>
+            </fan-card>
+
+            <fan-card aria-label="课程章节页面">
+              <style>
+                :host {
+                  display: block;
+                  min-height: 100%;
+                  background: #dff4e8;
+                  color: #10251a;
+                  font-family: Inter, system-ui, sans-serif;
+                }
+
+                .world-course {
+                  min-width: 100%;
+                  min-height: 100%;
+                  padding: 30px;
+                }
+
+                .world-course .label {
+                  display: inline-flex;
+                  padding: 7px 10px;
+                  border: 1px solid rgba(16, 37, 26, .18);
+                  border-radius: 999px;
+                  font-size: 12px;
+                  font-weight: 850;
+                }
+
+                .world-course .title {
+                  margin: 18px 0 10px;
+                  font-size: 39px;
+                  line-height: 1.02;
+                  letter-spacing: -.055em;
+                }
+
+                .world-course .copy {
+                  margin: 0 0 24px;
+                  color: #496355;
+                  line-height: 1.7;
+                }
+
+                .world-course .lesson {
+                  display: grid;
+                  grid-template-columns: 38px 1fr auto;
+                  gap: 12px;
+                  align-items: center;
+                  min-height: 62px;
+                  padding: 10px 12px;
+                  border-top: 1px solid rgba(16, 37, 26, .12);
+                }
+
+                .world-course .lesson:first-of-type {
+                  border-top: 0;
+                }
+
+                .world-course .number {
+                  display: grid;
+                  width: 34px;
+                  height: 34px;
+                  place-items: center;
+                  border-radius: 50%;
+                  background: #10251a;
+                  color: #fff;
+                  font-size: 12px;
+                  font-weight: 900;
+                }
+
+                .world-course .lesson b {
+                  font-size: 14px;
+                }
+
+                .world-course .time {
+                  color: #668071;
+                  font-size: 12px;
+                }
+              </style>
+
+              <div class="world-course">
+                <span class="label">Spring Boot · 第 4 章</span>
+                <div class="title">把一次请求讲清楚。</div>
+                <p class="copy">从 Controller 到数据库，再从实体转换为页面需要的数据。</p>
+
+                <div class="lesson">
+                  <span class="number">01</span><b>请求进入 Controller</b><span class="time">8 min</span>
+                </div>
+                <div class="lesson">
+                  <span class="number">02</span><b>Service 编排业务</b><span class="time">12 min</span>
+                </div>
+                <div class="lesson">
+                  <span class="number">03</span><b>Repository 隔离存储</b><span class="time">15 min</span>
+                </div>
+                <div class="lesson">
+                  <span class="number">04</span><b>DTO 与 VO 的边界</b><span class="time">10 min</span>
+                </div>
+                <div class="lesson">
+                  <span class="number">05</span><b>完成一次重构</b><span class="time">20 min</span>
+                </div>
+              </div>
+            </fan-card>
+
+            <fan-card aria-label="项目终端页面">
+              <style>
+                :host {
+                  display: block;
+                  min-height: 100%;
+                  background: #0b110d;
+                  color: #d7f9df;
+                  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+                }
+
+                .world-terminal {
+                  width: 760px;
+                  min-height: 760px;
+                  padding: 26px;
+                  background: #0b110d;
+                }
+
+                .world-terminal .topbar {
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 24px;
+                  color: #74c69d;
+                  font-size: 13px;
+                  font-weight: 800;
+                }
+
+                .world-terminal .dots {
+                  letter-spacing: .28em;
+                }
+
+                .world-terminal .screen {
+                  padding: 20px;
+                  border: 1px solid rgba(215, 249, 223, .14);
+                  border-radius: 16px;
+                  background: #060a07;
+                  line-height: 1.9;
+                  white-space: pre-wrap;
+                }
+
+                .world-terminal .ok { color: #74c69d; }
+                .world-terminal .path { color: #f4c27f; }
+
+                .world-terminal .commits {
+                  display: flex;
+                  gap: 12px;
+                  margin-top: 26px;
+                }
+
+                .world-terminal .commit {
+                  min-width: 150px;
+                  padding: 14px;
+                  border: 1px solid rgba(215, 249, 223, .16);
+                  border-radius: 12px;
+                  color: #a8cdb1;
+                  text-align: center;
+                  font-size: 12px;
+                }
+              </style>
+
+              <div class="world-terminal">
+                <div class="topbar"><span>狐不九 / fan-poker-deck</span><span class="dots">● ● ●</span></div>
+                <div class="screen"><span class="path">fox@lab:~/fan-poker</span>$ npm test
+<span class="ok">✓</span> static validation
+<span class="ok">✓</span> node and SSR import
+<span class="ok">✓</span> package size
+<span class="ok">✓</span> chromium interaction smoke
+
+<span class="path">fox@lab:~/fan-poker</span>$ npm pack --dry-run
+package: @hubujiu/fan-poker-deck
+version: 2.0.0
+status: <span class="ok">ready</span></div>
+
+                <div class="commits">
+                  <div class="commit">isolated worlds</div>
+                  <div class="commit">floating scrollbars</div>
+                  <div class="commit">gesture arbitration</div>
+                  <div class="commit">zero dependencies</div>
+                </div>
+              </div>
+            </fan-card>
+
+            <fan-card aria-label="完整文章阅读页面">
+              <style>
+                :host {
+                  display: block;
+                  min-height: 100%;
+                  background: #f5ead7;
+                  color: #2a2119;
+                  font-family: Georgia, "Songti SC", serif;
+                }
+
+                .world-article {
+                  min-width: 100%;
+                  min-height: 980px;
+                  padding: 38px;
+                }
+
+                .world-article .meta {
+                  color: #9b7653;
+                  font-family: Inter, system-ui, sans-serif;
+                  font-size: 12px;
+                  font-weight: 850;
+                  letter-spacing: .12em;
+                  text-transform: uppercase;
+                }
+
+                .world-article .title {
+                  margin: 20px 0 24px;
+                  font-size: 42px;
+                  line-height: 1.08;
+                  letter-spacing: -.04em;
+                }
+
+                .world-article .lead {
+                  padding-left: 16px;
+                  border-left: 3px solid #b47743;
+                  color: #765c45;
+                  font-size: 17px;
+                  line-height: 1.9;
+                }
+
+                .world-article .body {
+                  font-size: 16px;
+                  line-height: 2;
+                }
+
+                .world-article .quote {
+                  margin: 28px 0;
+                  padding: 22px;
+                  border-radius: 16px;
+                  background: rgba(255, 255, 255, .48);
+                  font-size: 20px;
+                  line-height: 1.6;
+                }
+              </style>
+
+              <div class="world-article">
+                <span class="meta">Design note · 06 min read</span>
+                <div class="title">一张卡片，也可以装下一篇完整文章。</div>
+                <p class="lead">组件不替内容决定结构，只提供边界、动画和交互秩序。</p>
+
+                <div class="body">
+                  <p>过去的卡片组件通常先规定封面、标题、正文和页脚，再让内容填入这些固定位置。</p>
+                  <p>Fan Poker Deck v2 反过来处理：卡片获得一个独立世界，使用者自己决定里面是什么。</p>
+                  <div class="quote">边界归组件，世界归卡片。</div>
+                  <p>当内容超过卡片尺寸时，滚动仍发生在卡片内部。原生滚动条不会常驻，鼠标靠近边缘时才显示浮动控件。</p>
+                  <p>继续向下滚动，可以确认这不是被截断的静态样张，而是一张真正能够承载长内容的卡片。</p>
+                  <p>同一个牌组还可以混合仪表盘、表单、小游戏和其他 Web Component，它们的样式不会互相串色。</p>
+                </div>
+              </div>
+            </fan-card>
+          </fan-poker>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section" id="features">
+      <div class="section-head">
+        <h2>卡片不再是模板。</h2>
+        <p>成品可以完全不同，但牌组切换、手势、滚动和可访问性由同一个组件统一处理。</p>
+      </div>
+
       <div class="grid">
-        <article class="feature">
-          <b>完整自定义</b>
-          <p>组件不插入固定封面、标题、正文或页脚。</p>
-        </article>
-
-        <article class="feature">
-          <b>独立世界</b>
-          <p>每张卡片拥有自己的 Shadow Root 和视觉规则。</p>
-        </article>
-
-        <article class="feature">
-          <b>边缘滚动</b>
-          <p>隐藏原生滚动条，只在右边或底边浮出玻璃式控件。</p>
-        </article>
-
-        <article class="feature">
-          <b>手势仲裁</b>
-          <p>横向内容优先滚动，不再与牌组切换争抢鼠标。</p>
-        </article>
-
-        <article class="feature">
-          <b>SSR safe</b>
-          <p>Node 与服务端渲染环境仍可安全导入模块。</p>
-        </article>
-
-        <article class="feature">
-          <b>0 deps</b>
-          <p>没有运行时依赖，也没有内置设计系统包袱。</p>
-        </article>
+        <article class="feature"><b>完整自定义</b><p>组件不插入固定封面、标题、正文或页脚。</p></article>
+        <article class="feature"><b>独立世界</b><p>每张卡片拥有自己的 Shadow Root 和视觉规则。</p></article>
+        <article class="feature"><b>边缘滚动</b><p>隐藏原生滚动条，只在右边或底边浮出玻璃式控件。</p></article>
+        <article class="feature"><b>手势仲裁</b><p>横向内容优先滚动，不再与牌组切换争抢鼠标。</p></article>
+        <article class="feature"><b>SSR safe</b><p>Node 与服务端渲染环境仍可安全导入模块。</p></article>
+        <article class="feature"><b>0 deps</b><p>没有运行时依赖，也没有内置设计系统包袱。</p></article>
       </div>
     </section>
 
     <section class="wrap section" id="quick">
       <div class="section-head">
-        <h2>复制，然后建立世界。</h2>
+        <h2>复制，然后建立自己的卡片世界。</h2>
         <p>生产页面固定版本地址，升级节奏留在自己手里。</p>
       </div>
 
@@ -562,12 +908,6 @@
         min-height: 100%;
         background: #fff8ed;
       }
-
-      main {
-        min-width: 100%;
-        min-height: 100%;
-        padding: 28px;
-      }
     &lt;/style&gt;
 
     &lt;main&gt;整个卡面由你决定。&lt;/main&gt;
@@ -582,10 +922,7 @@
           <h3>旧页面暂时不能迁移？</h3>
           <p>继续固定 v1.0.3，等卡片结构改造完成后再进入 v2。</p>
         </div>
-
-        <a class="button secondary" href="./docs/VERSIONING.md">
-          查看迁移指南
-        </a>
+        <a class="button secondary" href="./docs/VERSIONING.md">查看迁移指南</a>
       </div>
     </section>
   </main>
@@ -594,5 +931,32 @@
     <span>MIT © Hubujiu</span>
     <span>Every card deserves its own physics.</span>
   </footer>
+
+  <script type="module">
+    await customElements.whenDefined("fan-poker");
+
+    const deck = document.querySelector("#finishedDeck");
+    const position = document.querySelector("#deckPosition");
+    const tabs = [...document.querySelectorAll("[data-card-index]")];
+
+    const syncControls = () => {
+      const index = deck.currentIndex ?? 0;
+      const count = deck.cardCount || 4;
+      position.textContent = `${index + 1} / ${count}`;
+      tabs.forEach((tab, tabIndex) => {
+        tab.setAttribute("aria-current", tabIndex === index ? "true" : "false");
+      });
+    };
+
+    document.querySelector("#previousCard").addEventListener("click", () => deck.previous());
+    document.querySelector("#nextCard").addEventListener("click", () => deck.next());
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => deck.goTo(Number(tab.dataset.cardIndex)));
+    });
+
+    deck.addEventListener("ready", syncControls);
+    deck.addEventListener("cardchange", syncControls);
+    syncControls();
+  </script>
 </body>
 </html>
