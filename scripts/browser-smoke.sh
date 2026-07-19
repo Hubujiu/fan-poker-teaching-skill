@@ -20,34 +20,54 @@ if [[ -z "$BROWSER" ]]; then
   exit 1
 fi
 
-"$BROWSER" \
-  --headless=new \
-  --no-sandbox \
-  --disable-gpu \
-  --disable-dev-shm-usage \
-  --force-prefers-reduced-motion=reduce \
-  --run-all-compositor-stages-before-draw \
-  --virtual-time-budget=6000 \
-  --dump-dom \
-  "http://127.0.0.1:${PORT}/scripts/browser-smoke.html" \
-  > /tmp/fan-poker-browser-smoke.html
+run_smoke() {
+  local page="$1"
+  local marker="$2"
+  local output="$3"
+  local result_file="$4"
 
-mkdir -p .github
-python3 - <<'PY'
+  "$BROWSER" \
+    --headless=new \
+    --no-sandbox \
+    --disable-gpu \
+    --disable-dev-shm-usage \
+    --force-prefers-reduced-motion=reduce \
+    --run-all-compositor-stages-before-draw \
+    --virtual-time-budget=6000 \
+    --dump-dom \
+    "http://127.0.0.1:${PORT}/${page}" \
+    > "$output"
+
+  mkdir -p .github
+  python3 - "$output" "$result_file" <<'PY'
 from html import unescape
 from pathlib import Path
 import re
+import sys
 
-body = Path('/tmp/fan-poker-browser-smoke.html').read_text(encoding='utf-8')
+body = Path(sys.argv[1]).read_text(encoding="utf-8")
 match = re.search(r'<pre id="result">(.*?)</pre>', body, re.S)
 result = unescape(match.group(1).strip()) if match else '{"ok":false,"error":"result element not found"}'
-Path('.github/browser-smoke-result.txt').write_text(result + '\n', encoding='utf-8')
+Path(sys.argv[2]).write_text(result + "\n", encoding="utf-8")
 print(result)
 PY
 
-if ! grep -q 'data-smoke="passed"' /tmp/fan-poker-browser-smoke.html; then
-  echo "Browser smoke test failed" >&2
-  exit 1
-fi
+  if ! grep -q "$marker" "$output"; then
+    echo "Browser smoke test failed for $page" >&2
+    exit 1
+  fi
+}
 
-echo "Browser smoke test passed"
+run_smoke \
+  "scripts/browser-smoke.html" \
+  'data-smoke="passed"' \
+  /tmp/fan-poker-browser-smoke.html \
+  .github/browser-smoke-result.txt
+
+run_smoke \
+  "scripts/style-isolation-smoke.html" \
+  'data-style-smoke="passed"' \
+  /tmp/fan-poker-style-isolation-smoke.html \
+  .github/style-isolation-smoke-result.txt
+
+echo "Browser smoke tests passed"
